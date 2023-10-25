@@ -75,8 +75,11 @@ public class AuthenticationHandler {
                 });
     }
     public boolean isUserAuthenticated() {
+
         return mAuth.getCurrentUser() != null;
     }
+
+    //TODO: provide the SHA-1 fingerprint for your release keystore as well. The process is similar, but you'll use your release keystore path and password instead of the debug ones. This ensures that Google Sign-In works both in debug and release versions of your app.
 
 
 }

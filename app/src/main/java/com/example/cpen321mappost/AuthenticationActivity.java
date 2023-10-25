@@ -16,12 +16,6 @@ public class AuthenticationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (authenticationHandler.isUserAuthenticated()) {
-//            updateUI();
-//            return;
-//        }
-        setContentView(R.layout.activity_authentication);
-
         authenticationHandler = new AuthenticationHandler(this, new AuthenticationHandler.AuthCallback() {
             @Override
             public void onAuthSuccess(FirebaseUser user) {
@@ -35,6 +29,15 @@ public class AuthenticationActivity extends AppCompatActivity {
 
             }
         });
+
+        if (authenticationHandler.isUserAuthenticated()) {
+            updateUI();
+            return;
+        }
+
+        setContentView(R.layout.activity_authentication);
+
+
 
         findViewById(R.id.btnGoogleSignIn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,6 +57,9 @@ public class AuthenticationActivity extends AppCompatActivity {
         // TODO: Update UI
         // After successful authentication, you can navigate to the next page
         Log.d("AuthenticationActivity", "updateUI called");
+        //Need to call initialize user:
+        //TODO: generate a new user if not generated: if(current user==null) User currentUser= new User();
+
         Intent intent = new Intent(AuthenticationActivity.this, MapsActivity.class);
         startActivity(intent);
         finish();  // Finish the current activity

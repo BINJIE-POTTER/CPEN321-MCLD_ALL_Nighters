@@ -18,6 +18,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -54,6 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         requestLocationPermissions();
 
+
         // Set onClickListener for the user profile button
         Button userProfileButton = findViewById(R.id.userProfileButton);
         userProfileButton.setOnClickListener(v -> {
@@ -88,6 +90,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (lastKnownLocation != null) {
                 LatLng currentLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                Log.d("MapsActivity", "displayCurrentLocation():" + currentLocation.latitude + ", " + currentLocation.longitude);
+
                 mMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
             }
