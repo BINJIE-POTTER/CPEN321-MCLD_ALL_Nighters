@@ -12,7 +12,20 @@
           "package_name": "com.example.cpen321mappost"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "667120763376-p34t974is263ku50uo6eg1th04eg5sij.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cpen321mappost",
+            "certificate_hash": "4aaa72abad71d78d98f915f5eb597e8a75562b37"
+          }
+        },
+        {
+          "client_id": "667120763376-1be03htv6s11a7be9d1k2d57hdnftt5m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAt3034Ob4e66P9Ou_qTCVzw1-sfzWI5U0"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "667120763376-1be03htv6s11a7be9d1k2d57hdnftt5m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

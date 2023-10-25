@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Cpen321Mappost</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="default_web_client_id">667120763376-1be03htv6s11a7be9d1k2d57hdnftt5m.apps.googleusercontent.com</string>
+
 </resources>
