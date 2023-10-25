@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "667120763376",
+    "project_id": "mappost-d37d3",
+    "storage_bucket": "mappost-d37d3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:667120763376:android:19867dfa3a5ce5f68c1d35",
+        "android_client_info": {
+          "package_name": "com.example.cpen321mappost"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAt3034Ob4e66P9Ou_qTCVzw1-sfzWI5U0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
