@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MapsActivity">
+<!--    //TODO: need to address unkonw fragment error-->
 
     <fragment
         android:id="@+id/map"
@@ -21,5 +22,6 @@
         android:text="Profile"
         android:padding="8dp"
         android:background="@color/black" /> <!-- Optional: customize the button background if desired -->
+
 
 </RelativeLayout>

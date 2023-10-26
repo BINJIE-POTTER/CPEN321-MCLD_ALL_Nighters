@@ -9,6 +9,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.cpen321mappost.databinding.ActivityMapsBinding;
 import android.Manifest;
@@ -33,12 +34,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
     private LocationManager locationManager;
     private static final String TAG = "MapsActivity";
+    private Marker selectedMarker = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +88,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         displayCurrentLocation();
+        // Handle click on map
+        mMap.setOnMapClickListener(latLng -> {
+            // Remove selected marker
+            if (selectedMarker != null) {
+                selectedMarker.remove();
+            }
+
+            // Add new marker
+            selectedMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Selected Location"));
+        });
+
+        // Handle click on marker
+        mMap.setOnMarkerClickListener(marker -> {
+            if (selectedMarker != null && marker.equals(selectedMarker)) {
+                displayLocationMenu(marker.getPosition());
+                return true; // indicate that we consumed the event
+            }
+            return false;
+        });
+    }
+    private void displayLocationMenu(LatLng latLng) {
+        View view = getLayoutInflater().inflate(R.layout.layout_location_menu, null);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        bottomSheetDialog.setContentView(view);
+
+        // Reference the button and set click listener
+        Button createPostButton = view.findViewById(R.id.createPostButton);
+        createPostButton.setOnClickListener(v -> {
+//            CreatePost(latLng);
+            bottomSheetDialog.dismiss();
+        });
+
+        bottomSheetDialog.show();
     }
 
     private void displayCurrentLocation() {

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import androidx.annotation.Nullable;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 
@@ -59,6 +61,18 @@ public class AuthenticationActivity extends AppCompatActivity {
         Log.d("AuthenticationActivity", "updateUI called");
         //Need to call initialize user:
         //TODO: generate a new user if not generated: if(current user==null) User currentUser= new User();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null) {
+            // User is already authenticated
+
+//            User currentUser = User.initializeUser(firebaseUser);
+            // TODO:
+            //if current user by email exist in database, fetch the user
+            //else create a post method to create user
+
+        }
+
+
 
         Intent intent = new Intent(AuthenticationActivity.this, MapsActivity.class);
         startActivity(intent);
