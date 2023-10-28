@@ -25,6 +25,11 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
@@ -33,6 +38,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager locationManager;
     private static final String TAG = "MapsActivity";
     private Marker selectedMarker = null;
+    private Location currentLocation;
+    LatLng currentLatLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,12 +82,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+
         mMap.setOnMapClickListener(latLng -> {
             if (selectedMarker != null) {
                 selectedMarker.remove();
             }
             selectedMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Selected Location"));
         });
+        //Show dropdown menu if user click on a location that already has a marker:
         mMap.setOnMarkerClickListener(marker -> {
             if (selectedMarker != null && marker.equals(selectedMarker)) {
                 displayLocationMenu(marker.getPosition());
@@ -88,6 +98,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             return false;
         });
+
+        //Show all posts:
+        Post[] clusteredPosts=null;
+//        Post[] clusteredPosts = get from backend of all posts
+        addBlueMarkersToMap(clusteredPosts);
+
+
+
+    }
+
+    public void addBlueMarkersToMap(Post[]  clusteredPosts) {
+        if(clusteredPosts != null) {
+            for (Post post : clusteredPosts) {
+
+                LatLng postLocation = new LatLng(post.getLatitude(), post.getLongitude());
+                mMap.addMarker(new MarkerOptions()
+                        .position(postLocation)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+
+            }
+        }
     }
 
     private void displayLocationMenu(LatLng latLng) {
@@ -98,23 +129,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         createPostButton.setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
         });
+        //Click on Create Post
+        createPostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent =new Intent(MapsActivity.this,PostActivity.class);
+                intent.putExtra("latitude",Double.toString(latLng.latitude));
+                intent.putExtra("longitude",Double.toString(latLng.longitude));
+
+                startActivity(intent);
+            }
+        });
         bottomSheetDialog.show();
+
+
+
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+        currentLocation=location;
+
+        LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current Location"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
     }
 
-    @Override
-    public void onProviderEnabled(String provider) {}
 
-    @Override
-    public void onProviderDisabled(String provider) {}
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {}
 
 }

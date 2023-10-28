@@ -62,6 +62,7 @@ public class AuthenticationActivity extends AppCompatActivity {
         //Need to call initialize user:
         //TODO: generate a new user if not generated: if(current user==null) User currentUser= new User();
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        //TODO:Ask for firebase cloud mesasging token, ask for permission
         if (firebaseUser != null) {
             // User is already authenticated
 
