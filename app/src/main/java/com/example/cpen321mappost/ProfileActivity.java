@@ -1,8 +1,10 @@
 package com.example.cpen321mappost;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +23,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        user = new User();
+        user = User.getInstance();
         profileManager = new ProfileManager();
 
         Log.d(TAG, "User ID: " + user.getUserId() + "," + "User Email: " + user.getUserEmail() + "," + "User name: " + user.getUserName() + ",");
@@ -127,7 +129,14 @@ public class ProfileActivity extends AppCompatActivity {
         }, this); // 'this' is the current activity, which is passed for context
 
 
+        nameEditButton.setOnClickListener(view -> {
 
+            Log.d(TAG,"Opening the profile editing activity");
+            Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
+            ProfileEditingIntent.putExtra("item", "userName");
+            startActivity(ProfileEditingIntent);
+
+        });
 
 
     }
