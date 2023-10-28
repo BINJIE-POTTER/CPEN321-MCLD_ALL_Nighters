@@ -20,7 +20,7 @@ public class Post {
         private String[] comments; // need to request using PID
         private int likeCount;
 
-        // Getter methods for the above attributes
+        // Getter methods for the above attributesdddd
 
    public double getLatitude()
    {
