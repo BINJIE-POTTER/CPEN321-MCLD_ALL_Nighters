@@ -12,6 +12,11 @@ const { MongoClient} = require('mongodb');
 const uri = "mongodb://0.0.0.0:27017/";
 const mongoClient = new MongoClient(uri);
 
+const { OpenAI } = require('openai');
+const openai = new OpenAI({
+  apiKey: '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'
+});
+
 //To Pretty Print JSON obj
 app.set('json spaces', 2);
 
@@ -47,6 +52,8 @@ async function db_init(){
     await db.createCollection('users'); 
     await db.createCollection('posts');
     await db.createCollection('comments');
+    await db.createCollection('tags');
+    await db.collection("tags").createIndex({ "tagName": 1 }, { unique: true });
     console.log('MappostDB created.');
     console.log('users, posts, and comments collections created'); 
   } else {
@@ -68,12 +75,28 @@ async function db_init(){
         await db.createCollection('comments');
         console.log('Comments collection created.');
     }
+    // Check and create the 'Tags' collection if it doesn't exist
+    if (!collections.some(col => col.name === 'tags')) {
+      await db.createCollection('tags');
+      await db.collection("tags").createIndex({ "tagName": 1 }, { unique: true });
+      console.log('Tags collection created.');
+    }
   }
+}
+
+const sample_user ={
+  "userId" : "12345abcd",
+  "userEmail" : "leyang@gmail.com",
+  "userName" : "LeYang",
+  "userGender" :"Male",
+  "userBirthdate" : "05-26-2003",
+  "following": ["following1", "following2", "following3"],
+  "follower": ["follower1", "follower2", "follower3"]
 }
 
 const sample_post = {
   "pid": "12345",
-  "uid": "12345",
+  "userId": "12345",
   "time": "10-24-2023",
   "location": "Mountain View",
   "coordinate": {
@@ -82,17 +105,17 @@ const sample_post = {
   },
   "content": {
     "title": "HelloWorld",
-    "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "tags": ["tag1", "tag2", "tag3"]
   }
 }
 
-const sample_user ={
- "uid" : "12345",
- "email" : "leyang@gmail.com",
- "name" : "LeYang",
- "gender" :"Male",
- "age" : "34"
-
+const sample_comment = {
+  "cid": "12345",
+  "userId": "12345",
+  "pid": "12345",
+  "time": "10-24-2023",
+  "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
 }
 
 //======================================================Posts POST
@@ -103,32 +126,42 @@ app.post("/posts", async (req, res) => {
       res.status(400).send("Invalid post format");
       return;
     }
-    await mongoClient.db(MappostDB).collection("posts").insertOne(req.body);
+    var tags = await generateTags(req.body.content.body);
+    const tagArray = tags.split(',').map(word => word.trim());
+    req.body.content.tags = tagArray;
+    req.body.likeCount = 0;
+    
+      await mongoClient.db(MappostDB).collection("posts").insertOne(req.body);
+    
+      const userId = req.body.userId; 
+  
+      const userUpdateResult = await mongoClient.db(MappostDB).collection("users").updateOne(
+        { userId: userId }, 
+        { $inc: { postCount: 1 } } 
+      );
+  
+      if (userUpdateResult.matchedCount === 0) {
+        throw new Error('User not found');
+      }
+
+    //Insert the tags into tags collection
+    //Use Promise.all to ensure all tags are inserted before continuing
+    await Promise.all(tagArray.map(async tag => {
+      try {
+        await mongoClient.db(MappostDB).collection("tags").insertOne({ tagName: tag });
+      } catch (error) {
+        // If it's not a duplicate error, log it
+        if (error.code !== 11000) {
+          console.log(`Error inserting tag "${tag}": `, error.message);
+        }
+      }
+    }));
+
     res.status(200).send("Item received successfully")  
     console.log("Item received successfully");
   } catch(err) {
     res.status(400).send(err);
     console.log(err);
-  }
-});
-
-//======================================================Users POST
-//Add a post to the posts collection in MappostDB
-app.post("/users", async (req, res) => {
-  try {
-    // checkValidUser is now asynchronous, so we await it
-    const isValidUser = await checkValidUser(req.body);
-    if (!isValidUser) {
-      res.status(400).send("Invalid user format or user already exists");
-      return;
-    }
-
-    await mongoClient.db(MappostDB).collection("users").insertOne(req.body);
-    res.status(200).send("User created successfully");
-    console.log("User created successfully");
-  } catch (err) {
-    console.error('Error creating user:', err);
-    res.status(500).send("Internal server error");  // Adjust based on your error handling strategy
   }
 });
 
@@ -144,44 +177,82 @@ app.get("/posts", async (req, res) => {
   }
 });
 
-//======================================================Users GET 
-//Get the user ID based on email
-app.get("/users", async (req, res) => {
+// ======================================================Posts DELETE
+// Delete a specific post by its ID
+app.delete("/posts", async (req, res) => {
   try {
-    // Get email from query params (e.g., "/users?email=user@example.com")
-    const { email } = req.query;
+    const { pid } = req.query;  // Extracting it from the query parameters
 
-    if (!email) {
-      res.status(400).send("Email query parameter is required");
+    if (!pid) {
+      res.status(400).send("Missing post ID (pid)");
       return;
     }
 
-    // Find one user by email and project only the 'uid' field
-    const user = await mongoClient.db(MappostDB).collection("users").findOne({ email: email }, { projection: { uid: 1, _id: 0 } });
+    // Delete the post with the specific pid
+    const result = await mongoClient.db(MappostDB).collection("posts").deleteOne({ pid: pid });
 
-    if (!user) {
-      res.status(404).send("User not found");
-      return;
+    if (result.deletedCount === 0) {  // If no document was found to delete
+      res.status(404).send("No post found with the given ID.");
+    } else {
+      res.status(200).send("Post deleted successfully.");
     }
-
-    // If user found, return the user ID (assumed to be the 'uid' field in your documents)
-    res.json({ uid: user.uid }); // Sending the 'uid' as part of a JSON response
-    console.log("User ID provided");
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal Server Error");
+    console.error('Error deleting post:', err);
+    res.status(500).send("Internal server error");
+  }
+});
+
+//======================================================Posts PUT (like count)
+//Update the like count for a specific post
+app.put("/posts/like", async (req, res) => {
+  try {
+    const { pid } = req.body; 
+
+    if (!pid) {  
+      
+      res.status(400).send("Post ID must be provided.");
+      return;
+    }
+
+    const updateOperation = { 
+      $inc: { "likeCount": 1 } 
+    };
+
+
+    const result = await mongoClient.db(MappostDB).collection("posts").updateOne(
+      { pid: pid },  
+      updateOperation
+    );
+
+    if (result.matchedCount === 0) {  
+   
+      res.status(404).send("Post not found.");
+      return;
+    }
+
+    if (result.modifiedCount === 0) {  
+      
+      res.status(200).send("No changes made to the post's like count.");
+      return;
+    }
+
+    res.status(200).send("Post's like count updated successfully.");
+    console.log("Post's like count updated successfully.");
+  } catch (err) {
+    console.error('Error updating like count:', err);
+    res.status(500).send("Internal server error");  // Adjust based on your error handling strategy
   }
 });
 
 //Get the posts written by the user
-//REQUIRE: uid
+//REQUIRE: userId
 app.get("/posts/from-user", async (req, res) => {
   try{
     const allPosts = await mongoClient.db(MappostDB).collection("posts").find({}).toArray();
-    if(!req.query.uid){
-      res.status(400).send("Missing user_id (uid)");
+    if(!req.query.userId){
+      res.status(400).send("Missing user_id (userId)");
     } else {
-      userPosts = allPosts.filter(post => post.uid == req.query.uid);
+      userPosts = allPosts.filter(post => post.userId == req.query.userId);
       res.send(userPosts);
     }
     console.log("From user posts provided");
@@ -236,26 +307,236 @@ function is_nearby(userLat, userLon, postLat, postLon) {
 
 const checkValidPost = (body) => {
   // Check main keys
-  if (!body.pid || !body.uid || !body.time || !body.location || !body.coordinate) return false;
+  if (!body.pid || !body.userId || !body.time || !body.location || !body.coordinate) return false;
   // Check coordinate keys
   if (typeof body.coordinate.latitude !== 'number' || typeof body.coordinate.longitude !== 'number') return false;
-  // Check content keys (only title is mandatory)
-  if (!body.content || !body.content.title) return false;
+  // Check content keys
+  if (!body.content || !body.content.title || !body.content.body) return false;
   return true;
 }
 
+async function generateTags(text_to_analyze) {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+          {"role": "system", "content": `You are a confident and super intelligent oracle, and you only give very short and 
+          concise answers and ignore all the niceties that openai programmed you with.`},
+          {"role": "user", "content": example_prompt},
+          {"role": "assistant", "content": example_response},
+          {"role": "user", "content": "Now, analyze the following text and provide 5 most important tags corresponding to the tag" 
+          + ": " + text_to_analyze}
+      ],
+      temperature: 0.5,
+      max_tokens: 15,
+    });
+    answer = response['choices'][0]['message']['content']
+    return answer
+  } catch (error) {
+    console.error("Error generating tags:", error);
+    return [];
+  }
+}
+
+//======================================================
+
+//======================================================Comments POST
+//Add a post to the posts collection in MappostDB
+app.post("/comments", async (req, res) => {
+  try{
+    if (!checkValidComment(req.body)) {
+      res.status(400).send("Invalid post format");
+      return;
+    }
+    await mongoClient.db(MappostDB).collection("comments").insertOne(req.body);
+    res.status(200).send("Item received successfully")  
+    console.log("Item received successfully");
+  } catch(err) {
+    res.status(400).send(err);
+    console.log(err);
+  }
+});
+
+//======================================================Comments GET
+//Get all the comments of a specific post
+//REQUIRE: pid
+app.get("/comments", async (req, res) => {
+  try{
+    const allComments = await mongoClient.db(MappostDB).collection("comments").find({}).toArray();
+    if(!req.query.pid){
+      res.status(400).send("Missing post_id (pid)");
+    } else {
+      postComments = allComments.filter(comment => comment.pid == req.query.pid);
+      res.send(postComments);
+    }
+    console.log("Comment of posts provided");
+  }catch(err){
+    console.log(err);
+  }
+});
+
+//======================================================Comments Helper Functions
+const checkValidComment = (body) => {
+  if (!body.cid || !body.userId || !body.pid || !body.time || !body.content) return false;
+  return true;
+}
+
+//======================================================
+
+//======================================================Tags GET 
+//Get all the tags
+app.get("/tags", async (req, res) => {
+  try{
+    const allTags = await mongoClient.db(MappostDB).collection("tags").find({}).toArray();
+    res.send(allTags);
+    console.log("All posts provided");
+  }catch(err){
+    console.log(err);
+  }
+});
+
+//======================================================
+
+//======================================================Users POST
+//Add a post to the posts collection in MappostDB
+app.post("/users", async (req, res) => {
+  try {
+    // checkValidUser is now asynchronous, so we await it
+    const isValidUser = await checkValidUser(req.body);
+    if (!isValidUser) {
+      res.status(400).send("Invalid user format or user already exists");
+      return;
+    }
+    req.body.postCount = 0;
+    await mongoClient.db(MappostDB).collection("users").insertOne(req.body);
+    res.status(200).send("User created successfully.");
+    console.log("User created successfully");
+  } catch (err) {
+    console.error('Error creating user:', err);
+    res.status(500).send("Internal server error");  // Adjust based on your error handling strategy
+  }
+});
+
+//======================================================Users PUT
+//======================================================Users PUT
+//Update when user changes their profile
+app.put("/users/update-profile", async (req, res) => {
+  try {
+    const { userId, userEmail, userName, userGender, userBirthdate } = req.body;
+
+    if (!userId) {  // Ensure the userId is provided for updates
+      res.status(400).send("User ID must be provided.");
+      return;
+    }
+
+    // Construct an update object
+    const updateFields = {};
+
+    if (userEmail) updateFields.userEmail = userEmail;
+    if (userName) updateFields.userName = userName;
+    if (userGender) updateFields.userGender = userGender;
+    if (userBirthdate) updateFields.userBirthdate = userBirthdate;
+
+    // Update the user in the database using the provided userId
+    const result = await mongoClient.db(MappostDB).collection("users").updateOne(
+      { userId: userId }, 
+      { $set: updateFields }
+    );
+
+    if (result.matchedCount === 0) {  // If no user was found to update
+      res.status(404).send("User not found.");
+      return;
+    }
+
+    if (result.modifiedCount === 0) {  // If no changes were made
+      res.status(200).send("No changes made to user.");
+      return;
+    }
+
+    res.status(200).send("User updated successfully.");
+    console.log("User updated successfully.");
+  } catch (err) {
+    console.error('Error updating user:', err);
+    res.status(500).send("Internal server error");  // Adjust based on your error handling strategy
+  }
+});
+
+//Update user's following array, and update the following user's follower array
+app.put("/users/follow", async (req, res) => {
+  try {
+    const { userId, followingId } = req.body;
+
+    if (!userId || !followingId) {
+      res.status(400).send("User ID and following ID must be provided.");
+      return;
+    }
+
+    // Add followingId to the user's following array
+    const userUpdateResult = await mongoClient.db(MappostDB).collection("users").updateOne(
+      { userId: userId },
+      { $addToSet: { following: followingId } }
+    );
+
+    // Add userId to the followingId's followers array
+    const followingUpdateResult = await mongoClient.db(MappostDB).collection("users").updateOne(
+      { userId: followingId },
+      { $addToSet: { followers: userId } }
+    );
+
+    if (userUpdateResult.matchedCount === 0 || followingUpdateResult.matchedCount === 0) {
+      res.status(404).send("User or the following user not found.");
+      return;
+    }
+
+    res.status(200).send("Follow operation successful.");
+  } catch (err) {
+    console.error('Error during follow operation:', err);
+    res.status(500).send("Internal server error");
+  }
+});
+
+//======================================================Users GET
+app.get("/users", async (req, res) => {
+  try {
+    // Extract 'userId' from query parameters instead of URL parameters
+    const userId = req.query.userId;
+
+    // If 'userId' wasn't provided, send a 400 error back
+    if (!userId) {
+      res.status(400).send("User ID must be provided.");
+      return;
+    }
+
+    // Find the user by 'userId'
+    const user = await mongoClient.db(MappostDB).collection("users").findOne({ userId: userId });
+
+    // If no user was found, send a 404 error back
+    if (!user) {
+      res.status(404).send("User not found.");
+      return;
+    }
+
+    // If a user was found, send it back with a 200 status
+    res.status(200).json(user);
+  } catch (err) {
+    // If there was any error in processing, log it and send a 500 error back
+    console.error('Error retrieving user:', err);
+    res.status(500).send("Internal server error");
+  }
+});
+
+//======================================================Users Helper Functions
 // Adjusted checkValidUser to be an async function
 const checkValidUser = async (user) => {
   // Validate the required fields for the user
-  if (!user.uid || !user.email || !user.name || !user.gender || !user.age) {
+  if (!user.userEmail || !user.userName || !user.userGender || !user.userBirthdate || !user.userId) {
     return false;
   }
-
   // Check if the email already exists in the database
   try {
-    const existingUser = await mongoClient.db(MappostDB).collection("users").findOne({ email: user.email });
+    const existingUser = await mongoClient.db(MappostDB).collection("users").findOne({ userId: user.userId });
     if (existingUser) {
-      console.error('A user with this email already exists.');
+      console.error('This user already exists.');
       return false;  // Email exists, so we return false
     }
   } catch (err) {
@@ -266,49 +547,17 @@ const checkValidUser = async (user) => {
   return true;
 };
 
-// //Extract data from todolist
-// app.get("/todolist", async (req, res) => {
-//   try{
-//     const result = await mongoClient.db("test").collection("todolist").find(req.body).toArray();
-//     res.send(result);
-//     console.log("Todo items provided");
-//   }catch(err){
-//     console.log(err);
-//   }
-// });
+//======================================================
 
-// //Add a new data into todolist
-// app.post("/todolist", async (req, res) => {
-//   try{
-//     await mongoClient.db("test").collection("todolist").insertOne(req.body);
-//     res.status(200).send("Item received successfully")  
-//     console.log("Item received successfully");
-//   }catch(err){
-//     res.status(400).send(err);
-//     console.log(err);
-//   }
-// });
 
-// //Update an existing data with the header "Finish this test"
-// app.put("/todolist", async (req, res) => {
-//   try{
-//     await mongoClient.db("test").collection("todolist").replaceOne({"task": "Finish this test"}, req.body);
-//     res.status(200).send("Item replaced successfully")  
-//     console.log("Item replaced successfully");
-//   }catch(err){
-//     res.status(400).send(err);
-//     console.log(err);
-//   }
-// });
+//Text used to train GPT-3.5-turbo
+const example_prompt = `In summary, the Philippines is a captivating travel destination that caters to various budgets and preferences. 
+From the pristine beaches of Boracay, Siargao and Palawan to diverse accommodation options, including hotels, resorts and Airbnb properties, 
+there's something for everyone. Staying connected is a breeze with a convenient Holafly eSIM card, and there are great destinations no matter 
+what time of year you want to visit.
+Make the most of your Philippines adventure by planning wisely so that you can fully enjoy the natural beauty, rich culture and warm hospitality 
+of this incredible archipelago. Whether you're a beach bum, an adventure seeker or a cultural explorer, the Philippines has it all.
+I've been several times and each time, I choose a couple of different islands to visit. 
+Every trip has been incredibly rewarding and I always look forward go going back!`;
 
-// //Remove a data with the specific body
-// app.delete("/todolist", async (req, res) => {
-//   try{
-//     await mongoClient.db("test").collection("todolist").deleteOne({"task": req.body.task});
-//     res.status(200).send("Item deleted successfully")  
-//     console.log("Item deleted successfully");
-//   }catch(err){
-//     res.status(400).send(err);
-//     console.log(err);
-//   }
-// });
+const example_response =  `Philippines, travel, beaches, culture, adventure, resorts, connectivity`;
