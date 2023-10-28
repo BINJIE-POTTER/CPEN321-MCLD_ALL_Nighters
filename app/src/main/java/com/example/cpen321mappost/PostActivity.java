@@ -64,7 +64,7 @@ public class PostActivity extends AppCompatActivity {
         Intent receivedIntent = getIntent();
         String latitude = receivedIntent.getStringExtra("latitude");
         String longitude = receivedIntent.getStringExtra("longitude");
-        User currentuser= new User();
+        User currentuser= User.getInstance();
 
         // Check permissions at runtime
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {

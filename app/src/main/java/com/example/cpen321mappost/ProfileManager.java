@@ -90,6 +90,9 @@ public class ProfileManager {
         Gson gson = new Gson();
         String jsonUserData = gson.toJson(user); // 'user' is your User instance
 
+        Log.d(TAG, "PUT: changing user data");
+        Log.d(TAG, jsonUserData);
+
         // Create a request body with the JSON representation of the user
         RequestBody body = RequestBody.create(jsonUserData, MediaType.parse("application/json; charset=utf-8"));
 

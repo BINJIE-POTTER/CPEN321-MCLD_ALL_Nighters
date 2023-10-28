@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ProfileActivity extends AppCompatActivity {
     private TextView nameTextView, emailTextView, genderTextView, birthdateTextView, userIdTextView;
-    private Button nameEditButton, emailEditButton, genderEditButton, birthdateEditButton, userIdEditButton;
+    private Button nameEditButton, emailEditButton, genderEditButton, birthdateEditButton;
     private User user;
     private ProfileManager profileManager;
     final static String TAG = "ProfileManager Activity";
@@ -39,7 +39,6 @@ public class ProfileActivity extends AppCompatActivity {
         emailEditButton = findViewById(R.id.user_email_edit_button_id);
         genderEditButton = findViewById(R.id.user_gender_edit_button_id);
         birthdateEditButton = findViewById(R.id.user_birthdate_edit_button_id);
-        userIdEditButton = findViewById(R.id.user_id_edit_button_id);
 
         profileManager.getUserData(user, new User.UserCallback() {
             @Override
@@ -63,65 +62,11 @@ public class ProfileActivity extends AppCompatActivity {
                 // This is run on the UI thread, safe to update UI components
                 // e.g., show an error message
 
-                profileManager.postUserData(user, new User.UserCallback() {
-                    @Override
-                    public void onSuccess(User user) {
-
-                        Log.d(TAG, "Succeed on post user data");
-
-                        profileManager.getUserData(user, new User.UserCallback() {
-                            @Override
-                            public void onSuccess(User user) {
-                                // This is run on the UI thread, safe to update UI components
-                                // e.g., display user details in the UI
-
-                                Log.d(TAG, "Succeed on get user data");
-
-                                emailTextView.setText(user.getUserEmail());
-                                nameTextView.setText(user.getUserName());
-                                genderTextView.setText(user.getUserGender());
-                                birthdateTextView.setText(user.getUserBirthdate());
-                                userIdTextView.setText(user.getUserId());
-
-                            }
-
-                            @SuppressLint("SetTextI18n")
-                            @Override
-                            public void onFailure(Exception e) {
-                                // This is run on the UI thread, safe to update UI components
-                                // e.g., show an error message
-
-                                Log.d(TAG, "Faliure on get user data again");
-
-                                emailTextView.setText("error loading...");
-                                nameTextView.setText("error loading...");
-                                genderTextView.setText("error loading...");
-                                birthdateTextView.setText("error loading...");
-                                userIdTextView.setText("error loading...");
-
-                                Toast.makeText(ProfileActivity.this, "Failed to load user info!", Toast.LENGTH_LONG).show();
-
-                            }
-                        }, ProfileActivity.this); // 'this' is the current activity, which is passed for context
-
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-
-                        Log.d(TAG, "Faliure on post user data");
-
-                        emailTextView.setText("error loading...");
-                        nameTextView.setText("error loading...");
-                        genderTextView.setText("error loading...");
-                        birthdateTextView.setText("error loading...");
-                        userIdTextView.setText("error loading...");
-
-                        Toast.makeText(ProfileActivity.this, "Failed to get user info!", Toast.LENGTH_LONG).show();
-
-                    }
-
-                }, ProfileActivity.this);
+                emailTextView.setText("error");
+                nameTextView.setText("error");
+                genderTextView.setText("error");
+                birthdateTextView.setText("error");
+                userIdTextView.setText("error");
 
                 //Toast.makeText(ProfileActivity.this, "Failed to load user info!", Toast.LENGTH_LONG).show();
 
@@ -138,17 +83,34 @@ public class ProfileActivity extends AppCompatActivity {
 
         });
 
+        genderEditButton.setOnClickListener(view -> {
+
+            Log.d(TAG,"Opening the profile editing activity");
+            Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
+            ProfileEditingIntent.putExtra("item", "userGender");
+            startActivity(ProfileEditingIntent);
+
+        });
+
+        birthdateEditButton.setOnClickListener(view -> {
+
+            Log.d(TAG,"Opening the profile editing activity");
+            Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
+            ProfileEditingIntent.putExtra("item", "userBirthdate");
+            startActivity(ProfileEditingIntent);
+
+        });
+
+        emailEditButton.setOnClickListener(view -> {
+
+            Log.d(TAG,"Opening the profile editing activity");
+            Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
+            ProfileEditingIntent.putExtra("item", "userEmail");
+            startActivity(ProfileEditingIntent);
+
+        });
+
 
     }
-
-//        emailTextView.setText(currentUser.getUserEmail());
-//        nameTextView.setText(currentUser.getUserName());
-//        genderTextView.setText(currentUser.getUserGender());
-//        birthdateTextView.setText(currentUser.getUserBirthdate());
-//        userIdTextView.setText(currentUser.getUserId());
-
-
-
-
 
 }
