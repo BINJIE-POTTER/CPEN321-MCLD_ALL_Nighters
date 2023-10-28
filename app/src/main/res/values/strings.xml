@@ -3,4 +3,21 @@
     <string name="title_activity_maps">MapsActivity</string>
     <string name="default_web_client_id">667120763376-1be03htv6s11a7be9d1k2d57hdnftt5m.apps.googleusercontent.com</string>
 
+    <string name="user_name_caption">Name</string>
+    <string name="user_id_caption">Mappost ID</string>
+    <string name="user_gender_caption">Gender</string>
+    <string name="user_birthdate_caption">Birth Date</string>
+    <string name="user_email_caption">Email</string>
+
+    <string name="user_name_value_caption">loading…</string>
+    <string name="user_id_value_caption">loading…</string>
+    <string name="user_gender_value_caption">loading…</string>
+    <string name="user_birthdate_value_caption">loading…</string>
+    <string name="user_email_value_caption">loading…</string>
+
+    <string name="user_profile_edit_button_caption">edit</string>
+
+
+
+
 </resources>
