@@ -4,22 +4,22 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class User {
-    private String userId;
-    private String userName;
-    private String userEmail;
-    private String userGender;
-    private String userBirthdate;
+    private static String userId;
+    private static String userName;
+    private static String userEmail;
+    private static String userGender;
+    private static String userBirthdate;
 
     public User() {
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert firebaseUser != null;
 
-        this.userId = firebaseUser.getUid();
-        this.userName = firebaseUser.getDisplayName();
-        this.userEmail = firebaseUser.getEmail();
-        this.userGender = "none";
-        this.userBirthdate = "none";
+        userId = firebaseUser.getUid();
+        userName = firebaseUser.getDisplayName();
+        userEmail = firebaseUser.getEmail();
+        userGender = "none";
+        userBirthdate = "none";
 
     }
 
@@ -29,23 +29,23 @@ public class User {
         void onFailure(Exception e);
     }
 
-    public String getUserId() {
+    public static String getUserId() {
         return userId;
     }
 
-    public String getUserName() {
+    public static String getUserName() {
         return userName;
     }
 
-    public String getUserEmail() {
+    public static String getUserEmail() {
         return userEmail;
     }
 
-    public String getUserGender() {
+    public static String getUserGender() {
         return userGender;
     }
 
-    public String getUserBirthdate() {
+    public static String getUserBirthdate() {
         return userBirthdate;
     }
 
