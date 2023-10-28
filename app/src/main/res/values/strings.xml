@@ -17,6 +17,9 @@
 
     <string name="user_profile_edit_button_caption">edit</string>
 
+    <string name="edit_profile_save_button_caption">Save</string>
+    <string name="edit_profile_cancel_button_caption">Cancel</string>
+
 
 
 

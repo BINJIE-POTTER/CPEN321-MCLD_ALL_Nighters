@@ -4,49 +4,62 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class User {
-    private static String userId;
-    private static String userName;
-    private static String userEmail;
-    private static String userGender;
-    private static String userBirthdate;
+    private static User instance = null;
 
-    public User() {
+    // User attributes
+    private String userId;
+    private String userName;
+    private String userEmail;
+    private String userGender;
+    private String userBirthdate;
 
+    // Private constructor so no other class can instantiate
+    private User() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        assert firebaseUser != null;
+        assert firebaseUser != null; // Consider proper error handling here
 
-        userId = firebaseUser.getUid();
-        userName = firebaseUser.getDisplayName();
-        userEmail = firebaseUser.getEmail();
-        userGender = "none";
-        userBirthdate = "none";
-
+        this.userId = firebaseUser.getUid();
+        this.userName = firebaseUser.getDisplayName();
+        this.userEmail = firebaseUser.getEmail();
+        // Default values, consider providing ways to update these fields
+        this.userGender = "none";
+        this.userBirthdate = "none";
     }
 
-    // Callback interface for user update
+    // Method to get the single instance of user
+    public static synchronized User getInstance() {
+        if (instance == null) {
+            instance = new User();
+        }
+        return instance;
+    }
+
     public interface UserCallback {
         void onSuccess(User user);
         void onFailure(Exception e);
     }
 
-    public static String getUserId() {
+    // Getters and possibly setters if you need to change user's attributes after instantiation
+
+    public String getUserId() {
         return userId;
     }
 
-    public static String getUserName() {
+    public String getUserName() {
         return userName;
     }
 
-    public static String getUserEmail() {
+    public String getUserEmail() {
         return userEmail;
     }
 
-    public static String getUserGender() {
+    public String getUserGender() {
         return userGender;
     }
 
-    public static String getUserBirthdate() {
+    public String getUserBirthdate() {
         return userBirthdate;
     }
 
+    // Add other methods here...
 }
