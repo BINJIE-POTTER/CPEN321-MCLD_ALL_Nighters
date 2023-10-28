@@ -61,68 +61,122 @@ public class ProfileActivity extends AppCompatActivity {
                 // This is run on the UI thread, safe to update UI components
                 // e.g., show an error message
 
-                emailTextView.setText("error loading...");
-                nameTextView.setText("error loading...");
-                genderTextView.setText("error loading...");
-                birthdateTextView.setText("error loading...");
-                userIdTextView.setText("error loading...");
+                profileManager.postUserData(user, new User.UserCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+
+                        Log.d(TAG, "Succeed on post user data");
+
+                        profileManager.getUserData(user, new User.UserCallback() {
+                            @Override
+                            public void onSuccess(User user) {
+                                // This is run on the UI thread, safe to update UI components
+                                // e.g., display user details in the UI
+
+                                Log.d(TAG, "Succeed on get user data");
+
+                                emailTextView.setText(user.getUserEmail());
+                                nameTextView.setText(user.getUserName());
+                                genderTextView.setText(user.getUserGender());
+                                birthdateTextView.setText(user.getUserBirthdate());
+                                userIdTextView.setText(user.getUserId());
+
+                            }
+
+                            @SuppressLint("SetTextI18n")
+                            @Override
+                            public void onFailure(Exception e) {
+                                // This is run on the UI thread, safe to update UI components
+                                // e.g., show an error message
+
+                                Log.d(TAG, "Faliure on get user data again");
+
+                                emailTextView.setText("error loading...");
+                                nameTextView.setText("error loading...");
+                                genderTextView.setText("error loading...");
+                                birthdateTextView.setText("error loading...");
+                                userIdTextView.setText("error loading...");
+
+                                Toast.makeText(ProfileActivity.this, "Failed to load user info!", Toast.LENGTH_LONG).show();
+
+                            }
+                        }, ProfileActivity.this); // 'this' is the current activity, which is passed for context
+
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+
+                        Log.d(TAG, "Faliure on post user data");
+
+                        emailTextView.setText("error loading...");
+                        nameTextView.setText("error loading...");
+                        genderTextView.setText("error loading...");
+                        birthdateTextView.setText("error loading...");
+                        userIdTextView.setText("error loading...");
+
+                        Toast.makeText(ProfileActivity.this, "Failed to get user info!", Toast.LENGTH_LONG).show();
+
+                    }
+
+                }, ProfileActivity.this);
 
                 //Toast.makeText(ProfileActivity.this, "Failed to load user info!", Toast.LENGTH_LONG).show();
 
             }
         }, this); // 'this' is the current activity, which is passed for context
 
-        profileManager.postUserData(user, new User.UserCallback() {
-            @Override
-            public void onSuccess(User user) {
+//        profileManager.postUserData(user, new User.UserCallback() {
+//            @Override
+//            public void onSuccess(User user) {
+//
+//                Log.d(TAG, "Succeed on post user data");
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Exception e) {
+//
+//                Log.d(TAG, "Faliure on get user data");
+//
+//                Toast.makeText(ProfileActivity.this, "Failed to get user info!", Toast.LENGTH_LONG).show();
+//
+//            }
+//
+//        }, ProfileActivity.this);
 
-                Log.d(TAG, "Succeed on post user data");
-
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-
-                Log.d(TAG, "Faliure on get user data");
-
-                Toast.makeText(ProfileActivity.this, "Failed to get user info!", Toast.LENGTH_LONG).show();
-
-            }
-
-        }, ProfileActivity.this);
-
-        profileManager.getUserData(user, new User.UserCallback() {
-            @Override
-            public void onSuccess(User user) {
-                // This is run on the UI thread, safe to update UI components
-                // e.g., display user details in the UI
-
-                Log.d(TAG, "Succeed on get user data");
-
-                emailTextView.setText(user.getUserEmail());
-                nameTextView.setText(user.getUserName());
-                genderTextView.setText(user.getUserGender());
-                birthdateTextView.setText(user.getUserBirthdate());
-                userIdTextView.setText(user.getUserId());
-
-            }
-
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onFailure(Exception e) {
-                // This is run on the UI thread, safe to update UI components
-                // e.g., show an error message
-
-                emailTextView.setText("error loading...");
-                nameTextView.setText("error loading...");
-                genderTextView.setText("error loading...");
-                birthdateTextView.setText("error loading...");
-                userIdTextView.setText("error loading...");
-
-                Toast.makeText(ProfileActivity.this, "Failed to load user info!", Toast.LENGTH_LONG).show();
-
-            }
-        }, this); // 'this' is the current activity, which is passed for context
+//        profileManager.getUserData(user, new User.UserCallback() {
+//            @Override
+//            public void onSuccess(User user) {
+//                // This is run on the UI thread, safe to update UI components
+//                // e.g., display user details in the UI
+//
+//                Log.d(TAG, "Succeed on get user data");
+//
+//                emailTextView.setText(user.getUserEmail());
+//                nameTextView.setText(user.getUserName());
+//                genderTextView.setText(user.getUserGender());
+//                birthdateTextView.setText(user.getUserBirthdate());
+//                userIdTextView.setText(user.getUserId());
+//
+//            }
+//
+//            @SuppressLint("SetTextI18n")
+//            @Override
+//            public void onFailure(Exception e) {
+//                // This is run on the UI thread, safe to update UI components
+//                // e.g., show an error message
+//
+//                emailTextView.setText("error loading...");
+//                nameTextView.setText("error loading...");
+//                genderTextView.setText("error loading...");
+//                birthdateTextView.setText("error loading...");
+//                userIdTextView.setText("error loading...");
+//
+//                Toast.makeText(ProfileActivity.this, "Failed to load user info!", Toast.LENGTH_LONG).show();
+//
+//            }
+//        }, this); // 'this' is the current activity, which is passed for context
 
 
 

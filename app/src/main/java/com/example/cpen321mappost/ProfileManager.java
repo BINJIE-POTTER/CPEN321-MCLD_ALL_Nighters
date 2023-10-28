@@ -19,50 +19,14 @@ import okhttp3.Response;
 
 public class ProfileManager {
     final static String TAG = "ProfileManager Activity";
-    private int status = 0;
-
-//    public void getUserData(String userId, final User.UserCallback callback) {
-//        // Build the request URL. Modify this with your actual API URL.
-//        String url = "http://4.204.251.146:8081/users/?userId=" + userId;
-//
-//        // Create a request object.
-//        Request request = new Request.Builder()
-//                .url(url)
-//                .build();
-//
-//        // Enqueue the request in the background.
-//        httpClient.newCall(request).enqueue(new Callback() {
-//            @Override
-//            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-//                // Handle the error. Be aware that this is called on a background thread.
-//                Log.d(TAG, "Failed to request user data");
-//                callback.onFailure(e);
-//            }
-//
-//            @Override
-//            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-//                if (response.isSuccessful()) {
-//
-//                    Gson gson = new Gson();
-//
-//                    assert response.body() != null;
-//                    User user = gson.fromJson(response.body().charStream(), User.class);
-//
-//                    callback.onSuccess(user);
-//                } else {
-//                    // Handle the error. Be aware that this is called on a background thread.
-//                    callback.onFailure(new IOException("Unexpected code " + response));
-//                }
-//            }
-//        });
-//    }
 
     //-------------------------------------------- E N D --------------------------------------------//
 
+    // GET
     public void getUserData(User user, final User.UserCallback callback, final Activity activity) {
+
         String url = "http://4.204.251.146:8081/users/?userId=" + user.getUserId();
         OkHttpClient httpClient = HttpClient.getInstance();
-
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -70,19 +34,18 @@ public class ProfileManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                // runOnUiThread means safe to update UI components like text
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Log.d(TAG, "Failed to get user data");
-                        callback.onFailure(e); // must be run on UI thread if updating UI components
+                        callback.onFailure(e);
                     }
                 });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
-                // Run the response handling logic on the UI thread since it involves the callback that may touch UI components.
-                setStatusCode(response.code());
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -92,8 +55,6 @@ public class ProfileManager {
                                 callback.onFailure(new IOException("Unexpected response " + response));
                                 return;
                             }
-
-                            // if successful
                             if (response.code() == 200) {
                                 Log.d(TAG, "Succeed on get");
 
