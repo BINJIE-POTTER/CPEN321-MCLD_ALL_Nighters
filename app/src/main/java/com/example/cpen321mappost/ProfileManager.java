@@ -70,9 +70,7 @@ public class ProfileManager {
                             Log.e(TAG, "Exception handling response", e);
                             callback.onFailure(e); // handle or pass IOException
                         } finally {
-                            if (response != null) {
-                                response.close(); // Important to avoid resource leaks
-                            }
+                            response.close(); // Important to avoid resource leaks
                         }
                     }
                 });
@@ -223,16 +221,6 @@ public class ProfileManager {
 
     }
 
-    private void setStatusCode(int code) {
 
-        status = code;
-
-    }
-
-    public int getStatusCode() {
-
-        return status;
-
-    }
 
 }

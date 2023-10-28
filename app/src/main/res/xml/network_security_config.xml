@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-</PreferenceScreen>
-=======
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">4.204.251.146</domain>
     </domain-config>
 </network-security-config>
->>>>>>> 01b88c7691f24dfeb88bd18774f02c686f3b1bc1
