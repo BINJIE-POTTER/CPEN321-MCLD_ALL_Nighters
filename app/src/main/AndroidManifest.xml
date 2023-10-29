@@ -41,6 +41,12 @@
         <activity
             android:name=".ProfileActivity"
             android:exported="false" />
+        <activity
+            android:name=".ProfileEditingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PostPreviewListActivity"
+            android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 

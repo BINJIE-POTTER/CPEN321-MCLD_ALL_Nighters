@@ -84,6 +84,7 @@ public class PostActivity extends AppCompatActivity {
         uploadImageButton = findViewById(R.id.uploadImageButton);
         saveButton = findViewById(R.id.saveButton);
         Intent receivedIntent = getIntent();
+
         double latitude = Double.parseDouble(receivedIntent.getStringExtra("latitude"));
         double longitude = Double.parseDouble(receivedIntent.getStringExtra("longitude"));
 
