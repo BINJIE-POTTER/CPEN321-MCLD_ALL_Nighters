@@ -92,6 +92,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void startLocationUpdates() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastKnownLocation != null) {
+                currentLocation = lastKnownLocation;
+                onLocationChanged(lastKnownLocation);  // Update the map with the last known location
+            }
+
         }
     }
 
@@ -114,6 +121,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             selectedMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Selected Location"));
         });
+
         //Show dropdown menu if user click on a location that already has a marker:
         mMap.setOnMarkerClickListener(marker -> {
             if (selectedMarker != null && marker.equals(selectedMarker)) {
@@ -247,6 +255,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         createPostButton.setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
         });
+
+
+
         //Click on Create Post
         createPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -267,12 +278,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
-        currentLocation=location;
+        currentLocation = location;
+        currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-        LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current Location"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
-    }
+        if (mMap != null) {
+            mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current Location"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+        }
+}
 
 
 
