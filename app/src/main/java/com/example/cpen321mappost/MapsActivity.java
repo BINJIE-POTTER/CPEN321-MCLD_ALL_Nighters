@@ -19,6 +19,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.widget.PopupMenu;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -80,6 +82,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Intent intent = new Intent(MapsActivity.this, ProfileActivity.class);
             startActivity(intent);
         });
+
+        Button moreButton = findViewById(R.id.moreButton);
+        moreButton.setOnClickListener(this::showMoreOptions);
     }
 
     private void requestLocationPermissions() {
@@ -161,16 +166,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-     public void getClusteredPostData(JSONObject postData, final Activity activity, final MapsActivity.JsonPostCallback callback){
+     public void getClusteredPostData(JSONObject coordinate, final Activity activity, final MapsActivity.JsonPostCallback callback){
 
         String url = "http://4.204.251.146:8081/posts/cluster";
          HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
 
          // Convert the JSONObject to query parameters
-         Iterator<String> keys = postData.keys();
+         Iterator<String> keys = coordinate.keys();
          while (keys.hasNext()) {
              String key = keys.next();
-             String value = postData.optString(key);
+             String value = coordinate.optString(key);
              if (value != null) {
                  urlBuilder.addQueryParameter(key, value);
              }
@@ -246,6 +251,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
+    public void showMoreOptions(View view) {
+        PopupMenu moreMenu = new PopupMenu(this, view);
+        moreMenu.getMenu().add("Search");
+        moreMenu.getMenu().add("Tag");
+        moreMenu.setOnMenuItemClickListener(item -> {
+            switch (item.getTitle().toString()) {
+                case "Search":
+                    // Implement your Search action here
+                    return true;
+                case "Tag":
+                    // Implement your Tag action here
+                    return true;
+                default:
+                    return false;
+            }
+        });
+        moreMenu.show();
+    }
+
 
     private void displayLocationMenu(LatLng latLng) {
         View view = getLayoutInflater().inflate(R.layout.layout_location_menu, null);
@@ -285,8 +309,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Intent intent =new Intent(MapsActivity.this,PostPreviewListActivity.class);
                 intent.putExtra("mode","reviewPosts");
 
-                intent.putExtra("latitude",Double.toString(latLng.latitude));
-                intent.putExtra("longitude",Double.toString(latLng.longitude));
+                intent.putExtra("latitude",latLng.latitude);
+                intent.putExtra("longitude",latLng.longitude);
                 //Pass the current cluster latitude longtitude,
                 //In PostPreviewListActivity, search for the destinated cluster; Then render the content
                 startActivity(intent);
