@@ -8,7 +8,7 @@ public class Comment {
     private String uid;
     private String time;
     private String content;
-
+    private static final ProfileManager profileManager = new ProfileManager();
     public String getContent()
     {
         return content;
@@ -24,7 +24,7 @@ public class Comment {
 
                 uid=post.getUserId();
                 //userName[0] =post.getAuthor(uid);
-                post.getAuthor(uid, new Post.AuthorCallback() {
+                profileManager.getAuthor(uid, new ProfileManager.AuthorCallback() {
                     @Override
                     public void onAuthorRetrieved(String authorName) {
                         userName[0] = authorName;

@@ -30,6 +30,7 @@ import okhttp3.Response;
 
 public class PostDetailActivity extends AppCompatActivity {
     private static final String TAG = "PostDetailActivity";
+    private static final ProfileManager profileManager = new ProfileManager();
     private String pid;
     private String uid;
 
@@ -63,8 +64,7 @@ public class PostDetailActivity extends AppCompatActivity {
             public void onSuccess(Post post) {
                 textViewTitle.setText(post.getContent().getTitle());
                 textViewMainContent.setText(post.getContent().getBody());
-                uid=post.getUserId();
-                post.getAuthor(uid, new Post.AuthorCallback() {
+                profileManager.getAuthor(post.getUserId(), new ProfileManager.AuthorCallback() {
                     @Override
                     public void onAuthorRetrieved(String authorName) {
                         buttonAuthor.setText(authorName);

@@ -13,9 +13,8 @@ import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private List<Post> postList;
-
     private static final String TAG = "PostAdapter";
-
+    private static final ProfileManager profileManager = new ProfileManager();
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textViewAuthor, textViewTitle, textViewContent, textViewLikes;
 
@@ -43,7 +42,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Post post = postList.get(position);
-        post.getAuthor(post.getUserId(), new Post.AuthorCallback() {
+        profileManager.getAuthor(post.getUserId(), new ProfileManager.AuthorCallback() {
             @Override
             public void onAuthorRetrieved(String authorName) {
                 holder.textViewAuthor.setText(authorName);

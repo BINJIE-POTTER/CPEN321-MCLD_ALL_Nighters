@@ -50,7 +50,7 @@ public class User {
             instance = new User();
             profileManager = new ProfileManager();
 
-            profileManager.getUserData(instance, new UserCallback() {
+            profileManager.getUserData(instance, new Activity(), new UserCallback() {
                 @Override
                 public String onSuccess(User user) {
 
@@ -69,7 +69,7 @@ public class User {
                 @Override
                 public void onFailure(Exception e) {
 
-                    profileManager.postUserData(instance, new User.UserCallback() {
+                    profileManager.postUserData(instance, new Activity(), new User.UserCallback() {
                         @Override
                         public String onSuccess(User user) {
 
@@ -81,10 +81,10 @@ public class User {
 
                         }
 
-                    }, new Activity());
+                    });
 
                 }
-            }, new Activity());
+            });
 
         }
 

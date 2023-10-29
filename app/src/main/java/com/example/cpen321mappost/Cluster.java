@@ -75,40 +75,6 @@ class Post {
         return likeCount;
     }
 
-    public interface AuthorCallback {
-        void onAuthorRetrieved(String authorName);
-        void onError(Exception e);
-    }
-
-    // Additional methods like setters or others can be added here
-    public void getAuthor(String userId, AuthorCallback callback) {
-
-        User author = new User(userId);
-
-        ProfileManager profileManager = new ProfileManager();
-
-        profileManager.getUserData(author, new User.UserCallback() {
-            @Override
-            public String onSuccess(User user) {
-
-                if (user != null) {
-                    callback.onAuthorRetrieved(user.getUserName());
-                } else {
-                    // Handle the case where the user data is not available or parsing failed
-                    callback.onError(new Exception("User data is not available"));
-                }
-
-                return null;
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-
-            }
-        }, new Activity());
-
-    }
-
     public interface PostCallback {
         void onSuccess(List<Post> posts);
         void onFailure(Exception e);

@@ -47,6 +47,8 @@ public class PostPreviewListActivity extends AppCompatActivity {
                 modeTitle.setText(User.getInstance().getUserName() + "'s Posts");
                 break;
 
+            case "":
+
             default:
         }
 
