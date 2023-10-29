@@ -1,7 +1,9 @@
 package com.example.cpen321mappost;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.Manifest;
 import android.content.Intent;
@@ -10,6 +12,7 @@ import android.net.Uri;
 import java.util.Calendar;
 
 
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -18,6 +21,9 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+
+import com.google.gson.Gson;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,12 +34,28 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import org.json.JSONObject;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class PostActivity extends AppCompatActivity {
 
     private ImageView imgPreview;
     private EditText titleEditText, mainTextEditText;
     private Button uploadImageButton;
     private Button saveButton;
+    final static String TAG = "PostActivity";
+
+    public interface JsonPostCallback {
+        void onSuccess(JSONObject postedData);
+
+        void onFailure(Exception e);
+    }
+
 
     private final ActivityResultLauncher<String[]> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
@@ -62,9 +84,9 @@ public class PostActivity extends AppCompatActivity {
         uploadImageButton = findViewById(R.id.uploadImageButton);
         saveButton = findViewById(R.id.saveButton);
         Intent receivedIntent = getIntent();
-        String latitude = receivedIntent.getStringExtra("latitude");
-        String longitude = receivedIntent.getStringExtra("longitude");
-        User currentuser= new User();
+        double latitude = Double.parseDouble(receivedIntent.getStringExtra("latitude"));
+        double longitude = Double.parseDouble(receivedIntent.getStringExtra("longitude"));
+
 
         // Check permissions at runtime
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -79,19 +101,15 @@ public class PostActivity extends AppCompatActivity {
         });
         //Save the content of post
 
-
-
-
         saveButton.setOnClickListener(v -> {
 
             try {
                 // Construct the JSON object
                 JSONObject postData = new JSONObject();
-//                postData.put("pid", "12345");
                 //TODO: for testing only put real useridafterwards
-                postData.put("userId", "1233");
+                postData.put("userId", User.getInstance().getUserId());
+
                 postData.put("time", getCurrentDateUsingCalendar());
-//                postData.put("location", "Mountain View");
 
                 JSONObject coordinate = new JSONObject();
                 coordinate.put("latitude", latitude);
@@ -102,49 +120,97 @@ public class PostActivity extends AppCompatActivity {
                 content.put("title", titleEditText.getText().toString());
                 content.put("body", mainTextEditText.getText().toString());
                 postData.put("content", content);
+//                postJsonData( postData, PostActivity.this);
+                postJsonData(postData, PostActivity.this, new JsonPostCallback() {
+                    @Override
+                    public void onSuccess(JSONObject postedData) {
+                        // Handle success here
+                        Intent intent=new Intent(PostActivity.this, MapsActivity.class);
+                        startActivity(intent);
 
-                // Make the POST request
-                new Thread(() -> {
-                    try {
-                        // Your backend API endpoint
-                        URL url = new URL("http://4.204.251.146:8081/posts");
-                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                        conn.setRequestMethod("POST");
-                        conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                        conn.setRequestProperty("Accept", "application/json");
-                        conn.setDoOutput(true);
-                        conn.setDoInput(true);
-
-                        try (OutputStream os = new BufferedOutputStream(conn.getOutputStream())) {
-                            byte[] data = postData.toString().getBytes(StandardCharsets.UTF_8);
-                            os.write(data, 0, data.length);
-                        }
-
-                        try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-                            StringBuilder response = new StringBuilder();
-                            String responseLine;
-                            while ((responseLine = br.readLine()) != null) {
-                                response.append(responseLine.trim());
-                            }
-                            // Here you can handle the server's response if needed
-                            runOnUiThread(() -> {
-                                Toast.makeText(PostActivity.this, "Response: " + response.toString(), Toast.LENGTH_LONG).show();
-                            });
-                        }
-
-                        conn.disconnect();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
-                }).start();
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        // Handle failure here
+                    }
+                });
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
         });
 
     }
 
-    public String getCurrentDateUsingCalendar() {
+    public void postJsonData(JSONObject postData, final Activity activity, final JsonPostCallback callback){
+
+        String url = "http://4.204.251.146:8081/posts";
+
+        OkHttpClient httpClient = HttpClient.getInstance();
+
+        // Convert the JSONObject to a string representation
+        String jsonStrData = postData.toString();
+
+        Log.d(TAG, "This is the posted data: " + jsonStrData);
+
+        // Create a request body with the string representation of the JSONObject
+        RequestBody body = RequestBody.create(jsonStrData, MediaType.parse("application/json; charset=utf-8"));
+
+        // Build the request
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e(TAG, "Failed to post data", e);
+                        callback.onFailure(e); // Notify callback about the failure
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (response.isSuccessful()) {
+                            try {
+                                if (response.code() == 200) {
+                                    // The operation was successful.
+                                    Log.d(TAG, "Data posted successfully!");
+                                    callback.onSuccess(postData); // Notify callback about the success
+
+                                } else {
+                                    // Handle other response codes (like 4xx or 5xx errors)
+                                    IOException exception = new IOException("Unexpected response when posting data: " + response);
+                                    Log.e(TAG, "Error posting data", exception);
+                                    callback.onFailure(exception); // Notify callback about the failure
+                                }
+                            } finally {
+                                response.close(); // Important to avoid leaking resources
+                            }
+                        } else {
+                            IOException exception = new IOException("Unexpected code " + response);
+                            Log.e(TAG, "Error posting data", exception);
+                            callback.onFailure(exception); // Notify callback about the failure
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
+    public String getCurrentDateUsingCalendar () {
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH) + 1; // Months are indexed from 0
@@ -153,8 +219,4 @@ public class PostActivity extends AppCompatActivity {
         return day + "-" + month + "-" + year;
     }
 
-
-
-
 }
-

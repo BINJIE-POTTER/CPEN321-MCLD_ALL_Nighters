@@ -1,6 +1,8 @@
 package com.example.cpen321mappost;
 
 import androidx.fragment.app.FragmentActivity;
+
+import android.app.Activity;
 import android.os.Bundle;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,6 +32,22 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.Iterator;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
@@ -40,6 +58,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker selectedMarker = null;
     private Location currentLocation;
     LatLng currentLatLng;
+
+    public interface JsonPostCallback {
+        void onSuccess(Cluster[] clusters);
+        void onFailure(Exception e);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,19 +124,113 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         //Show all posts:
-        Post[] clusteredPosts=null;
-//        Post[] clusteredPosts = get from backend of all posts
-        addBlueMarkersToMap(clusteredPosts);
+        JSONObject coordinate = new JSONObject();
+        double latitude= currentLocation.getLatitude();
+        double longitude= currentLocation.getLongitude();
 
+        //TODO: for testing only put real useridafterwards
+        try {
+            coordinate.put("latitude", latitude);
+            coordinate.put("longitude", longitude);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        getClusteredPostData(coordinate, MapsActivity.this,new JsonPostCallback() {
+            @Override
+            public void onSuccess(Cluster[] clusters) {
+                // Handle success here
+//                Intent intent=new Intent(PostActivity.this, MapsActivity.class);
+//                startActivity(intent);
+                addBlueMarkersToMap(clusters);
 
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                // Handle failure here
+            }
+        });
 
     }
 
-    public void addBlueMarkersToMap(Post[]  clusteredPosts) {
-        if(clusteredPosts != null) {
-            for (Post post : clusteredPosts) {
+     public void getClusteredPostData(JSONObject postData, final Activity activity, final MapsActivity.JsonPostCallback callback){
 
-                LatLng postLocation = new LatLng(post.getLatitude(), post.getLongitude());
+        String url = "http://4.204.251.146:8081/posts/cluster";
+         HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+
+         // Convert the JSONObject to query parameters
+         Iterator<String> keys = postData.keys();
+         while (keys.hasNext()) {
+             String key = keys.next();
+             String value = postData.optString(key);
+             if (value != null) {
+                 urlBuilder.addQueryParameter(key, value);
+             }
+         }
+         String fullUrl = urlBuilder.build().toString();
+
+         // Build the GET request
+         Request request = new Request.Builder()
+                 .url(fullUrl)
+                 .build();
+
+         OkHttpClient httpClient = HttpClient.getInstance();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.e(TAG, "Failed to post data", e);
+                        callback.onFailure(e); // Notify callback about the failure
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (response.isSuccessful()) {
+                            try {
+                                if (response.code() == 200) {
+                                    // The operation was successful.
+                                    Log.d(TAG, "Data posted successfully!");
+                                    String responseData = response.body().string();
+                                    Gson gson = new Gson();
+                                    Cluster[] clusters = gson.fromJson(responseData, Cluster[].class);
+                                    callback.onSuccess(clusters); // already on UI thread, safe to call directly
+
+
+                                } else {
+                                    // Handle other response codes (like 4xx or 5xx errors)
+                                    IOException exception = new IOException("Unexpected response when posting data: " + response);
+                                    Log.e(TAG, "Error posting data", exception);
+                                    callback.onFailure(exception); // Notify callback about the failure
+                                }
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            } finally {
+                                response.close(); // Important to avoid leaking resources
+                            }
+                        } else {
+                            IOException exception = new IOException("Unexpected code " + response);
+                            Log.e(TAG, "Error posting data", exception);
+                            callback.onFailure(exception); // Notify callback about the failure
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    public void addBlueMarkersToMap(Cluster[] clusteredPosts) {
+        if(clusteredPosts != null) {
+            for (Cluster cluster : clusteredPosts) {
+
+                LatLng postLocation = new LatLng(cluster.getLatitude(), cluster.getLongitude());
                 mMap.addMarker(new MarkerOptions()
                         .position(postLocation)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
