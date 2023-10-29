@@ -4,10 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -42,7 +40,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         profileManager.getUserData(user, new User.UserCallback() {
             @Override
-            public void onSuccess(User user) {
+            public String onSuccess(User user) {
                 // This is run on the UI thread, safe to update UI components
                 // e.g., display user details in the UI
 
@@ -54,6 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
                 birthdateTextView.setText(user.getUserBirthdate());
                 userIdTextView.setText(user.getUserId());
 
+                return null;
             }
 
             @SuppressLint("SetTextI18n")

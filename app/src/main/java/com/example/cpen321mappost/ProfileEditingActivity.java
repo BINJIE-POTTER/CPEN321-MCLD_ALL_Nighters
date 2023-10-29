@@ -1,6 +1,5 @@
 package com.example.cpen321mappost;
 
-import android.text.NoCopySpan;
 import android.view.View;
 import android.widget.Button;
 
@@ -43,7 +42,7 @@ public class ProfileEditingActivity extends AppCompatActivity {
 
         profileManager.getUserData(user, new User.UserCallback() {
             @Override
-            public void onSuccess(User user) {
+            public String onSuccess(User user) {
 
                 switch (Objects.requireNonNull(item)) {
 
@@ -79,6 +78,7 @@ public class ProfileEditingActivity extends AppCompatActivity {
 
                 }
 
+                return null;
             }
             @Override
             public void onFailure(Exception e) {
@@ -128,7 +128,7 @@ public class ProfileEditingActivity extends AppCompatActivity {
 
             profileManager.putUserData(user, new User.UserCallback() {
                 @Override
-                public void onSuccess(User user) {
+                public String onSuccess(User user) {
 
                     Log.d(TAG, "2");
                     Toast.makeText(ProfileEditingActivity.this, newInput + " Changed!", Toast.LENGTH_LONG).show();
@@ -136,6 +136,7 @@ public class ProfileEditingActivity extends AppCompatActivity {
                     Intent ProfileIntent = new Intent(ProfileEditingActivity.this, ProfileActivity.class);
                     startActivity(ProfileIntent);
 
+                    return null;
                 }
 
                 @Override

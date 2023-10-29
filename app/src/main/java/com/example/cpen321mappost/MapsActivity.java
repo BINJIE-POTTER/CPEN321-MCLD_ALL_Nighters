@@ -58,6 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker selectedMarker = null;
     private Location currentLocation;
     LatLng currentLatLng;
+    public Cluster[] allClusters;
 
     public interface JsonPostCallback {
         void onSuccess(Cluster[] clusters);
@@ -146,9 +147,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getClusteredPostData(coordinate, MapsActivity.this,new JsonPostCallback() {
             @Override
             public void onSuccess(Cluster[] clusters) {
-                // Handle success here
-//                Intent intent=new Intent(PostActivity.this, MapsActivity.class);
-//                startActivity(intent);
+
+                ClusterManager.getInstance().setAllClusters(clusters);
                 addBlueMarkersToMap(clusters);
 
             }
@@ -251,11 +251,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         View view = getLayoutInflater().inflate(R.layout.layout_location_menu, null);
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         bottomSheetDialog.setContentView(view);
+
+
         Button createPostButton = view.findViewById(R.id.createPostButton);
         createPostButton.setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
         });
 
+        Button reviewPostsButton = view.findViewById(R.id.reviewPostsButton);
+        reviewPostsButton.setOnClickListener(v -> {
+            bottomSheetDialog.dismiss(); // Close the bottom sheet when the button is clicked
+        });
 
 
         //Click on Create Post
@@ -266,6 +272,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Intent intent =new Intent(MapsActivity.this,PostActivity.class);
                 intent.putExtra("latitude",Double.toString(latLng.latitude));
                 intent.putExtra("longitude",Double.toString(latLng.longitude));
+
+                startActivity(intent);
+            }
+        });
+
+        //Click on Review Post
+        reviewPostsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent =new Intent(MapsActivity.this,PostPreviewListActivity.class);
+                intent.putExtra("latitude",Double.toString(latLng.latitude));
+                intent.putExtra("longitude",Double.toString(latLng.longitude));
+                //Pass the current cluster latitude longtitude,
+                //In PostPreviewListActivity, search for the destinated cluster; Then render the content
+
 
                 startActivity(intent);
             }

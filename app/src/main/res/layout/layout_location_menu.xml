@@ -22,6 +22,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Create a Post" />
+
+        <Button
+            android:id="@+id/reviewPostsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Review Posts" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

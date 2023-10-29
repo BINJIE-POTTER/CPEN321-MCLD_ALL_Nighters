@@ -1,9 +1,7 @@
 package com.example.cpen321mappost;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -44,7 +42,7 @@ public class User {
 
             profileManager.getUserData(instance, new UserCallback() {
                 @Override
-                public void onSuccess(User user) {
+                public String onSuccess(User user) {
 
                     Log.d(TAG, "IN the user class, succeed in getting user data");
 
@@ -55,6 +53,7 @@ public class User {
 
                     instance = gson.fromJson(jsonUserData, User.class);
 
+                    return jsonUserData;
                 }
 
                 @Override
@@ -62,8 +61,9 @@ public class User {
 
                     profileManager.postUserData(instance, new User.UserCallback() {
                         @Override
-                        public void onSuccess(User user) {
+                        public String onSuccess(User user) {
 
+                            return null;
                         }
 
                         @Override
@@ -83,7 +83,7 @@ public class User {
     }
 
     public interface UserCallback {
-        void onSuccess(User user);
+        String onSuccess(User user);
         void onFailure(Exception e);
     }
 
