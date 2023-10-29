@@ -19,8 +19,9 @@
 
     <string name="edit_profile_save_button_caption">Save</string>
     <string name="edit_profile_cancel_button_caption">Cancel</string>
-
-
+    <string name="image_content_desc">non_for_now</string>
+    <string name="post_item_title">Title</string>
+    <string name="post_item_author">Author</string>
 
 
 </resources>
