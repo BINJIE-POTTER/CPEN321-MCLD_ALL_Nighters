@@ -1,5 +1,7 @@
 package com.example.cpen321mappost;
 
+import android.app.Activity;
+
 public class Comment {
 
     private String pid;
@@ -15,12 +17,24 @@ public class Comment {
     {
         PostManager postManager=new PostManager();
         final String[] userName = new String[1];
-        postManager.getSinglePostData(this.pid, this, new PostManager.JsonCallback<Post>() {
+        // change this -> new Activity()
+        postManager.getSinglePostData(this.pid, new Activity(), new PostManager.JsonCallback<Post>() {
             @Override
             public void onSuccess(Post post) {
 
                 uid=post.getUserId();
-                userName[0] =post.getAuthor(uid);
+                //userName[0] =post.getAuthor(uid);
+                post.getAuthor(uid, new Post.AuthorCallback() {
+                    @Override
+                    public void onAuthorRetrieved(String authorName) {
+                        userName[0] = authorName;
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
 
             }
             @Override

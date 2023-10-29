@@ -64,7 +64,17 @@ public class PostDetailActivity extends AppCompatActivity {
                 textViewTitle.setText(post.getContent().getTitle());
                 textViewMainContent.setText(post.getContent().getBody());
                 uid=post.getUserId();
-                buttonAuthor.setText(post.getAuthor(uid));//????
+                post.getAuthor(uid, new Post.AuthorCallback() {
+                    @Override
+                    public void onAuthorRetrieved(String authorName) {
+                        buttonAuthor.setText(authorName);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });//????
 
             }
             @Override
