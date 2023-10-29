@@ -21,7 +21,17 @@
         android:layout_margin="16dp"
         android:text="Profile"
         android:padding="8dp"
-        android:background="@color/black" /> <!-- Optional: customize the button background if desired -->
+        android:background="@color/black" />
+    <Button
+        android:id="@+id/moreButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:text="More"
+        android:onClick="showMoreOptions" />
+
 
 
 

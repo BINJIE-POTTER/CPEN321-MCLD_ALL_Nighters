@@ -43,7 +43,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         }
 
         public void bind(Comment comment) {
-            textViewComment.setText(comment.getUserName() + comment.getContent());
+            String uid= comment.getUid();
+
+            textViewComment.setText(  + comment.getContent());
         }
     }
 }
