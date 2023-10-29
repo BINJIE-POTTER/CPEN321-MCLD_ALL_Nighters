@@ -40,6 +40,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import okhttp3.Call;
@@ -53,6 +54,7 @@ import okhttp3.Response;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
+    private static final double CLICKABLE_RADIUS = 0.005 ;
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
     private LocationManager locationManager;
@@ -61,6 +63,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location currentLocation;
     LatLng currentLatLng;
     public Cluster[] allClusters;
+    private ArrayList<Marker> markerList;
 
     public interface JsonPostCallback {
         void onSuccess(Cluster[] clusters);
@@ -120,23 +123,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-
-        mMap.setOnMapClickListener(latLng -> {
-            if (selectedMarker != null) {
-                selectedMarker.remove();
-            }
-            selectedMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Selected Location"));
-        });
-
-        //Show dropdown menu if user click on a location that already has a marker:
-        mMap.setOnMarkerClickListener(marker -> {
-            if (selectedMarker != null && marker.equals(selectedMarker)) {
-                displayLocationMenu(marker.getPosition());
-                return true;
-            }
-            return false;
-        });
-
         //Show all posts:
         JSONObject coordinate = new JSONObject();
         double latitude= currentLocation.getLatitude();
@@ -151,10 +137,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         getClusteredPostData(coordinate, MapsActivity.this,new JsonPostCallback() {
             @Override
-            public void onSuccess(Cluster[] clusters) {
+            public void onSuccess(Cluster[] markers) {
 
-                ClusterManager.getInstance().setAllClusters(clusters);
-                addBlueMarkersToMap(clusters);
+                ClusterManager.getInstance().setAllClusters(markers);
+                addBlueMarkersToMap(markers);
 
             }
 
@@ -163,6 +149,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Handle failure here
             }
         });
+        mMap.setOnMarkerClickListener(marker -> {
+            selectedMarker = marker;
+            displayLocationMenu(marker.getPosition().latitude, marker.getPosition().longitude, "create_review_Post");
+            return true; // Return true to indicate the click event has been handled
+        });
+
+        mMap.setOnMapClickListener(latLng -> {
+            if (selectedMarker != null) {
+                selectedMarker.remove();
+            }
+
+            boolean isNearMarker = false;
+            for (Marker marker : markerList) {
+                if (isNearby(marker.getPosition().latitude, marker.getPosition().longitude, latLng, CLICKABLE_RADIUS)) {
+                    selectedMarker = marker;
+                    displayLocationMenu(marker.getPosition().latitude, marker.getPosition().longitude, "create_review_Post");
+                    isNearMarker = true;
+                    break;
+                }
+            }
+
+            if (!isNearMarker) {
+                selectedMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Selected Location"));
+                displayLocationMenu(latLng.latitude, latLng.longitude, "createPostOnly");
+
+            }
+        });
+
+
 
     }
 
@@ -240,13 +255,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void addBlueMarkersToMap(Cluster[] clusteredPosts) {
+        markerList = new ArrayList<>();
+
         if(clusteredPosts != null) {
             for (Cluster cluster : clusteredPosts) {
-
                 LatLng postLocation = new LatLng(cluster.getLatitude(), cluster.getLongitude());
-                mMap.addMarker(new MarkerOptions()
+
+                Marker marker = mMap.addMarker(new MarkerOptions()
                         .position(postLocation)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+
+                markerList.add(marker);
 
             }
         }
@@ -269,58 +288,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
         moreMenu.show();
     }
+    private void displayLocationMenu( double latitude, double longitude, String openMode) {
 
-
-    private void displayLocationMenu(LatLng latLng) {
         View view = getLayoutInflater().inflate(R.layout.layout_location_menu, null);
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         bottomSheetDialog.setContentView(view);
 
-
         Button createPostButton = view.findViewById(R.id.createPostButton);
+        Button reviewPostsButton = view.findViewById(R.id.reviewPostsButton);
+
+        if (openMode.equals("createPostOnly")) {
+            reviewPostsButton.setVisibility(View.GONE); // Hide the Review Posts button
+        } else {
+            reviewPostsButton.setVisibility(View.VISIBLE); // Show the Review Posts button
+        }
+
         createPostButton.setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
+            Intent intent = new Intent(MapsActivity.this, PostActivity.class);
+            intent.putExtra("latitude", Double.toString(latitude));
+            intent.putExtra("longitude", Double.toString(longitude));
+            startActivity(intent);
         });
 
-        Button reviewPostsButton = view.findViewById(R.id.reviewPostsButton);
         reviewPostsButton.setOnClickListener(v -> {
-            bottomSheetDialog.dismiss(); // Close the bottom sheet when the button is clicked
+            bottomSheetDialog.dismiss();
+            Intent intent = new Intent(MapsActivity.this, PostPreviewListActivity.class);
+            intent.putExtra("mode", "reviewPosts");
+            intent.putExtra("latitude", latitude);
+            intent.putExtra("longitude", longitude);
+            startActivity(intent);
         });
-
-
-        //Click on Create Post
-        createPostButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent =new Intent(MapsActivity.this,PostActivity.class);
-                intent.putExtra("latitude",Double.toString(latLng.latitude));
-                intent.putExtra("longitude",Double.toString(latLng.longitude));
-
-                startActivity(intent);
+        bottomSheetDialog.setOnDismissListener(dialog -> {
+            if (selectedMarker != null) {
+                selectedMarker.remove();
+                selectedMarker = null;
             }
         });
 
-        //Click on Review Post
-        reviewPostsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent =new Intent(MapsActivity.this,PostPreviewListActivity.class);
-                intent.putExtra("mode","reviewPosts");
-
-                intent.putExtra("latitude",latLng.latitude);
-                intent.putExtra("longitude",latLng.longitude);
-                //Pass the current cluster latitude longtitude,
-                //In PostPreviewListActivity, search for the destinated cluster; Then render the content
-                startActivity(intent);
-            }
-        });
         bottomSheetDialog.show();
-
-
-
     }
+
 
     @Override
     public void onLocationChanged(Location location) {
@@ -332,7 +340,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
         }
 }
+    // Method to check if two locations are nearby based on a certain radius
+    private boolean isNearby(double markeLatitude, double markerLongitude , LatLng selectedMarker, double radius) {
 
+        float[] results = new float[1];
+        Location.distanceBetween(markeLatitude, markerLongitude, selectedMarker.latitude, selectedMarker.longitude, results);
+        return results[0] <= radius;
+    }
 
 
 }
