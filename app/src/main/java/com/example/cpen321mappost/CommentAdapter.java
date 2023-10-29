@@ -9,6 +9,8 @@ import com.example.cpen321mappost.Comment;
 
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
+    private static final ProfileManager profileManager = new ProfileManager();
+
 
     private Comment[] comments;
 
@@ -44,8 +46,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
         public void bind(Comment comment) {
             String uid= comment.getUid();
+            profileManager.getAuthor(uid, new ProfileManager.AuthorCallback() {
+                @Override
+                public void onAuthorRetrieved(String authorName) {
+                    textViewComment.setText(  authorName + comment.getContent());
+                }
+                @Override
+                public void onError(Exception e) {
 
-            textViewComment.setText(  + comment.getContent());
+                }
+            });
         }
     }
 }
