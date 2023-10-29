@@ -217,5 +217,18 @@
 
         <!-- ... other UI elements ... -->
 
+        <Button
+            android:id="@+id/user_view_posts_button_id"
+            android:layout_width="131dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:padding="16dp"
+            android:layout_gravity="center"
+            android:text="@string/user_view_posts_caption" />
+
     </LinearLayout>
+
+
+
 </ScrollView>
+
