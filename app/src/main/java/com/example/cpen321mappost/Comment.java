@@ -8,7 +8,7 @@ public class Comment {
     private String uid;
     private String time;
     private String content;
-
+    private static final ProfileManager profileManager = new ProfileManager();
     public String getContent()
     {
         return content;
@@ -16,6 +16,8 @@ public class Comment {
     public String getUid()
     {
         return uid;
+
+
     }
 //    public String getUserName()
 //    {

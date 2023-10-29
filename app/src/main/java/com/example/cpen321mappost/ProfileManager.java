@@ -25,7 +25,7 @@ public class ProfileManager {
     //-------------------------------------------- E N D --------------------------------------------//
 
     // GET
-    public void getUserData(User user, final User.UserCallback callback, final Activity activity) {
+    public void getUserData(User user, final Activity activity, final User.UserCallback callback) {
 
 
         String url = "http://4.204.251.146:8081/users/?userId=" + user.getUserId();
@@ -82,7 +82,7 @@ public class ProfileManager {
     }
 
 
-    public void putUserData(User user, final User.UserCallback callback, final Activity activity) {
+    public void putUserData(User user, final Activity activity, final User.UserCallback callback) {
 
         // chage this to PUT
         String url = "http://4.204.251.146:8081/users/update-profile";
@@ -152,7 +152,7 @@ public class ProfileManager {
         });
     }
 
-    public void postUserData(User user, final User.UserCallback callback, final Activity activity){
+    public void postUserData(User user, final Activity activity, final User.UserCallback callback){
 
         String url = "http://4.204.251.146:8081/users";
 
@@ -227,6 +227,38 @@ public class ProfileManager {
 
     }
 
+    public interface AuthorCallback {
+        void onAuthorRetrieved(String authorName);
+        void onError(Exception e);
+    }
 
+    // Additional methods like setters or others can be added here
+    public void getAuthor(String userId, AuthorCallback callback) {
+
+        User author = new User(userId);
+
+        ProfileManager profileManager = new ProfileManager();
+
+        profileManager.getUserData(author, new Activity(), new User.UserCallback() {
+            @Override
+            public String onSuccess(User user) {
+
+                if (user != null) {
+                    callback.onAuthorRetrieved(user.getUserName());
+                } else {
+                    // Handle the case where the user data is not available or parsing failed
+                    callback.onError(new Exception("User data is not available"));
+                }
+
+                return null;
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+        });
+
+    }
 
 }

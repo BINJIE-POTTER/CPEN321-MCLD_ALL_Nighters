@@ -39,7 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
         birthdateEditButton = findViewById(R.id.user_birthdate_edit_button_id);
         viewPostsButton = findViewById(R.id.user_view_posts_button_id);
 
-        profileManager.getUserData(user, new User.UserCallback() {
+        profileManager.getUserData(user, this, new User.UserCallback() {
             @Override
             public String onSuccess(User user) {
                 // This is run on the UI thread, safe to update UI components
@@ -71,7 +71,7 @@ public class ProfileActivity extends AppCompatActivity {
                 //Toast.makeText(ProfileActivity.this, "Failed to load user info!", Toast.LENGTH_LONG).show();
 
             }
-        }, this); // 'this' is the current activity, which is passed for context
+        }); // 'this' is the current activity, which is passed for context
 
 
         nameEditButton.setOnClickListener(view -> {

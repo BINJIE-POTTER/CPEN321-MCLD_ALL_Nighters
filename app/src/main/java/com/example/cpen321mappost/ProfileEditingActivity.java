@@ -40,7 +40,7 @@ public class ProfileEditingActivity extends AppCompatActivity {
 
         String item = intent.getStringExtra("item");
 
-        profileManager.getUserData(user, new User.UserCallback() {
+        profileManager.getUserData(user, this, new User.UserCallback() {
             @Override
             public String onSuccess(User user) {
 
@@ -84,7 +84,7 @@ public class ProfileEditingActivity extends AppCompatActivity {
             public void onFailure(Exception e) {
 
             }
-        }, this);
+        });
 
         saveButton.setOnClickListener(view -> {
 
@@ -126,7 +126,7 @@ public class ProfileEditingActivity extends AppCompatActivity {
 
             Log.d(TAG, "1");
 
-            profileManager.putUserData(user, new User.UserCallback() {
+            profileManager.putUserData(user, this, new User.UserCallback() {
                 @Override
                 public String onSuccess(User user) {
 
@@ -144,7 +144,7 @@ public class ProfileEditingActivity extends AppCompatActivity {
                     Toast.makeText(ProfileEditingActivity.this, "Failed to upload new user info!", Toast.LENGTH_LONG).show();
                     finish();
                 }
-            }, this);
+            });
 
 
         });
