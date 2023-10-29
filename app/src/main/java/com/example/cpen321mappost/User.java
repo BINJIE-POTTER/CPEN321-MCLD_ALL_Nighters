@@ -32,6 +32,16 @@ public class User {
         this.userBirthdate = "none";
     }
 
+    public User(String userId){
+
+        this.userId = userId;
+        this.userName = "none";
+        this.userEmail = "none";
+        this.userGender = "none";
+        this.userBirthdate = "none";
+
+    }
+
     // Method to get the single instance of user
     public static synchronized User getInstance() {
 
