@@ -283,12 +283,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View view) {
 
                 Intent intent =new Intent(MapsActivity.this,PostPreviewListActivity.class);
+                intent.putExtra("mode","reviewPosts");
+
                 intent.putExtra("latitude",Double.toString(latLng.latitude));
                 intent.putExtra("longitude",Double.toString(latLng.longitude));
                 //Pass the current cluster latitude longtitude,
                 //In PostPreviewListActivity, search for the destinated cluster; Then render the content
-
-
                 startActivity(intent);
             }
         });

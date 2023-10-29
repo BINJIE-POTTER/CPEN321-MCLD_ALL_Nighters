@@ -2,6 +2,7 @@ package com.example.cpen321mappost;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +17,7 @@ public class CommentActivity extends AppCompatActivity {
     private RecyclerView recyclerViewComments;
     private EditText editTextComment;
     private Button buttonSubmitComment;
+    private String pid;
     // TODO: You might want to use a custom Adapter for the comments
 
     @Override
@@ -24,8 +26,13 @@ public class CommentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_comment);
 
         recyclerViewComments = findViewById(R.id.recyclerViewComments);
+        //display all existing comments
+
         editTextComment = findViewById(R.id.editTextComment);
+        //Here to input your comment
         buttonSubmitComment = findViewById(R.id.buttonSubmitComment);
+        Intent receivedIntent = getIntent();
+        pid = receivedIntent.getStringExtra("pid");
 
         buttonSubmitComment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,5 +46,7 @@ public class CommentActivity extends AppCompatActivity {
         });
 
         // TODO: Load existing comments and display them in the RecyclerView
+
+
     }
 }

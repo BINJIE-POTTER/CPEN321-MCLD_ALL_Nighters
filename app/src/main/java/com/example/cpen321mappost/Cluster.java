@@ -102,6 +102,7 @@ class Post {
         return null;
 
     }
+
     public interface PostCallback {
         void onSuccess(List<String> posts);
         void onFailure(Exception e);
