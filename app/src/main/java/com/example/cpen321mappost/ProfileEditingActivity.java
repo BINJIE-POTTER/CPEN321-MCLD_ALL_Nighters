@@ -124,13 +124,10 @@ public class ProfileEditingActivity extends AppCompatActivity {
 
             }
 
-            Log.d(TAG, "1");
-
             profileManager.putUserData(user, this, new User.UserCallback() {
                 @Override
                 public String onSuccess(User user) {
 
-                    Log.d(TAG, "2");
                     Toast.makeText(ProfileEditingActivity.this, newInput + " Changed!", Toast.LENGTH_LONG).show();
 
                     Intent ProfileIntent = new Intent(ProfileEditingActivity.this, ProfileActivity.class);

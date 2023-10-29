@@ -25,6 +25,7 @@
     <string name="post_item_author">Author</string>
     <string name="user_view_posts_caption">view posts</string>
     <string name="post_preview_list_mode_name">Mode Name</string>
+    <string name="follow_button">Follow</string>
 
 
 </resources>

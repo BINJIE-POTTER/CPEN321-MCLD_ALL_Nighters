@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -31,6 +32,7 @@ import okhttp3.Response;
 public class PostDetailActivity extends AppCompatActivity {
     private static final String TAG = "PostDetailActivity";
     private static final ProfileManager profileManager = new ProfileManager();
+    private static final PostManager postManager = new PostManager();
     private String pid;
     private String uid;
 
@@ -43,7 +45,6 @@ public class PostDetailActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
-        PostManager postManager = new PostManager();
 
         // Initialize views
         TextView textViewPostDetail = findViewById(R.id.textViewPostDetail);
@@ -62,52 +63,60 @@ public class PostDetailActivity extends AppCompatActivity {
         postManager.getSinglePostData(pid, this, new PostManager.JsonCallback<Post>() {
             @Override
             public void onSuccess(Post post) {
+
                 textViewTitle.setText(post.getContent().getTitle());
                 textViewMainContent.setText(post.getContent().getBody());
+
+                uid = post.getUserId();
                 profileManager.getAuthor(post.getUserId(), new ProfileManager.AuthorCallback() {
                     @Override
                     public void onAuthorRetrieved(String authorName) {
+
                         buttonAuthor.setText(authorName);
+
                     }
 
                     @Override
                     public void onError(Exception e) {
 
+                        Log.d(TAG, String.valueOf(e));
+
                     }
-                });//????
+                });
 
             }
             @Override
             public void onFailure(Exception e) {
-                // Handle failure here
+
+                Toast.makeText(PostDetailActivity.this, "Failed to fetch this post!", Toast.LENGTH_LONG).show();
+
             }
         });
 
-        buttonDelete.setOnClickListener(new View.OnClickListener() {
+        buttonDelete.setOnClickListener(v -> postManager.deletePostData(pid, PostDetailActivity.this, new PostManager.JsonCallback<Void>() {
             @Override
-            public void onClick(View v) {
-                postManager.deletePostData(pid, PostDetailActivity.this, new PostManager.JsonCallback<Void>() {
-                    @Override
-                    public void onSuccess(Void result) {
-                        // Handle success in deleting a post here
-                    }
+            public void onSuccess(Void result) {
 
-                    @Override
-                    public void onFailure(Exception e) {
-                        // Handle failure here
-                    }
-                });
+                Intent PostPreviewListIntent = new Intent(PostDetailActivity.this, PostPreviewListActivity.class);
+                startActivity(PostPreviewListIntent);
+
             }
-        });
+            @Override
+            public void onFailure(Exception e) {
+
+                Toast.makeText(PostDetailActivity.this, "Failed to delete this post!", Toast.LENGTH_LONG).show();
+
+            }
+        }));
 
         buttonAuthor.setOnClickListener(new View.OnClickListener() {
             //This button will navigate to PostPreviewListActivity, and show the author with a sub button
             //and display all his posts accroding to uid
             @Override
             public void onClick(View v) {
-                Intent intent =new Intent(PostDetailActivity.this,PostPreviewListActivity.class);
+                Intent intent = new Intent(PostDetailActivity.this, PostPreviewListActivity.class);
                 intent.putExtra("mode","authorInfo" );
-                intent.putExtra("uid",uid);
+                intent.putExtra("userId", uid);
                 startActivity(intent);
             }
         });
@@ -120,11 +129,15 @@ public class PostDetailActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void result) {
                         // Handle success in deleting a post here
+                        Toast.makeText(PostDetailActivity.this, "liked this post!", Toast.LENGTH_LONG).show();
+
                     }
 
                     @Override
                     public void onFailure(Exception e) {
                         // Handle failure here
+                        Toast.makeText(PostDetailActivity.this, "Failed to like this post :(", Toast.LENGTH_LONG).show();
+
                     }
                 });
             }

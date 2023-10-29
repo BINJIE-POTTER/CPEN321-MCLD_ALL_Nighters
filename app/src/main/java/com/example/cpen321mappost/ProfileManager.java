@@ -27,7 +27,6 @@ public class ProfileManager {
     // GET
     public void getUserData(User user, final Activity activity, final User.UserCallback callback) {
 
-
         String url = "http://4.204.251.146:8081/users/?userId=" + user.getUserId();
         OkHttpClient httpClient = HttpClient.getInstance();
         Request request = new Request.Builder()
@@ -244,6 +243,7 @@ public class ProfileManager {
             public String onSuccess(User user) {
 
                 if (user != null) {
+                    Log.d(TAG,"preparing to send author name");
                     callback.onAuthorRetrieved(user.getUserName());
                 } else {
                     // Handle the case where the user data is not available or parsing failed
