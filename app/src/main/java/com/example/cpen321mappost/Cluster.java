@@ -1,6 +1,7 @@
 package com.example.cpen321mappost;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -32,6 +33,7 @@ public class Cluster {
 }
 
 class Post {
+    final static String TAG = "Post Activity";
     private String _id;
     private String pid;
     private String userId;
@@ -73,24 +75,30 @@ class Post {
         return likeCount;
     }
 
-    // Additional methods like setters or others can be added here
-    public String getAuthor(String userId) {
+    public interface AuthorCallback {
+        void onAuthorRetrieved(String authorName);
+        void onError(Exception e);
+    }
 
-        final User[] author = {new User(userId)};
+    // Additional methods like setters or others can be added here
+    public void getAuthor(String userId, AuthorCallback callback) {
+
+        User author = new User(userId);
 
         ProfileManager profileManager = new ProfileManager();
 
-        profileManager.getUserData(author[0], new User.UserCallback() {
+        profileManager.getUserData(author, new User.UserCallback() {
             @Override
             public String onSuccess(User user) {
 
-                Gson gson = new Gson();
-                String jsonUserData = gson.toJson(user);
+                if (user != null) {
+                    callback.onAuthorRetrieved(user.getUserName());
+                } else {
+                    // Handle the case where the user data is not available or parsing failed
+                    callback.onError(new Exception("User data is not available"));
+                }
 
-                author[0] = gson.fromJson(jsonUserData, User.class);
-
-                return author[0].getUserName();
-
+                return null;
             }
 
             @Override
@@ -99,12 +107,10 @@ class Post {
             }
         }, new Activity());
 
-        return null;
-
     }
 
     public interface PostCallback {
-        void onSuccess(List<String> posts);
+        void onSuccess(List<Post> posts);
         void onFailure(Exception e);
     }
 }

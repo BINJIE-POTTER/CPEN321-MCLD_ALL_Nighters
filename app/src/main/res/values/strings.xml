@@ -23,6 +23,8 @@
     <string name="image_content_desc">non_for_now</string>
     <string name="post_item_title">Title</string>
     <string name="post_item_author">Author</string>
+    <string name="user_view_posts_caption">view posts</string>
+    <string name="post_preview_list_mode_name">Mode Name</string>
 
 
 </resources>

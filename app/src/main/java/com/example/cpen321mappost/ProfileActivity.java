@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class ProfileActivity extends AppCompatActivity {
     private TextView nameTextView, emailTextView, genderTextView, birthdateTextView, userIdTextView;
-    private Button nameEditButton, emailEditButton, genderEditButton, birthdateEditButton;
+    private Button nameEditButton, emailEditButton, genderEditButton, birthdateEditButton, viewPostsButton;
     private User user;
     private ProfileManager profileManager;
     final static String TAG = "ProfileManager Activity";
@@ -37,6 +37,7 @@ public class ProfileActivity extends AppCompatActivity {
         emailEditButton = findViewById(R.id.user_email_edit_button_id);
         genderEditButton = findViewById(R.id.user_gender_edit_button_id);
         birthdateEditButton = findViewById(R.id.user_birthdate_edit_button_id);
+        viewPostsButton = findViewById(R.id.user_view_posts_button_id);
 
         profileManager.getUserData(user, new User.UserCallback() {
             @Override
@@ -106,6 +107,16 @@ public class ProfileActivity extends AppCompatActivity {
             Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
             ProfileEditingIntent.putExtra("item", "userEmail");
             startActivity(ProfileEditingIntent);
+
+        });
+
+        viewPostsButton.setOnClickListener(view -> {
+
+            Log.d(TAG,"Opening the posts preview list activity");
+            Intent PostPreviewListIntent = new Intent(this, PostPreviewListActivity.class);
+            PostPreviewListIntent.putExtra("mode", "profile");
+            PostPreviewListIntent.putExtra("userId", user.getUserId());
+            startActivity(PostPreviewListIntent);
 
         });
 
