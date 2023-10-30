@@ -25,10 +25,11 @@ public class SearchActivity extends AppCompatActivity {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String newSearchStr=searchText.getText().toString();
 
                 Intent searchIntent= new Intent(SearchActivity.this,PostPreviewListActivity.class);
                 searchIntent.putExtra("mode", "search");
-                searchIntent.putExtra("searchString", searchText.getText().toString());
+                searchIntent.putExtra("searchString", newSearchStr);
                 startActivity(searchIntent);
             }
         });
