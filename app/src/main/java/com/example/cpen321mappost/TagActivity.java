@@ -1,22 +1,29 @@
 package com.example.cpen321mappost;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TagActivity extends AppCompatActivity {
     private static final PostManager postManager = new PostManager();
     private static final String TAG = "TagActivity";
-
-    private ArrayList<String> tagsList;
-
-
+    private static final Set<String> tagsSet = new HashSet<>();
+    private RecyclerView recyclerViewTags;
+    private Button buttonSaveTags;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,50 +34,40 @@ public class TagActivity extends AppCompatActivity {
         String latitude = receivedIntent.getStringExtra("latitude");
         String longitude = receivedIntent.getStringExtra("longitude");
 
-        postManager.getTagsData(latitude,longitude, this, new PostManager.JsonCallback<ArrayList<String>>() {
+        recyclerViewTags = findViewById(R.id.RecyclerViewTags);
+        recyclerViewTags.setLayoutManager(new LinearLayoutManager(this));
+        buttonSaveTags = findViewById(R.id.saveButton);
+
+        postManager.getTagsData(latitude, longitude, this, new PostManager.JsonCallback<ArrayList<String>>() {
             @Override
             public void onSuccess( ArrayList<String> tags) {
-                Log.e(TAG, "Get tags successfully");
-                tagsList=tags;
+                Log.d(TAG, "Get tags successfully");
+                Log.d(TAG, String.join(", ", tags));
 
+                TagAdapter tagAdapter = new TagAdapter(tags, tagsSet);
+                recyclerViewTags.setAdapter(tagAdapter);
 
             }
             @Override
             public void onFailure(Exception e) {
 
-                Toast.makeText(TagActivity.this, "Failed to fetch this post!", Toast.LENGTH_LONG).show();
+                Toast.makeText(TagActivity.this, "Failed to fetch tags!", Toast.LENGTH_LONG).show();
 
             }
         });
 
+        buttonSaveTags.setOnClickListener(view -> {
 
-        //sara's work
-        ArrayList<String> test = new ArrayList<>(Arrays.asList("None")); // Example tags
+            Intent tagIntent = new Intent(TagActivity.this, PostPreviewListActivity.class);
+            tagIntent.putExtra("mode", "tag");
+            tagIntent.putExtra("userCurrentLat", latitude);
+            tagIntent.putExtra("userCurrentLon", longitude);
 
-//        ArrayList<String> test = new ArrayList<>(Arrays.asList("tag1", "tag2", "tag3")); // Example tags
-        Intent tagIntent = new Intent(TagActivity.this, PostPreviewListActivity.class);
-        tagIntent.putExtra("mode", "tag");
-        tagIntent.putExtra("userCurrentLat", latitude);
-        tagIntent.putExtra("userCurrentLon", longitude);
+            tagIntent.putStringArrayListExtra("tagsList", new ArrayList<>(tagsSet));
+            startActivity(tagIntent);
 
-//        tagIntent.putStringArrayListExtra("tagsList", tagsList);
-        tagIntent.putStringArrayListExtra("tagsList", test);
-        startActivity(tagIntent);
-
-
-
-        //end sara's work
-
-
+        });
 
     }
-
-//         Intent tagIntent= new Intent(MapsActivity.this,PostPreviewListActivity.class);
-//                    tagIntent.putExtra("mode", "tag");
-//                    startActivity(tagIntent);
-
-
-
-
 
 }

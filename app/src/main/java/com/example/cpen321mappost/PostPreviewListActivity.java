@@ -155,11 +155,17 @@ public class PostPreviewListActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Exception e) {
 
+                        Log.d(TAG, String.valueOf(e));
+
                     }
                 });
 
                 break;
+
             case "search":
+
+                modeTitle.setText("Search result");
+
                 String searchText = intent.getStringExtra("searchString");
                 postManager.getSearchedPosts(searchText, this, new PostManager.PostCallback() {
                     @SuppressLint("NotifyDataSetChanged")
@@ -176,22 +182,23 @@ public class PostPreviewListActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Exception e) {
 
+                        Log.d(TAG, String.valueOf(e));
+
                     }
                 });
-
-
 
                 break;
 
             case "tag":
+
+                modeTitle.setText("Filtered Posts");
+
                 ArrayList<String> tagsList = intent.getStringArrayListExtra("tagsList");
                 String userCurrentLat = intent.getStringExtra("userCurrentLat");
                 String userCurrentLon = intent.getStringExtra("userCurrentLon");
 
-
-
                 if (tagsList != null) {
-                    postManager.getTagsSelectedPosts(userCurrentLat,userCurrentLon, tagsList,this, new PostManager.PostCallback() {
+                    postManager.getTagsSelectedPosts(userCurrentLat, userCurrentLon, tagsList,this, new PostManager.PostCallback() {
                         @SuppressLint("NotifyDataSetChanged")
                         @Override
                         public void onSuccess(List<Post> fetchedPosts) {
@@ -206,11 +213,12 @@ public class PostPreviewListActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Exception e) {
 
+                            Log.d(TAG, String.valueOf(e));
+
                         }
                     });
 
                 }
-
 
                 break;
 

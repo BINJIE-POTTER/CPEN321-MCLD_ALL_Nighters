@@ -26,6 +26,9 @@
     <string name="user_view_posts_caption">view posts</string>
     <string name="post_preview_list_mode_name">Mode Name</string>
     <string name="follow_button">Follow</string>
+    <string name="tag_caption">Tag</string>
+    <string name="tag_activity_title_caption">Tags</string>
+    <string name="tag_activity_save_button">Save</string>
 
 
 </resources>
