@@ -152,12 +152,38 @@ public class PostPreviewListActivity extends AppCompatActivity {
                         adapter.notifyDataSetChanged();
 
                     }
-
                     @Override
                     public void onFailure(Exception e) {
 
                     }
                 });
+
+                break;
+            case "search":
+                String searchText = intent.getStringExtra("searchString");
+                postManager.getSearchedPosts(searchText, this, new PostManager.PostCallback() {
+                    @SuppressLint("NotifyDataSetChanged")
+                    @Override
+                    public void onSuccess(List<Post> fetchedPosts) {
+
+                        Log.d(TAG, "Succeed on getSearchedPostss(), " + fetchedPosts.toString());
+
+                        posts.clear();
+                        posts.addAll(fetchedPosts);
+                        adapter.notifyDataSetChanged();
+
+                    }
+                    @Override
+                    public void onFailure(Exception e) {
+
+                    }
+                });
+
+
+
+                break;
+
+            case "tag":
 
                 break;
 

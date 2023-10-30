@@ -241,6 +241,68 @@ public class PostManager {
 
 
 
+    public void getSearchedPosts(String searchText, final Activity activity, final PostCallback callback) {
+        String url = "http://4.204.251.146:8081/posts/search/?keyword=" + searchText;
+        OkHttpClient httpClient = HttpClient.getInstance();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                activity.runOnUiThread(() -> {
+                    Log.d(TAG, "Failed to get user posts", e);
+                    callback.onFailure(e);
+                });
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                activity.runOnUiThread(() -> {
+                    try {
+                        if (!response.isSuccessful()) {
+                            Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+                            callback.onFailure(new IOException("Unexpected response " + response));
+                        } else if (response.code() == 200) {
+                            Log.d(TAG, "Succeed on get user all posts");
+
+                            List<Post> posts = null;
+
+                            try {
+
+                                assert response.body() != null;
+                                String responseData = response.body().string();
+                                Gson gson = new Gson();
+                                Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
+                                posts = gson.fromJson(responseData, postListType);
+
+                            } catch (JsonSyntaxException e) {
+
+                                Log.e(TAG, "JSON Parsing error", e);
+                                throw new IOException("Error parsing JSON", e); // Convert to IOException to handle later
+
+                            }
+
+                            if (posts != null) {
+                                callback.onSuccess(posts); // use the correct method with List<Post>
+                            } else {
+                                throw new IOException("Error in response data"); // Handle the scenario of unsuccessful parsing
+                            }
+
+                        } else {
+                            callback.onFailure(new IOException("Unexpected response " + response));
+                        }
+                    } catch (IOException e) {
+                        Log.e(TAG, "Exception handling response", e);
+                        callback.onFailure(e); // handle or pass IOException
+                    } finally {
+                        response.close(); // Important to avoid resource leaks
+                    }
+                });
+            }
+        });
+    }
 
 
 
