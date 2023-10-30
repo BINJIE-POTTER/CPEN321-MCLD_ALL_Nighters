@@ -62,7 +62,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker selectedMarker = null;
     private Location currentLocation;
     LatLng currentLatLng;
-    public Cluster[] allClusters;
     private ArrayList<Marker> markerList;
 
     public interface JsonPostCallback {
@@ -279,14 +278,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             switch (item.getTitle().toString()) {
                 case "Search":
                     // Implement your Search action here
-                    Intent searchIntent= new Intent(MapsActivity.this,PostPreviewListActivity.class);
-                    searchIntent.putExtra("mode", "search");
+                    Intent searchIntent= new Intent(MapsActivity.this,SearchActivity.class);
                     startActivity(searchIntent);
                     return true;
                 case "Tag":
                     // Implement your Tag action here
-                    Intent tagIntent= new Intent(MapsActivity.this,PostPreviewListActivity.class);
-                    tagIntent.putExtra("mode", "tag");
+                    Intent tagIntent= new Intent(MapsActivity.this,TagActivity.class);
+                    double latitude= currentLocation.getLatitude();
+                    double longitude= currentLocation.getLongitude();
+                    tagIntent.putExtra("latitude", Double.toString(latitude));
+                    tagIntent.putExtra("longitude", Double.toString(longitude));
                     startActivity(tagIntent);
                     return true;
                 default:
