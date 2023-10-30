@@ -13,27 +13,24 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class AuthenticationHandler {
-
     private static final int RC_SIGN_IN = 9001;
-
     private final Activity activity;
     private final FirebaseAuth mAuth;
+    private AuthCallback callback;
     private final GoogleSignInClient mGoogleSignInClient;
 
+    //ChatGPT usage: Yes
     public interface AuthCallback {
         void onAuthSuccess(FirebaseUser user);
         void onAuthFailure(Exception exception);
     }
 
-    private AuthCallback callback;
-
+    //ChatGPT usage: Partial
     public AuthenticationHandler(Activity activity, AuthCallback callback) {
         this.activity = activity;
         this.callback = callback;
 
         mAuth = FirebaseAuth.getInstance();
-
-        //TODO: Add FacebookSignInOptions  here      FacebookSignInOptions fso = ...
 
         // Configure Google Sign-In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -43,13 +40,14 @@ public class AuthenticationHandler {
 
         mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
     }
-    //TODO: Add signInWithFacebook here
 
+    //ChatGPT usage: No
     public void signInWithGoogle() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         activity.startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    //ChatGPT usage: No
     public void handleSignInResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RC_SIGN_IN) {
             try {
@@ -63,6 +61,7 @@ public class AuthenticationHandler {
         }
     }
 
+    //ChatGPT usage: Partial
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -74,12 +73,12 @@ public class AuthenticationHandler {
                     }
                 });
     }
+
+    //ChatGPT usage: No
     public boolean isUserAuthenticated() {
 
         return mAuth.getCurrentUser() != null;
+
     }
-
-    //TODO: provide the SHA-1 fingerprint for your release keystore as well. The process is similar, but you'll use your release keystore path and password instead of the debug ones. This ensures that Google Sign-In works both in debug and release versions of your app.
-
 
 }

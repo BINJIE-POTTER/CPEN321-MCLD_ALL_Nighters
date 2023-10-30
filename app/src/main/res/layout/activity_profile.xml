@@ -1,9 +1,234 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfileActivity">
+    android:fillViewport="true"> <!-- this attribute is optional. If set to true, the ScrollView will stretch its content to fill the viewport -->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- All your existing UI elements go here, for example: -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Caption (e.g., "User Name:") aligned to left -->
+            <TextView
+                android:id="@+id/user_name_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/user_name_caption"
+                android:textSize="18sp" />
+
+            <!-- Actual user data aligned to right -->
+            <TextView
+                android:id="@+id/user_name_value_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_name_value_caption"
+                android:textSize="18sp"
+                android:layout_marginEnd="10dp"
+                android:gravity="end" />
+
+            <Button
+                android:id="@+id/user_name_edit_button_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_profile_edit_button_caption" />
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#cccccc"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- User ID Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Caption (e.g., "User ID:") aligned to left -->
+            <TextView
+                android:id="@+id/user_id_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/user_id_caption"
+                android:textSize="18sp" />
+
+            <!-- Actual user data aligned to right -->
+            <TextView
+                android:id="@+id/user_id_value_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_id_value_caption"
+                android:textSize="18sp"
+                android:layout_marginEnd="10dp"
+                android:gravity="end"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
+                android:padding="10dp" />
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#cccccc"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Repeat similar sections for User Gender, User Birthdate, and User Email -->
+
+        <!-- User Gender Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Caption -->
+            <TextView
+                android:id="@+id/user_gender_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/user_gender_caption"
+                android:textSize="18sp" />
+
+            <!-- Actual user data -->
+            <TextView
+                android:id="@+id/user_gender_value_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_gender_value_caption"
+                android:textSize="18sp"
+                android:layout_marginEnd="10dp"
+                android:gravity="end" />
+
+            <!-- Edit button for User Gender -->
+            <Button
+                android:id="@+id/user_gender_edit_button_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_profile_edit_button_caption" />
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#cccccc"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- User Birthdate Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Caption -->
+            <TextView
+                android:id="@+id/user_birthdate_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/user_birthdate_caption"
+                android:textSize="18sp" />
+
+            <!-- Actual user data -->
+            <TextView
+                android:id="@+id/user_birthdate_value_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_birthdate_value_caption"
+                android:textSize="18sp"
+                android:layout_marginEnd="10dp"
+                android:gravity="end" />
+
+            <!-- Edit button for User Birthdate -->
+            <Button
+                android:id="@+id/user_birthdate_edit_button_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_profile_edit_button_caption" />
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#cccccc"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- User Email Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Caption -->
+            <TextView
+                android:id="@+id/user_email_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/user_email_caption"
+                android:textSize="18sp" />
+
+            <!-- Actual user data -->
+            <TextView
+                android:id="@+id/user_email_value_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_email_value_caption"
+                android:textSize="18sp"
+                android:layout_marginEnd="10dp"
+                android:gravity="end" />
+
+            <!-- Edit button for User Email -->
+            <Button
+                android:id="@+id/user_email_edit_button_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_profile_edit_button_caption" />
+
+        </LinearLayout>
+
+        <!-- ... other UI elements ... -->
+
+        <Button
+            android:id="@+id/user_view_posts_button_id"
+            android:layout_width="131dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:padding="16dp"
+            android:layout_gravity="center"
+            android:text="@string/user_view_posts_caption" />
+
+    </LinearLayout>
+
+
+
+</ScrollView>
+

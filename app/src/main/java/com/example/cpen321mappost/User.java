@@ -1,33 +1,165 @@
 package com.example.cpen321mappost;
 
+import android.app.Activity;
+import android.util.Log;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
 
 public class User {
-        private String userId;
-        private String userName;
-        private String userEmail;
-        private String gender;
-        private String age;
-        //TODO: gender and age could be changed in profile manager
+    private static User instance = null;
+    private static ProfileManager profileManager = null;
+    private static final String TAG = "User";
+    private String userId;
+    private String userName;
+    private String userEmail;
+    private String userGender;
+    private String userBirthdate;
+    private String token;
 
+    //ChatGPT usage: Partial
+    private User() {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert firebaseUser != null;
 
-    // ... any other attributes you want to store for a user
+        this.userId = firebaseUser.getUid();
+        this.userName = firebaseUser.getDisplayName();
+        this.userEmail = firebaseUser.getEmail();
+        this.userGender = "none";
+        this.userBirthdate = "none";
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
 
-        public User(String userId, String userName, String userEmail) {
-            this.userId = userId;
-            this.userName = userName;
-            this.userEmail = userEmail;
-        }
-    // Static method to initialize a User from a FirebaseUser
-    public static User initializeUser(FirebaseUser firebaseUser) {
-         String userName=firebaseUser.getDisplayName();
-         String userEmail= firebaseUser.getEmail();
+                    token = task.getResult();
 
-        //TODO: Here call Post method to create a user, pass the email and get the uid
-         String userId="";
+                    String msg = "FCM Token: " + token;
+                    Log.d(TAG, msg);
+                });
 
-        return new User(userId, userName, userEmail);
     }
 
+    //ChatGPT usage: No
+    public User(String userId){
+
+        this.userId = userId;
+        this.userName = "none";
+        this.userEmail = "none";
+        this.userGender = "none";
+        this.userBirthdate = "none";
+        this.token = null;
+
+    }
+
+    //ChatGPT usage: Partial
+    public static synchronized User getInstance() {
+
+        if (instance == null) {
+
+            instance = new User();
+            profileManager = new ProfileManager();
+
+            profileManager.getUserData(instance, new Activity(), new UserCallback() {
+                @Override
+                public String onSuccess(User user) {
+
+                    Log.d(TAG, "IN the user class, succeed in getting user data");
+
+                    Gson gson = new Gson();
+                    String jsonUserData = gson.toJson(user);
+
+                    Log.d(TAG, jsonUserData);
+
+                    instance = gson.fromJson(jsonUserData, User.class);
+
+                    return jsonUserData;
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                    profileManager.postUserData(instance, new Activity(), new User.UserCallback() {
+                        @Override
+                        public String onSuccess(User user) {
+
+                            return null;
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+
+                        }
+
+                    });
+
+                }
+            });
+
+        }
+
+        return instance;
+
+    }
+
+    //ChatGPT usage: Yes
+    public interface UserCallback {
+        String onSuccess(User user);
+        void onFailure(Exception e);
+    }
+
+    //ChatGPT usage: No
+    public String getUserId() {
+        return userId;
+    }
+
+    //ChatGPT usage: No
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    //ChatGPT usage: No
+    public String getUserName() {
+        return userName;
+    }
+
+    //ChatGPT usage: No
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    //ChatGPT usage: No
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    //ChatGPT usage: No
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    //ChatGPT usage: No
+    public String getUserGender() {
+        return userGender;
+    }
+
+    //ChatGPT usage: No
+    public void setUserGender(String userGender) {
+        this.userGender = userGender;
+    }
+
+    //ChatGPT usage: No
+    public String getUserBirthdate() {
+        return userBirthdate;
+    }
+
+    //ChatGPT usage: No
+    public void setUserBirthdate(String userBirthdate) {
+        this.userBirthdate = userBirthdate;
+    }
 
 }
