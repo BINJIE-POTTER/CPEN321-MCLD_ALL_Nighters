@@ -19,12 +19,15 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.widget.PopupMenu;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -146,6 +149,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onFailure(Exception e) {
                 // Handle failure here
+                Toast.makeText(MapsActivity.this, "Failed to get nearby blue markers on map", Toast.LENGTH_SHORT).show();
+                final Toast toast = Toast.makeText(MapsActivity.this, "Failed to get nearby blue markers on map", Toast.LENGTH_LONG);
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        toast.show();
+                    }
+                }, 3000); // 3000ms delay to show the toast again after the initial showing
             }
         });
         mMap.setOnMarkerClickListener(marker -> {
@@ -184,6 +196,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      public void getClusteredPostData(JSONObject coordinate, final Activity activity, final MapsActivity.JsonPostCallback callback){
 
         String url = "http://4.204.251.146:8081/posts/cluster";
+//       String url = "http://4.204.251.146:8081/posts/clusterssss";//for testing failure
+
          HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
 
          // Convert the JSONObject to query parameters
@@ -327,12 +341,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             intent.putExtra("longitude", longitude);
             startActivity(intent);
         });
-//        bottomSheetDialog.setOnDismissListener(dialog -> {
-//            if (selectedMarker != null) {
-//                selectedMarker.remove();
-//                selectedMarker = null;
-//            }
-//        });
 
         bottomSheetDialog.show();
     }
