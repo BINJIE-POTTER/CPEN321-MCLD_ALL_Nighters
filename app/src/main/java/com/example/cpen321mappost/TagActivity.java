@@ -45,15 +45,16 @@ public class TagActivity extends AppCompatActivity {
 
 
         //sara's work
-        ArrayList<String> test = new ArrayList<>(Arrays.asList("tag1", "tag2", "tag3")); // Example tags
+        ArrayList<String> test = new ArrayList<>(Arrays.asList("None")); // Example tags
+
+//        ArrayList<String> test = new ArrayList<>(Arrays.asList("tag1", "tag2", "tag3")); // Example tags
         Intent tagIntent = new Intent(TagActivity.this, PostPreviewListActivity.class);
+        tagIntent.putExtra("mode", "tag");
         tagIntent.putExtra("userCurrentLat", latitude);
         tagIntent.putExtra("userCurrentLon", longitude);
 
 //        tagIntent.putStringArrayListExtra("tagsList", tagsList);
         tagIntent.putStringArrayListExtra("tagsList", test);
-
-
         startActivity(tagIntent);
 
 
