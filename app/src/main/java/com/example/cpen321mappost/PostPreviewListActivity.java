@@ -81,9 +81,6 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
                 modeTitle.setText("All near by posts");
 
-//                    latitude = 37.42630578217591;
-//                    longitude = -122.0851394534111;
-
                 latitude = intent.getDoubleExtra("latitude",0.0);
                 longitude = intent.getDoubleExtra("longitude", 0.0);
                 Log.d(TAG, "Coord received: " + latitude + ", " + longitude);
@@ -105,7 +102,7 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
                     else {
 
-                        Toast.makeText(PostPreviewListActivity.this, "No nearby posts found!", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(PostPreviewListActivity.this, "No nearby posts found!", Toast.LENGTH_LONG).show();
 
                     }
 
@@ -121,6 +118,10 @@ public class PostPreviewListActivity extends AppCompatActivity {
                 if (!userId.equals(User.getInstance().getUserId())) {
 
                     followButton.setVisibility(View.VISIBLE);
+
+                } else {
+
+                    followButton.setVisibility(View.GONE);
 
                 }
 

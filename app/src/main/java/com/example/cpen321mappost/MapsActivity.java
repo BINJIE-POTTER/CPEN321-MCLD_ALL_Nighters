@@ -221,47 +221,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.e(TAG, "Failed to post data", e);
-                        callback.onFailure(e); // Notify callback about the failure
-                    }
+                activity.runOnUiThread(() -> {
+                    Log.e(TAG, "Failed to post data", e);
+                    callback.onFailure(e); // Notify callback about the failure
                 });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (response.isSuccessful()) {
-                            try {
-                                if (response.code() == 200) {
-                                    // The operation was successful.
-                                    Log.d(TAG, "Data posted successfully!");
-                                    String responseData = response.body().string();
-                                    Gson gson = new Gson();
-                                    Cluster[] clusters = gson.fromJson(responseData, Cluster[].class);
-                                    callback.onSuccess(clusters); // already on UI thread, safe to call directly
+                activity.runOnUiThread(() -> {
+                    if (response.isSuccessful()) {
+                        try {
+                            if (response.code() == 200) {
+                                // The operation was successful.
+                                Log.d(TAG, "Data posted successfully!");
+                                assert response.body() != null;
+                                String responseData = response.body().string();
+                                Gson gson = new Gson();
+                                Cluster[] clusters = gson.fromJson(responseData, Cluster[].class);
+                                callback.onSuccess(clusters); // already on UI thread, safe to call directly
 
 
-                                } else {
-                                    // Handle other response codes (like 4xx or 5xx errors)
-                                    IOException exception = new IOException("Unexpected response when posting data: " + response);
-                                    Log.e(TAG, "Error posting data", exception);
-                                    callback.onFailure(exception); // Notify callback about the failure
-                                }
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            } finally {
-                                response.close(); // Important to avoid leaking resources
+                            } else {
+                                // Handle other response codes (like 4xx or 5xx errors)
+                                IOException exception = new IOException("Unexpected response when posting data: " + response);
+                                Log.e(TAG, "Error posting data", exception);
+                                callback.onFailure(exception); // Notify callback about the failure
                             }
-                        } else {
-                            IOException exception = new IOException("Unexpected code " + response);
-                            Log.e(TAG, "Error posting data", exception);
-                            callback.onFailure(exception); // Notify callback about the failure
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        } finally {
+                            response.close(); // Important to avoid leaking resources
                         }
+                    } else {
+                        IOException exception = new IOException("Unexpected code " + response);
+                        Log.e(TAG, "Error posting data", exception);
+                        callback.onFailure(exception); // Notify callback about the failure
                     }
                 });
             }

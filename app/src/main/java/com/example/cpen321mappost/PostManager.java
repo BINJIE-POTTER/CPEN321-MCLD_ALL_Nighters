@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
@@ -137,12 +138,13 @@ public class PostManager {
         String url = "http://4.204.251.146:8081/posts/like";
         OkHttpClient httpClient = HttpClient.getInstance();
 
-        Gson gson = new Gson();
-        String jsonPid = gson.toJson(pid);
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("pid", pid);
+        String jsonBody = jsonObject.toString();
 
-        Log.d(TAG, "This is the liked post data: " + jsonPid);
+        Log.d(TAG, "This is the liked post data: " + jsonBody);
 
-        RequestBody body = RequestBody.create(jsonPid, MediaType.parse("application/json; charset=utf-8"));
+        RequestBody body = RequestBody.create(jsonBody, MediaType.parse("application/json; charset=utf-8"));
 
         // Build the request
         Request request = new Request.Builder()
@@ -154,7 +156,7 @@ public class PostManager {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(() -> {
-                    Log.e(TAG, "Failed to post data", e);
+                    Log.e(TAG, "Failed to like user", e);
                     callback.onFailure(e); // Notify callback about the failure
                 });
             }
@@ -165,13 +167,13 @@ public class PostManager {
                         try {
                             if (response.code() == 200) {
                                 // The operation was successful.
-                                Log.d(TAG, "Data posted successfully!");
+                                Log.d(TAG, "like user successfully!");
                                 callback.onSuccess(null); // Notify callback about the success
 
                             } else {
                                 // Handle other response codes (like 4xx or 5xx errors)
-                                IOException exception = new IOException("Unexpected response when posting data: " + response);
-                                Log.e(TAG, "Error posting data", exception);
+                                IOException exception = new IOException("Unexpected response when liking user: " + response);
+                                Log.e(TAG, "Error liking user", exception);
                                 callback.onFailure(exception); // Notify callback about the failure
                             }
                         } finally {

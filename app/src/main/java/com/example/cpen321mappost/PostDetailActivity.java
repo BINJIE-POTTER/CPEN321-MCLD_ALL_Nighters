@@ -72,7 +72,11 @@ public class PostDetailActivity extends AppCompatActivity {
 
                 if (Objects.equals(uid, User.getInstance().getUserId())){
 
+                    buttonDelete.setVisibility(View.VISIBLE);
 
+                } else {
+
+                    buttonDelete.setVisibility(View.GONE);
 
                 }
                 profileManager.getAuthor(post.getUserId(), new ProfileManager.AuthorCallback() {
