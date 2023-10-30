@@ -44,13 +44,14 @@ dependencies {
     //firebase authentication
     implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-auth:21.0.1")
-    implementation ("com.google.firebase:firebase-core:20.0.0")
-    implementation ("com.google.android.gms:play-services-auth:20.0.0")
-    implementation("com.google.android.gms:play-services-maps:18.1.0") // For Google Sign-In
+    implementation("com.google.firebase:firebase-auth:22.2.0")
+    implementation ("com.google.firebase:firebase-core:21.1.1")
+    implementation ("com.google.firebase:firebase-messaging:23.3.1")
+    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0") // For Google Sign-In
 
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
 
     implementation( "androidx.activity:activity:1.3.0")
     implementation ("androidx.fragment:fragment:1.3.0")
