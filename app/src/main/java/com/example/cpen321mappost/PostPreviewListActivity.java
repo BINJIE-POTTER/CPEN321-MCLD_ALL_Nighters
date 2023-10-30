@@ -81,11 +81,11 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
                 modeTitle.setText("All near by posts");
 
-                    latitude = 37.42630578217591;
-                    longitude = -122.0851394534111;
+//                    latitude = 37.42630578217591;
+//                    longitude = -122.0851394534111;
 
-//                latitude = intent.getDoubleExtra("latitude",0.0);
-//                longitude = intent.getDoubleExtra("longitude", 0.0);
+                latitude = intent.getDoubleExtra("latitude",0.0);
+                longitude = intent.getDoubleExtra("longitude", 0.0);
                 Log.d(TAG, "Coord received: " + latitude + ", " + longitude);
 
                 Cluster[] clusters = clusterManager.getAllClusters();
@@ -117,15 +117,16 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
                 userId = intent.getStringExtra("userId");
 
-                Log.d(TAG, "User ID: " + userId);
+                assert userId != null;
+                if (!userId.equals(User.getInstance().getUserId())) {
 
-                followButton.setVisibility(View.VISIBLE);
+                    followButton.setVisibility(View.VISIBLE);
+
+                }
 
                 profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
                     @Override
                     public void onAuthorRetrieved(String authorName) {
-
-                        Log.d(TAG, "The author name retrieved is: " + authorName);
 
                         modeTitle.setText(authorName + "'s Posts");
 
@@ -166,9 +167,42 @@ public class PostPreviewListActivity extends AppCompatActivity {
         }
 
 
-
-
         //recyclerView.setAdapter(adapter);
+
+        followButton.setOnClickListener(view -> {
+
+            profileManager.followAuthor(userId, this, new ProfileManager.FollowingUserCallback() {
+                @Override
+                public void onSuccess(String userId) {
+
+                    profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
+                        @Override
+                        public void onAuthorRetrieved(String authorName) {
+
+                            Toast.makeText(PostPreviewListActivity.this, "Succeed following "+ authorName +" rn!", Toast.LENGTH_LONG).show();
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                            Log.d(TAG, String.valueOf(e));
+
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                    Toast.makeText(PostPreviewListActivity.this, "Unable to follow this user :(", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, String.valueOf(e));
+
+                }
+            });
+
+        });
 
 
     }

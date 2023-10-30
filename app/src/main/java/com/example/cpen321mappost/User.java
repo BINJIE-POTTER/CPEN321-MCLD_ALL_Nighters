@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
 public class User {
@@ -18,18 +19,31 @@ public class User {
     private String userEmail;
     private String userGender;
     private String userBirthdate;
+    private String token;
 
     // Private constructor so no other class can instantiate
     private User() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        assert firebaseUser != null; // Consider proper error handling here
+        assert firebaseUser != null;
 
         this.userId = firebaseUser.getUid();
         this.userName = firebaseUser.getDisplayName();
         this.userEmail = firebaseUser.getEmail();
-        // Default values, consider providing ways to update these fields
         this.userGender = "none";
         this.userBirthdate = "none";
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
+
+                    token = task.getResult();
+
+                    String msg = "FCM Token: " + token;
+                    Log.d(TAG, msg);
+                });
+
     }
 
     public User(String userId){
@@ -39,6 +53,7 @@ public class User {
         this.userEmail = "none";
         this.userGender = "none";
         this.userBirthdate = "none";
+        this.token = null;
 
     }
 

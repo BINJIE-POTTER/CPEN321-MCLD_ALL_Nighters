@@ -261,4 +261,94 @@ public class ProfileManager {
 
     }
 
+    public void followAuthor(String userId, final Activity activity, final FollowingUserCallback callback) {
+
+        String url = "http://4.204.251.146:8081/users/follow";
+        OkHttpClient httpClient = HttpClient.getInstance();
+
+        FollowingUser followingUser = new FollowingUser(User.getInstance().getUserId(), userId);
+
+        Gson gson = new Gson();
+        String jsonFollowingUserData = gson.toJson(followingUser);
+
+        Log.d(TAG, jsonFollowingUserData);
+
+        RequestBody body = RequestBody.create(jsonFollowingUserData, MediaType.parse("application/json; charset=utf-8"));
+
+        // Build the request
+        Request request = new Request.Builder()
+                .url(url)
+                .put(body)
+                .build();
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                activity.runOnUiThread(() -> {
+                    Log.d(TAG, "Failed to update user data");
+                    callback.onFailure(e);
+                });
+            }
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                }
+                activity.runOnUiThread(() -> {
+                    // If you're just confirming the success, you can create a new 'success' method in your callback or pass a null user.
+                    // Or, if you've parsed a response, pass the updated user here.
+                    if (response.isSuccessful()) {
+                        try {
+                            // Here, we're not parsing a JSON response body, so we check the response directly.
+                            if (response.code() == 200) {
+                                // The operation was successful. Notify the callback.
+                                callback.onSuccess(userId);
+                            } else {
+                                // Handle other response codes (like 4xx or 5xx errors)
+                                callback.onFailure(new IOException("Unexpected response when updating user: " + response));
+                            }
+                        } finally {
+                            response.close(); // Important to avoid leaking resources
+                        }
+                    } else {
+                        callback.onFailure(new IOException("Unexpected code " + response));
+                    }
+                });
+            }
+        });
+
+    }
+
+    public interface FollowingUserCallback {
+        void onSuccess(String userId);
+        void onFailure(Exception e);
+    }
+
+    public static class FollowingUser {
+        private String followingId;
+        private String userId;
+
+        // Constructor
+        public FollowingUser(String userId, String followingId) {
+            this.userId = userId;
+            this.followingId = followingId;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getFollowingId() {
+            return followingId;
+        }
+
+        public void setFollowingId(String followingId) {
+            this.followingId = followingId;
+        }
+    }
+
+
 }
