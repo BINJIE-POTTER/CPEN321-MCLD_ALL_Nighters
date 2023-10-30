@@ -16,22 +16,22 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
     private static final String TAG = "CommentAdapter";
     private static final ProfileManager profileManager = new ProfileManager();
 
+    //ChatGPT usage: Partial
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textViewComment;
 
         public ViewHolder(View view) {
             super(view);
             textViewComment = view.findViewById(R.id.textViewComment);
-
-            // You can keep onClick logic if it's intentional to navigate to Post details from comments.
-            // If not, you should remove it or revise for what should happen when clicking on a comment.
         }
     }
 
+    //ChatGPT usage: No
     public CommentAdapter(List<Comment> commentList) {
         CommentAdapter.commentList = commentList;
     }
 
+    //ChatGPT usage: Partial
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -40,6 +40,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         return new ViewHolder(itemView);
     }
 
+    //ChatGPT usage: Partial
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Comment comment = commentList.get(position);
@@ -61,6 +62,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     }
 
+    //ChatGPT usage: No
     @Override
     public int getItemCount() {
         return commentList.size();

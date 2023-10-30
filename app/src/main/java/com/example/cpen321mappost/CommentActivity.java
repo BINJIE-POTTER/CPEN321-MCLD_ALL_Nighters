@@ -37,12 +37,14 @@ public class CommentActivity extends AppCompatActivity {
     private Button buttonSubmitComment;
     private String pid;
 
+    //ChatGPT usage: Yes
     public interface CommentCallback {
         void onCommentsReceived(List<Comment> comments);
         void onPostCommentSuccess();
         void onFailure(Exception e);
     }
 
+    //ChatGPT usage: Partial
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +95,7 @@ public class CommentActivity extends AppCompatActivity {
 
     }
 
+    //ChatGPT usage: No
     public void displayAllComments(String pid) {
         getAllCommentsData(pid, this, new CommentCallback() {
             @Override
@@ -113,6 +116,7 @@ public class CommentActivity extends AppCompatActivity {
         });
     }
 
+    //ChatGPT usage: Partial
     public void getAllCommentsData(String pid, final Activity activity, final CommentCallback callback) {
 
         String url = "http://4.204.251.146:8081/comments/?pid=" + pid;
@@ -178,7 +182,7 @@ public class CommentActivity extends AppCompatActivity {
         });
     }
 
-
+    //ChatGPT usage: Partial
     public void postCommentData(Comment comment, final Activity activity, final CommentCallback callback){
 
         String url = "http://4.204.251.146:8081/comments";
@@ -235,6 +239,7 @@ public class CommentActivity extends AppCompatActivity {
         });
     }
 
+    //ChatGPT usage: Partial
     public String getCurrentDateUsingCalendar () {
 
         Calendar calendar = Calendar.getInstance();

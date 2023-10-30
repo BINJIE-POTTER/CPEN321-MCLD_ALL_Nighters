@@ -22,9 +22,7 @@ import okhttp3.Response;
 public class ProfileManager {
     final static String TAG = "ProfileManager Activity";
 
-    //-------------------------------------------- E N D --------------------------------------------//
-
-    // GET
+    //ChatGPT usage: Yes
     public void getUserData(User user, final Activity activity, final User.UserCallback callback) {
 
         String url = "http://4.204.251.146:8081/users/?userId=" + user.getUserId();
@@ -80,7 +78,7 @@ public class ProfileManager {
         });
     }
 
-
+    //ChatGPT usage: Yes
     public void putUserData(User user, final Activity activity, final User.UserCallback callback) {
 
         // chage this to PUT
@@ -101,7 +99,7 @@ public class ProfileManager {
         // Build the request
         Request request = new Request.Builder()
                 .url(url)
-                .put(body) // Use PUT method
+                .put(body)
                 .build();
 
         httpClient.newCall(request).enqueue(new Callback() {
@@ -151,6 +149,7 @@ public class ProfileManager {
         });
     }
 
+    //ChatGPT usage: Yes
     public void postUserData(User user, final Activity activity, final User.UserCallback callback){
 
         String url = "http://4.204.251.146:8081/users";
@@ -226,12 +225,13 @@ public class ProfileManager {
 
     }
 
+    //ChatGPT usage: Yes
     public interface AuthorCallback {
         void onAuthorRetrieved(String authorName);
         void onError(Exception e);
     }
 
-    // Additional methods like setters or others can be added here
+    //ChatGPT usage: Partial
     public void getAuthor(String userId, AuthorCallback callback) {
 
         User author = new User(userId);
@@ -261,6 +261,7 @@ public class ProfileManager {
 
     }
 
+    //ChatGPT usage: Partial
     public void followAuthor(String userId, final Activity activity, final FollowingUserCallback callback) {
 
         String url = "http://4.204.251.146:8081/users/follow";
@@ -318,11 +319,13 @@ public class ProfileManager {
 
     }
 
+    //ChatGPT usage: Yes
     public interface FollowingUserCallback {
         void onSuccess(String userId);
         void onFailure(Exception e);
     }
 
+    //ChatGPT usage: Yes
     public static class FollowingUser {
         private String followingId;
         private String userId;
@@ -349,6 +352,5 @@ public class ProfileManager {
             this.followingId = followingId;
         }
     }
-
 
 }

@@ -6,6 +6,7 @@ public class ClusterManager {
 
     private ClusterManager() {}
 
+    //ChatGPT usage: No
     public static ClusterManager getInstance() {
         if (instance == null) {
             instance = new ClusterManager();
@@ -13,10 +14,12 @@ public class ClusterManager {
         return instance;
     }
 
+    //ChatGPT usage: No
     public void setAllClusters(Cluster[] clusters) {
         this.allClusters = clusters;
     }
 
+    //ChatGPT usage: No
     public Cluster[] getAllClusters() {
         return allClusters;
     }

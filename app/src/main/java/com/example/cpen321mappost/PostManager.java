@@ -29,12 +29,9 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class PostManager {
-
-    // Assuming HttpClient is your custom class that provides an OkHttpClient instance
     private static final String TAG = "UserDataFetcher"; // Tag for your log messages
 
-    //Sara's insert
-
+    //ChatGPT usage: Partial
     public void getSinglePostData(String pid, final Activity activity, final JsonCallback<Post> callback){
 
         String url = "http://4.204.251.146:8081/posts/single/?pid=" + pid;
@@ -86,6 +83,7 @@ public class PostManager {
         });
     }
 
+    //ChatGPT usage: Yes
     public void deletePostData(String pid, final Activity activity, final JsonCallback<Void> callback){
 
         String url = "http://4.204.251.146:8081/posts/?pid=" + pid;
@@ -133,6 +131,7 @@ public class PostManager {
         });
     }
 
+    //ChatGPT usage: Partial
     public void likePostData(String pid, final Activity activity, final JsonCallback<Void> callback) {
 
         String url = "http://4.204.251.146:8081/posts/like";
@@ -188,6 +187,8 @@ public class PostManager {
             }
         });
     }
+
+    //ChatGPT usage: Partial
     public void getTagsData(String latitude, String longitute, final Activity activity, final JsonCallback< ArrayList<String>> callback){
 
         String url = "http://4.204.251.146:8081/tags/nearby/?latitude=" + latitude + "&longitude=" + longitute;
@@ -241,8 +242,7 @@ public class PostManager {
         });
     }
 
-
-
+    //ChatGPT usage: Partial
     public void getSearchedPosts(String searchText, final Activity activity, final PostCallback callback) {
         String url = "http://4.204.251.146:8081/posts/search/?keyword=" + searchText;
         OkHttpClient httpClient = HttpClient.getInstance();
@@ -306,6 +306,7 @@ public class PostManager {
         });
     }
 
+    //ChatGPT usage: Partial
     public void getTagsSelectedPosts(String latitude, String longitute, ArrayList<String> tagsList, final Activity activity, final PostCallback callback) {
         String url = "http://4.204.251.146:8081/posts/has-tags/?latitude=" + latitude + "&longitude=" + longitute + "&tags=";
         StringBuilder urlBuilder= new StringBuilder(url);
@@ -381,13 +382,7 @@ public class PostManager {
         });
     }
 
-
-
-
-    //Sara;s insert end
-
-
-
+    //ChatGPT usage: Partial
     public void getUserAllPosts(String userId, final Activity activity, final PostCallback callback) {
         String url = "http://4.204.251.146:8081/posts/from-user/?userId=" + userId; // Replace with your actual posts endpoint
         OkHttpClient httpClient = HttpClient.getInstance();
@@ -451,11 +446,13 @@ public class PostManager {
         });
     }
 
-    // Define the callback interface
+    //ChatGPT usage: Yes
     public interface PostCallback {
         void onSuccess(List<Post> posts);
         void onFailure(Exception e);
     }
+
+    //ChatGPT usage: Yes
     public interface JsonCallback<T> {
         void onSuccess(T result);
         void onFailure(Exception e);

@@ -16,6 +16,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private static List<Post> postList;
     private static final String TAG = "PostAdapter";
     private static final ProfileManager profileManager = new ProfileManager();
+
+    //ChatGPT usage: Yes
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textViewAuthor, textViewTitle, textViewContent, textViewLikes;
 
@@ -47,6 +49,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         }
     }
 
+    //ChatGPT usage: Partial
     public PostAdapter(List<Post> postList) {
         PostAdapter.postList = postList;
     }
@@ -59,6 +62,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         return new ViewHolder(itemView);
     }
 
+    //ChatGPT usage: Partial
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Post post = postList.get(position);
@@ -79,6 +83,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.textViewLikes.setText(String.valueOf(post.getLikeCount()));
     }
 
+    //ChatGPT usage: No
     @Override
     public int getItemCount() {
         return postList.size();

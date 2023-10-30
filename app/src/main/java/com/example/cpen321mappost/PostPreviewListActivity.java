@@ -27,6 +27,8 @@ public class PostPreviewListActivity extends AppCompatActivity {
     private String userId;
     private double latitude;
     private double longitude;
+
+    //ChatGPT usage: Partial
     @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -225,11 +227,7 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
             default:
 
-
         }
-
-
-        //recyclerView.setAdapter(adapter);
 
         followButton.setOnClickListener(view -> {
 
@@ -265,7 +263,6 @@ public class PostPreviewListActivity extends AppCompatActivity {
             });
 
         });
-
 
     }
 

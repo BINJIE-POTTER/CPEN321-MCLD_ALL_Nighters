@@ -20,6 +20,7 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
     private Set<String> tagSet;
     private static final String TAG = "TagAdapter";
 
+    //ChatGPT usage: Partial
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public CheckBox checkBoxTag;
 
@@ -31,12 +32,15 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
         }
     }
 
+    //ChatGPT usage: No
     public TagAdapter(ArrayList<String> tagList, Set<String> tagSet) {
 
         this.tagList = tagList;
         this.tagSet = tagSet;
 
     }
+
+    //ChatGPT usage: Partial
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -45,6 +49,7 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
         return new TagAdapter.ViewHolder(itemView);
     }
 
+    //ChatGPT usage: Partial
     @Override
     public void onBindViewHolder(@NonNull TagAdapter.ViewHolder holder, int position) {
 
@@ -68,6 +73,7 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
 
     }
 
+    //ChatGPT usage: No
     @Override
     public int getItemCount() {
         return tagList.size();

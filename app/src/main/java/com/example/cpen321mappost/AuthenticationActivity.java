@@ -12,9 +12,9 @@ import com.google.firebase.auth.FirebaseUser;
 
 
 public class AuthenticationActivity extends AppCompatActivity {
-
     private AuthenticationHandler authenticationHandler;
 
+    //ChatGPT usage: Partial
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,12 +49,14 @@ public class AuthenticationActivity extends AppCompatActivity {
         });
     }
 
+    //ChatGPT usage: No
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         authenticationHandler.handleSignInResult(requestCode, resultCode, data);
     }
 
+    //ChatGPT usage: Partial
     private void updateUI() {
         // TODO: Update UI
         // After successful authentication, you can navigate to the next page
@@ -66,18 +68,17 @@ public class AuthenticationActivity extends AppCompatActivity {
         if (firebaseUser != null) {
             // User is already authenticated
 
-//            User currentUser = User.initializeUser(firebaseUser);
+            //User currentUser = User.initializeUser(firebaseUser);
             // TODO:
             //if current user by email exist in database, fetch the user
             //else create a post method to create user
 
         }
 
-
-
         Intent intent = new Intent(AuthenticationActivity.this, MapsActivity.class);
         startActivity(intent);
         finish();  // Finish the current activity
 
     }
+
 }

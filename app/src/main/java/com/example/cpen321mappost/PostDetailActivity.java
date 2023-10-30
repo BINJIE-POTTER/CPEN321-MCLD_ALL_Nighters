@@ -37,17 +37,12 @@ public class PostDetailActivity extends AppCompatActivity {
     private String pid;
     private String uid;
 
-//    public interface JsonCallback<T> {
-//        void onSuccess(T result);
-//        void onFailure(Exception e);
-//    }
-
+    //ChatGPT usage: Partial
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
 
-        // Initialize views
         TextView textViewPostDetail = findViewById(R.id.textViewPostDetail);
         TextView textViewTitle = findViewById(R.id.textViewTitle);
         TextView textViewMainContent = findViewById(R.id.textViewMainContent);
@@ -57,7 +52,6 @@ public class PostDetailActivity extends AppCompatActivity {
         Button buttonLike = findViewById(R.id.buttonLike);
         Button buttonComment = findViewById(R.id.buttonComment);
 
-        //Pass the variable as Pid:
         Intent receivedIntent = getIntent();
         pid = receivedIntent.getStringExtra("pid");
 
@@ -159,10 +153,10 @@ public class PostDetailActivity extends AppCompatActivity {
         buttonComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(PostDetailActivity.this, CommentActivity.class);
                 intent.putExtra("pid", pid);
                 startActivity(intent);
-
 
             }
         });

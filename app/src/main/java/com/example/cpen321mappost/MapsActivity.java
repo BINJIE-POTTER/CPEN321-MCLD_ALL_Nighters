@@ -56,7 +56,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
-
     private static final double CLICKABLE_RADIUS = 0.005 ;
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
@@ -67,12 +66,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public LatLng currentLatLng;
     private ArrayList<Marker> markerList;
 
+    //ChatGPT usage: Yes
     public interface JsonPostCallback {
         void onSuccess(Cluster[] clusters);
         void onFailure(Exception e);
     }
 
-
+    //ChatGPT usage: Partial
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +92,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         moreButton.setOnClickListener(this::showMoreOptions);
     }
 
+    //ChatGPT usage: No
     private void requestLocationPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1234);
@@ -100,6 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    //ChatGPT usage: No
     private void startLocationUpdates() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
@@ -113,6 +115,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    //ChatGPT usage: Partial
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -121,6 +124,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    //ChatGPT usage: Partial
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -193,10 +197,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    //ChatGPT usage: Partial
      public void getClusteredPostData(JSONObject coordinate, final Activity activity, final MapsActivity.JsonPostCallback callback){
 
         String url = "http://4.204.251.146:8081/posts/cluster";
-//       String url = "http://4.204.251.146:8081/posts/clusterssss";//for testing failure
 
          HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
 
@@ -263,6 +267,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    //ChatGPT usage: Partial
     public void addBlueMarkersToMap(Cluster[] clusteredPosts) {
         markerList = new ArrayList<>();
 
@@ -279,6 +284,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
+
+    //ChatGPT usage: Partial
     public void showMoreOptions(View view) {
         PopupMenu moreMenu = new PopupMenu(this, view);
         moreMenu.getMenu().add("Search");
@@ -305,6 +312,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
         moreMenu.show();
     }
+
+    //ChatGPT usage: Partial
     private void displayLocationMenu( double latitude, double longitude, String openMode) {
 
         View view = getLayoutInflater().inflate(R.layout.layout_location_menu, null);
@@ -340,7 +349,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         bottomSheetDialog.show();
     }
 
-
+    //ChatGPT usage: Partial
     @Override
     public void onLocationChanged(Location location) {
         currentLocation = location;
@@ -351,7 +360,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
         }
 }
-    // Method to check if two locations are nearby based on a certain radius
+    //ChatGPT usage: Partial
     private boolean isNearby(double markeLatitude, double markerLongitude , LatLng selectedMarker, double radius) {
 
         float[] results = new float[1];

@@ -13,7 +13,7 @@ public class SearchActivity extends AppCompatActivity {
     private EditText searchText;
     private Button searchButton;
 
-
+    //ChatGPT usage: Partial
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

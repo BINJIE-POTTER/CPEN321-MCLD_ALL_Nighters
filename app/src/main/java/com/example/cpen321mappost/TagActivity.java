@@ -25,6 +25,7 @@ public class TagActivity extends AppCompatActivity {
     private RecyclerView recyclerViewTags;
     private Button buttonSaveTags;
 
+    //ChatGPT usage: Partial
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

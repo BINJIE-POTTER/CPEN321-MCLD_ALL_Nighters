@@ -12,8 +12,6 @@ public class User {
     private static User instance = null;
     private static ProfileManager profileManager = null;
     private static final String TAG = "User";
-
-    // User attributes
     private String userId;
     private String userName;
     private String userEmail;
@@ -21,7 +19,7 @@ public class User {
     private String userBirthdate;
     private String token;
 
-    // Private constructor so no other class can instantiate
+    //ChatGPT usage: Partial
     private User() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert firebaseUser != null;
@@ -46,6 +44,7 @@ public class User {
 
     }
 
+    //ChatGPT usage: No
     public User(String userId){
 
         this.userId = userId;
@@ -57,7 +56,7 @@ public class User {
 
     }
 
-    // Method to get the single instance of user
+    //ChatGPT usage: Partial
     public static synchronized User getInstance() {
 
         if (instance == null) {
@@ -107,52 +106,60 @@ public class User {
 
     }
 
+    //ChatGPT usage: Yes
     public interface UserCallback {
         String onSuccess(User user);
         void onFailure(Exception e);
     }
 
-    // Getters and possibly setters if you need to change user's attributes after instantiation
-
+    //ChatGPT usage: No
     public String getUserId() {
         return userId;
     }
 
+    //ChatGPT usage: No
     public void setUserId(String userId) {
         this.userId = userId;
     }
 
+    //ChatGPT usage: No
     public String getUserName() {
         return userName;
     }
 
+    //ChatGPT usage: No
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
+    //ChatGPT usage: No
     public String getUserEmail() {
         return userEmail;
     }
 
+    //ChatGPT usage: No
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
     }
 
+    //ChatGPT usage: No
     public String getUserGender() {
         return userGender;
     }
 
+    //ChatGPT usage: No
     public void setUserGender(String userGender) {
         this.userGender = userGender;
     }
 
+    //ChatGPT usage: No
     public String getUserBirthdate() {
         return userBirthdate;
     }
 
+    //ChatGPT usage: No
     public void setUserBirthdate(String userBirthdate) {
         this.userBirthdate = userBirthdate;
     }
 
-    // Add other methods here...
 }

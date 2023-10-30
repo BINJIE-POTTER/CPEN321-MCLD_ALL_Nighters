@@ -9,6 +9,7 @@ public class Comment {
     private String content;
     private static final ProfileManager profileManager = new ProfileManager();
 
+    //ChatGPT usage: No
     public Comment(String pid, String uid, String time, String content) {
 
         this.pid = pid;
@@ -17,9 +18,13 @@ public class Comment {
         this.content = content;
 
     }
+
+    //ChatGPT usage: No
     public String getContent() {
         return content;
     }
+
+    //ChatGPT usage: No
     public String getUid() {
         return userId;
     }

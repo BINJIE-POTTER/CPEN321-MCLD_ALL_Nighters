@@ -43,20 +43,19 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class PostActivity extends AppCompatActivity {
-
     private ImageView imgPreview;
     private EditText titleEditText, mainTextEditText;
     private Button uploadImageButton;
     private Button saveButton;
     final static String TAG = "PostActivity";
 
+    //ChatGPT usage: Yes
     public interface JsonPostCallback {
         void onSuccess(JSONObject postedData);
-
         void onFailure(Exception e);
     }
 
-
+    //ChatGPT usage: Yes
     private final ActivityResultLauncher<String[]> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
                 if (isGranted.containsValue(false)) {
@@ -64,6 +63,7 @@ public class PostActivity extends AppCompatActivity {
                 }
             });
 
+    //ChatGPT usage: Yes
     private final ActivityResultLauncher<Intent> getImage = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -73,6 +73,7 @@ public class PostActivity extends AppCompatActivity {
                 }
             });
 
+    //ChatGPT usage: Partial
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,6 +147,7 @@ public class PostActivity extends AppCompatActivity {
 
     }
 
+    //ChatGPT usage: Partial
     public void postJsonData(JSONObject postData, final Activity activity, final JsonPostCallback callback){
 
         String url = "http://4.204.251.146:8081/posts";
@@ -210,7 +212,7 @@ public class PostActivity extends AppCompatActivity {
         });
     }
 
-
+    //ChatGPT usage: Partial
     public String getCurrentDateUsingCalendar () {
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);

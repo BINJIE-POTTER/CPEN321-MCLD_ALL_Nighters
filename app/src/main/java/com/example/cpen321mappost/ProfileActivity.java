@@ -16,6 +16,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ProfileManager profileManager;
     final static String TAG = "ProfileManager Activity";
 
+    //ChatGPT usage: Partial
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +43,6 @@ public class ProfileActivity extends AppCompatActivity {
         profileManager.getUserData(user, this, new User.UserCallback() {
             @Override
             public String onSuccess(User user) {
-                // This is run on the UI thread, safe to update UI components
-                // e.g., display user details in the UI
 
                 Log.d(TAG, "Succeed on get user data");
 
@@ -59,8 +58,6 @@ public class ProfileActivity extends AppCompatActivity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onFailure(Exception e) {
-                // This is run on the UI thread, safe to update UI components
-                // e.g., show an error message
 
                 emailTextView.setText("error");
                 nameTextView.setText("error");
@@ -71,8 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
                 //Toast.makeText(ProfileActivity.this, "Failed to load user info!", Toast.LENGTH_LONG).show();
 
             }
-        }); // 'this' is the current activity, which is passed for context
-
+        });
 
         nameEditButton.setOnClickListener(view -> {
 

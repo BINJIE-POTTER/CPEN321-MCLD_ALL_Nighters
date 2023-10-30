@@ -23,6 +23,8 @@ public class ProfileEditingActivity extends AppCompatActivity {
     private User user;
     final static String TAG = "ProfileEditing Activity";
 
+
+    //ChatGPT usage: Partial
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
