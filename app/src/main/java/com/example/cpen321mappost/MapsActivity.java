@@ -279,9 +279,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             switch (item.getTitle().toString()) {
                 case "Search":
                     // Implement your Search action here
+                    Intent searchIntent= new Intent(MapsActivity.this,PostPreviewListActivity.class);
+                    searchIntent.putExtra("mode", "search");
+                    startActivity(searchIntent);
                     return true;
                 case "Tag":
                     // Implement your Tag action here
+                    Intent tagIntent= new Intent(MapsActivity.this,PostPreviewListActivity.class);
+                    tagIntent.putExtra("mode", "tag");
+                    startActivity(tagIntent);
                     return true;
                 default:
                     return false;
