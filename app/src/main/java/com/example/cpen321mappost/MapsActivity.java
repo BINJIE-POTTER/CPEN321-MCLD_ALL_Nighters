@@ -173,6 +173,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (!isNearMarker) {
                 selectedMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Selected Location"));
                 displayLocationMenu(latLng.latitude, latLng.longitude, "createPostOnly");
+                selectedMarker.remove();
 
             }
         });
@@ -319,12 +320,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             intent.putExtra("longitude", longitude);
             startActivity(intent);
         });
-        bottomSheetDialog.setOnDismissListener(dialog -> {
-            if (selectedMarker != null) {
-                selectedMarker.remove();
-                selectedMarker = null;
-            }
-        });
+//        bottomSheetDialog.setOnDismissListener(dialog -> {
+//            if (selectedMarker != null) {
+//                selectedMarker.remove();
+//                selectedMarker = null;
+//            }
+//        });
 
         bottomSheetDialog.show();
     }

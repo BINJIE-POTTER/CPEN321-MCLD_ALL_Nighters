@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import org.json.JSONException;
@@ -27,6 +28,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
 
 public class CommentActivity extends AppCompatActivity {
 
@@ -47,44 +49,40 @@ public class CommentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_comment);
 
         recyclerViewComments = findViewById(R.id.recyclerViewComments);
+        recyclerViewComments.setLayoutManager(new LinearLayoutManager(this)); // Set LayoutManager here
         editTextComment = findViewById(R.id.editTextComment);
         buttonSubmitComment = findViewById(R.id.buttonSubmitComment);
 
         Intent receivedIntent = getIntent();
         pid = receivedIntent.getStringExtra("pid");
 
-        buttonSubmitComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String newComment = editTextComment.getText().toString();
-                if (!newComment.isEmpty()) {
-                    editTextComment.setText(""); // Clear the EditText
+        buttonSubmitComment.setOnClickListener(v -> {
+            String newComment = editTextComment.getText().toString();
+            if (!newComment.isEmpty()) {
+                editTextComment.setText(""); // Clear the EditText
 
-                    JSONObject postData = new JSONObject();
-                    try {
-                        postData.put("pid", pid);
-                        postData.put("userId", User.getInstance().getUserId());
-                        postData.put("time", getCurrentDateUsingCalendar());
-                        postData.put("content", newComment);
-
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
+                JSONObject postData = new JSONObject();
+                try {
+                    postData.put("pid", pid);
+                    postData.put("userId", User.getInstance().getUserId());
+                    postData.put("time", getCurrentDateUsingCalendar());
+                    postData.put("content", newComment);
 
                     postCommentData(postData, CommentActivity.this, new JsonCallback<Void>() {
                         @Override
                         public void onSuccess(Void result) {
-                            // TODO: Handle success of posting a comment
-                            Log.d(TAG, "Submit comment successfully");
-
-
+                            // Refresh comments to show the newly added one
+                            displayAllComments(pid);
                         }
 
                         @Override
                         public void onFailure(Exception e) {
-                            // TODO: Handle failure of posting a comment
+                            // Handle failure of posting a comment
+                            Log.e(TAG, "Failed to post comment", e);
                         }
                     });
+                } catch (JSONException e) {
+                    Log.e(TAG, "JSON Exception", e);
                 }
             }
         });
@@ -93,21 +91,16 @@ public class CommentActivity extends AppCompatActivity {
     }
 
     public void displayAllComments(String pid) {
-
-
-
         getAllCommentsData(pid, this, new JsonCallback<Comment[]>() {
             @Override
             public void onSuccess(Comment[] comments) {
                 CommentAdapter commentAdapter = new CommentAdapter(comments);
                 recyclerViewComments.setAdapter(commentAdapter);
-                commentAdapter.notifyDataSetChanged(); // Refresh the RecyclerView
-
             }
 
             @Override
             public void onFailure(Exception e) {
-                // TODO: Handle failure of fetching comments
+                Log.e(TAG, "Failed to fetch comments", e);
             }
         });
     }
