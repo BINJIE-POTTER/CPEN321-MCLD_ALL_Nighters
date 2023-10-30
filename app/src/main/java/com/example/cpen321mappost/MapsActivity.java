@@ -61,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String TAG = "MapsActivity";
     private Marker selectedMarker = null;
     private Location currentLocation;
-    LatLng currentLatLng;
+    public LatLng currentLatLng;
     private ArrayList<Marker> markerList;
 
     public interface JsonPostCallback {

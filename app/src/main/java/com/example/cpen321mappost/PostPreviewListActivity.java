@@ -166,7 +166,7 @@ public class PostPreviewListActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(List<Post> fetchedPosts) {
 
-                        Log.d(TAG, "Succeed on getSearchedPostss(), " + fetchedPosts.toString());
+                        Log.d(TAG, "Succeed on getSearchedPosts(), " + fetchedPosts.toString());
 
                         posts.clear();
                         posts.addAll(fetchedPosts);
@@ -184,6 +184,33 @@ public class PostPreviewListActivity extends AppCompatActivity {
                 break;
 
             case "tag":
+                ArrayList<String> tagsList = intent.getStringArrayListExtra("tagsList");
+                String userCurrentLat = intent.getStringExtra("userCurrentLat");
+                String userCurrentLon = intent.getStringExtra("userCurrentLon");
+
+
+
+                if (tagsList != null) {
+                    postManager.getTagsSelectedPosts(userCurrentLat,userCurrentLon, tagsList,this, new PostManager.PostCallback() {
+                        @SuppressLint("NotifyDataSetChanged")
+                        @Override
+                        public void onSuccess(List<Post> fetchedPosts) {
+
+                            Log.d(TAG, "Succeed on getTagsSelectedPosts(), " + fetchedPosts.toString());
+
+                            posts.clear();
+                            posts.addAll(fetchedPosts);
+                            adapter.notifyDataSetChanged();
+
+                        }
+                        @Override
+                        public void onFailure(Exception e) {
+
+                        }
+                    });
+
+                }
+
 
                 break;
 

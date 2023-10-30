@@ -8,10 +8,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class TagActivity extends AppCompatActivity {
     private static final PostManager postManager = new PostManager();
     private static final String TAG = "TagActivity";
+
+    private ArrayList<String> tagsList;
 
 
 
@@ -28,6 +31,7 @@ public class TagActivity extends AppCompatActivity {
             @Override
             public void onSuccess( ArrayList<String> tags) {
                 Log.e(TAG, "Get tags successfully");
+                tagsList=tags;
 
 
             }
@@ -38,6 +42,23 @@ public class TagActivity extends AppCompatActivity {
 
             }
         });
+
+
+        //sara's work
+        ArrayList<String> test = new ArrayList<>(Arrays.asList("tag1", "tag2", "tag3")); // Example tags
+        Intent tagIntent = new Intent(TagActivity.this, PostPreviewListActivity.class);
+        tagIntent.putExtra("userCurrentLat", latitude);
+        tagIntent.putExtra("userCurrentLon", longitude);
+
+//        tagIntent.putStringArrayListExtra("tagsList", tagsList);
+        tagIntent.putStringArrayListExtra("tagsList", test);
+
+
+        startActivity(tagIntent);
+
+
+
+        //end sara's work
 
 
 
