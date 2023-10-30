@@ -1,61 +1,69 @@
 package com.example.cpen321mappost;
+
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.cpen321mappost.Comment;
 
+import java.util.List;
 
-public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
+public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
+    private static List<Comment> commentList;
+    private static final String TAG = "CommentAdapter";
     private static final ProfileManager profileManager = new ProfileManager();
 
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView textViewComment;
 
-    private Comment[] comments;
+        public ViewHolder(View view) {
+            super(view);
+            textViewComment = view.findViewById(R.id.textViewComment);
 
-    public CommentAdapter(Comment[] comments) {
-        this.comments = comments;
+            // You can keep onClick logic if it's intentional to navigate to Post details from comments.
+            // If not, you should remove it or revise for what should happen when clicking on a comment.
+        }
+    }
+
+    public CommentAdapter(List<Comment> commentList) {
+        CommentAdapter.commentList = commentList;
     }
 
     @NonNull
     @Override
-    public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_item, parent, false);
-        return new CommentViewHolder(view);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.comment_item, parent, false);
+        return new ViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
-        holder.bind(comments[position]);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Comment comment = commentList.get(position);
+
+        profileManager.getAuthor(comment.getUid(), new ProfileManager.AuthorCallback() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onAuthorRetrieved(String authorName) {
+
+                holder.textViewComment.setText(authorName + ": \n" + comment.getContent());
+
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+
     }
 
     @Override
     public int getItemCount() {
-        return comments.length;
+        return commentList.size();
     }
 
-    public static class CommentViewHolder extends RecyclerView.ViewHolder {
-
-        TextView textViewComment;
-
-        public CommentViewHolder(@NonNull View itemView) {
-            super(itemView);
-            textViewComment = itemView.findViewById(R.id.textViewComment);
-        }
-
-        public void bind(Comment comment) {
-            String uid= comment.getUid();
-            profileManager.getAuthor(uid, new ProfileManager.AuthorCallback() {
-                @Override
-                public void onAuthorRetrieved(String authorName) {
-                    textViewComment.setText(  authorName + comment.getContent());
-                }
-                @Override
-                public void onError(Exception e) {
-
-                }
-            });
-        }
-    }
 }

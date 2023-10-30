@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -68,6 +69,12 @@ public class PostDetailActivity extends AppCompatActivity {
                 textViewMainContent.setText(post.getContent().getBody());
 
                 uid = post.getUserId();
+
+                if (Objects.equals(uid, User.getInstance().getUserId())){
+
+
+
+                }
                 profileManager.getAuthor(post.getUserId(), new ProfileManager.AuthorCallback() {
                     @Override
                     public void onAuthorRetrieved(String authorName) {
