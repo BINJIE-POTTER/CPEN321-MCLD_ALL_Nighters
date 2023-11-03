@@ -64,7 +64,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker selectedMarker = null;
     private Location currentLocation;
     public LatLng currentLatLng;
-    private ArrayList<Marker> markerList;
+    private ArrayList<Marker> markerList= null;
+    private boolean isPermissionGranted =false;
 
     //ChatGPT usage: Yes
     public interface JsonPostCallback {
@@ -110,6 +111,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (lastKnownLocation != null) {
                 currentLocation = lastKnownLocation;
                 onLocationChanged(lastKnownLocation);  // Update the map with the last known location
+                isPermissionGranted =true;
             }
 
         }
@@ -121,13 +123,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1234 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             startLocationUpdates();
+            initializeBlueMarkers();
         }
     }
+
 
     //ChatGPT usage: Partial
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        if(isPermissionGranted )
+        {
+            initializeBlueMarkers();
+        }
+
+        mMap.setOnMarkerClickListener(marker -> {
+            selectedMarker = marker;
+            displayLocationMenu(marker.getPosition().latitude, marker.getPosition().longitude, "create_review_Post");
+            return true; // Return true to indicate the click event has been handled
+        });
+
+        mMap.setOnMapClickListener(latLng -> {
+            if (selectedMarker != null) {
+                selectedMarker.remove();
+            }
+
+            boolean isNearMarker = false;
+            for (Marker marker : markerList) {
+                if (isNearby(marker.getPosition().latitude, marker.getPosition().longitude, latLng, CLICKABLE_RADIUS)) {
+                    selectedMarker = marker;
+                    displayLocationMenu(marker.getPosition().latitude, marker.getPosition().longitude, "create_review_Post");
+                    isNearMarker = true;
+                    break;
+                }
+            }
+
+            if (!isNearMarker) {
+                selectedMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Selected Location"));
+                displayLocationMenu(latLng.latitude, latLng.longitude, "createPostOnly");
+                selectedMarker.remove();
+
+            }
+        });
+
+
+
+    }
+    public void initializeBlueMarkers()
+    {
 
         //Show all posts:
         JSONObject coordinate = new JSONObject();
@@ -164,41 +208,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }, 3000); // 3000ms delay to show the toast again after the initial showing
             }
         });
-        mMap.setOnMarkerClickListener(marker -> {
-            selectedMarker = marker;
-            displayLocationMenu(marker.getPosition().latitude, marker.getPosition().longitude, "create_review_Post");
-            return true; // Return true to indicate the click event has been handled
-        });
-
-        mMap.setOnMapClickListener(latLng -> {
-            if (selectedMarker != null) {
-                selectedMarker.remove();
-            }
-
-            boolean isNearMarker = false;
-            for (Marker marker : markerList) {
-                if (isNearby(marker.getPosition().latitude, marker.getPosition().longitude, latLng, CLICKABLE_RADIUS)) {
-                    selectedMarker = marker;
-                    displayLocationMenu(marker.getPosition().latitude, marker.getPosition().longitude, "create_review_Post");
-                    isNearMarker = true;
-                    break;
-                }
-            }
-
-            if (!isNearMarker) {
-                selectedMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Selected Location"));
-                displayLocationMenu(latLng.latitude, latLng.longitude, "createPostOnly");
-                selectedMarker.remove();
-
-            }
-        });
-
-
 
     }
 
     //ChatGPT usage: Partial
      public void getClusteredPostData(JSONObject coordinate, final Activity activity, final MapsActivity.JsonPostCallback callback){
+
 
         String url = "http://4.204.251.146:8081/posts/cluster";
 
