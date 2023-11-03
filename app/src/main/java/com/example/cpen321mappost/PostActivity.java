@@ -21,19 +21,8 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-
-import com.google.gson.Gson;
-
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import org.json.JSONObject;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -44,16 +33,12 @@ import okhttp3.Response;
 
 public class PostActivity extends AppCompatActivity {
     private ImageView imgPreview;
-    private EditText titleEditText, mainTextEditText;
+    private EditText titleEditText;
+    private EditText mainTextEditText;
+
     private Button uploadImageButton;
     private Button saveButton;
     final static String TAG = "PostActivity";
-
-    //ChatGPT usage: Yes
-    public interface JsonPostCallback {
-        void onSuccess(JSONObject postedData);
-        void onFailure(Exception e);
-    }
 
     //ChatGPT usage: Yes
     private final ActivityResultLauncher<String[]> requestPermissionLauncher =
@@ -64,6 +49,7 @@ public class PostActivity extends AppCompatActivity {
             });
 
     //ChatGPT usage: Yes
+
     private final ActivityResultLauncher<Intent> getImage = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -72,6 +58,15 @@ public class PostActivity extends AppCompatActivity {
                     imgPreview.setImageURI(imageUri);
                 }
             });
+
+    //ChatGPT usage: Yes
+    public interface JsonPostCallback {
+        void onSuccess(JSONObject postedData);
+        void onFailure(Exception e);
+    }
+
+
+
 
     //ChatGPT usage: Partial
     @Override

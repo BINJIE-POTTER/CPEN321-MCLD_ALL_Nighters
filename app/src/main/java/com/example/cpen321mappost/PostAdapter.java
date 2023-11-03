@@ -19,7 +19,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     //ChatGPT usage: Yes
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView textViewAuthor, textViewTitle, textViewContent, textViewLikes;
+        public TextView textViewAuthor;
+        public TextView  textViewTitle;
+        public TextView textViewContent;
+        public TextView textViewLikes;
+
 
         public ViewHolder(View view) {
             super(view);
@@ -75,6 +79,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             @Override
             public void onError(Exception e) {
                 // Handle the error (e.g., logging, display a default name, etc.)
+                Log.e(TAG, "Failed to get author in PostAdapter", e);
+
             }
         });
 

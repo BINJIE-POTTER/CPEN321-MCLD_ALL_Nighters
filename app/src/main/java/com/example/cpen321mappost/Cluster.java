@@ -1,10 +1,4 @@
 package com.example.cpen321mappost;
-
-import android.app.Activity;
-import android.util.Log;
-
-import com.google.gson.Gson;
-
 import java.util.List;
 
 public class Cluster {

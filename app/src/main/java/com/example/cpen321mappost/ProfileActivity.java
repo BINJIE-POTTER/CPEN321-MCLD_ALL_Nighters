@@ -10,8 +10,17 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class ProfileActivity extends AppCompatActivity {
-    private TextView nameTextView, emailTextView, genderTextView, birthdateTextView, userIdTextView;
-    private Button nameEditButton, emailEditButton, genderEditButton, birthdateEditButton, viewPostsButton;
+    private TextView nameTextView;
+    private TextView emailTextView;
+    private TextView genderTextView;
+    private TextView birthdateTextView;
+    private TextView userIdTextView;
+    private Button nameEditButton;
+    private Button emailEditButton;
+    private Button genderEditButton;
+    private Button birthdateEditButton;
+    private Button viewPostsButton;
+
     private User user;
     private ProfileManager profileManager;
     final static String TAG = "ProfileManager Activity";

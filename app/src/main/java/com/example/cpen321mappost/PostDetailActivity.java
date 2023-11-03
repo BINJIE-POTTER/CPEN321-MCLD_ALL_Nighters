@@ -1,9 +1,6 @@
 package com.example.cpen321mappost;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,24 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.Iterator;
 import java.util.Objects;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.HttpUrl;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class PostDetailActivity extends AppCompatActivity {
     private static final String TAG = "PostDetailActivity";
@@ -43,7 +23,6 @@ public class PostDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
 
-        TextView textViewPostDetail = findViewById(R.id.textViewPostDetail);
         TextView textViewTitle = findViewById(R.id.textViewTitle);
         TextView textViewMainContent = findViewById(R.id.textViewMainContent);
 

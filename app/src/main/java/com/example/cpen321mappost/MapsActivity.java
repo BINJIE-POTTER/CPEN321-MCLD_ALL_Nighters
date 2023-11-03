@@ -21,38 +21,26 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.widget.PopupMenu;
-
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {

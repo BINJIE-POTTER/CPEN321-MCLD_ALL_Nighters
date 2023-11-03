@@ -3,23 +3,18 @@ package com.example.cpen321mappost;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 public class PostPreviewListActivity extends AppCompatActivity {
     private final static String TAG = "PostPreviewListActivity Activity";
@@ -73,6 +68,15 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Exception e) {
+                        Toast.makeText(PostPreviewListActivity.this, "Failed to get user's all posts ", Toast.LENGTH_SHORT).show();
+                        final Toast toast = Toast.makeText(PostPreviewListActivity.this, "Failed to get user's all posts in PostPreviewList", Toast.LENGTH_LONG);
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                toast.show();
+                            }
+                        }, 3000); // 3000ms delay to show the toast again after the initial showing
 
                     }
                 });

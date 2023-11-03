@@ -1,5 +1,6 @@
 package com.example.cpen321mappost;
 
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 
@@ -17,7 +18,8 @@ import java.util.Objects;
 
 public class ProfileEditingActivity extends AppCompatActivity {
     private TextInputEditText newValueText;
-    private Button saveButton, cancelButton;
+    private Button saveButton;
+    private Button cancelButton;
     private ProfileManager profileManager;
     private String hint;
     private User user;
@@ -84,6 +86,16 @@ public class ProfileEditingActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Exception e) {
+                Toast.makeText(ProfileEditingActivity.this, "Failed to get User Data in ProfileEditingActivity", Toast.LENGTH_SHORT).show();
+                final Toast toast = Toast.makeText(ProfileEditingActivity.this, "Failed to get User Data in ProfileEditingActivity", Toast.LENGTH_LONG);
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        toast.show();
+                    }
+                }, 3000); // 3000ms delay to show the toast again after the initial showing
+
 
             }
         });
