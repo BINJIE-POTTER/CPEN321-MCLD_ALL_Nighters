@@ -41,6 +41,7 @@ public class ProfileEditingActivity extends AppCompatActivity {
         cancelButton = findViewById(R.id.edit_profile_cancel_button);
 
         newValueText = findViewById(R.id.textInputEditText);
+
         //Implement the live checking:
         newValueText.addTextChangedListener(new TextWatcher() {
             @Override
