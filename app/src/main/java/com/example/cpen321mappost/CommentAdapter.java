@@ -1,13 +1,11 @@
 package com.example.cpen321mappost;
 
 import android.annotation.SuppressLint;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
-    private static List<Comment> commentList;
+    private final List<Comment> commentList;
     private static final String TAG = "CommentAdapter";
     private static final ProfileManager profileManager = new ProfileManager();
 
@@ -31,7 +29,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     //ChatGPT usage: No
     public CommentAdapter(List<Comment> commentList) {
-        CommentAdapter.commentList = commentList;
+        this.commentList = commentList;
     }
 
     //ChatGPT usage: Partial

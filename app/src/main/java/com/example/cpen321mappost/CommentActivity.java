@@ -36,7 +36,6 @@ public class CommentActivity extends AppCompatActivity {
     private static final String TAG = "CommentActivity";
     private RecyclerView recyclerViewComments;
     private EditText editTextComment;
-    private Button buttonSubmitComment;
     private String pid;
 
     //ChatGPT usage: Yes
@@ -55,7 +54,7 @@ public class CommentActivity extends AppCompatActivity {
         recyclerViewComments = findViewById(R.id.recyclerViewComments);
         recyclerViewComments.setLayoutManager(new LinearLayoutManager(this)); // Set LayoutManager here
         editTextComment = findViewById(R.id.editTextComment);
-        buttonSubmitComment = findViewById(R.id.buttonSubmitComment);
+        Button buttonSubmitComment = findViewById(R.id.buttonSubmitComment);
 
         //Implement the live checking:
         editTextComment.addTextChangedListener(new TextWatcher() {
