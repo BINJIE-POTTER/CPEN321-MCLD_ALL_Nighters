@@ -10,16 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class ProfileActivity extends AppCompatActivity {
-    private TextView nameTextView;
-    private TextView emailTextView;
-    private TextView genderTextView;
-    private TextView birthdateTextView;
-    private TextView userIdTextView;
-    private Button nameEditButton;
-    private Button emailEditButton;
-    private Button genderEditButton;
-    private Button birthdateEditButton;
-    private Button viewPostsButton;
+
 
     private User user;
     private ProfileManager profileManager;
@@ -30,6 +21,17 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        TextView nameTextView;
+        TextView emailTextView;
+        TextView genderTextView;
+        TextView birthdateTextView;
+        TextView userIdTextView;
+        Button nameEditButton;
+        Button emailEditButton;
+        Button genderEditButton;
+        Button birthdateEditButton;
+        Button viewPostsButton;
 
         user = User.getInstance();
         profileManager = new ProfileManager();

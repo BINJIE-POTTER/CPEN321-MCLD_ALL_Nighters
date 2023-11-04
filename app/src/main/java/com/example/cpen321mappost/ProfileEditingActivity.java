@@ -17,11 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Objects;
 
 public class ProfileEditingActivity extends AppCompatActivity {
-    private TextInputEditText newValueText;
-    private Button saveButton;
-    private Button cancelButton;
     private ProfileManager profileManager;
-    private String hint;
     private User user;
     final static String TAG = "ProfileEditing Activity";
 
@@ -31,6 +27,10 @@ public class ProfileEditingActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
+        TextInputEditText newValueText;
+        Button saveButton;
+        Button cancelButton;
+
 
         user = User.getInstance();
         profileManager = new ProfileManager();
@@ -47,6 +47,8 @@ public class ProfileEditingActivity extends AppCompatActivity {
         profileManager.getUserData(user, this, new User.UserCallback() {
             @Override
             public String onSuccess(User user) {
+                String hint;
+
 
                 switch (Objects.requireNonNull(item)) {
 

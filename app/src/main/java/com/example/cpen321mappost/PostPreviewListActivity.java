@@ -20,8 +20,7 @@ public class PostPreviewListActivity extends AppCompatActivity {
     private final static String TAG = "PostPreviewListActivity Activity";
     private static final ClusterManager clusterManager = ClusterManager.getInstance();
     private String userId;
-    private double latitude;
-    private double longitude;
+
 
     //ChatGPT usage: Partial
     @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
@@ -31,6 +30,9 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
         PostManager postManager = new PostManager();
         ProfileManager profileManager = new ProfileManager();
+
+        double latitude;
+        double longitude;
 
         RecyclerView recyclerView = findViewById(R.id.postsRecyclerView);
         TextView modeTitle = findViewById(R.id.post_preview_list_mode_name_id);

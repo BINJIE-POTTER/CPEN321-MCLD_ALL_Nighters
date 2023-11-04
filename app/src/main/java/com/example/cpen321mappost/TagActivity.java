@@ -19,13 +19,13 @@ public class TagActivity extends AppCompatActivity {
     private static final String TAG = "TagActivity";
     private static final Set<String> tagsSet = new HashSet<>();
     private RecyclerView recyclerViewTags;
-    private Button buttonSaveTags;
 
     //ChatGPT usage: Partial
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tag);
+        Button buttonSaveTags;
 
         Intent receivedIntent = getIntent();
         String latitude = receivedIntent.getStringExtra("latitude");

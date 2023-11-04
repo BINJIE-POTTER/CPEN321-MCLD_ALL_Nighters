@@ -8,14 +8,13 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SearchActivity extends AppCompatActivity {
-    private EditText searchText;
-    private Button searchButton;
-
     //ChatGPT usage: Partial
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        EditText searchText;
+        Button searchButton;
         searchText = findViewById(R.id.search_edit_text);
         searchButton = findViewById(R.id.search_button);
 
