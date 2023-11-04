@@ -3,6 +3,8 @@ package com.example.cpen321mappost;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,6 +56,28 @@ public class CommentActivity extends AppCompatActivity {
         recyclerViewComments.setLayoutManager(new LinearLayoutManager(this)); // Set LayoutManager here
         editTextComment = findViewById(R.id.editTextComment);
         buttonSubmitComment = findViewById(R.id.buttonSubmitComment);
+
+        //Implement the live checking:
+        editTextComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No need to implement anything here for this case
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // No need to implement anything here for this case
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String result = s.toString().replaceAll("<", "");
+                if (!s.toString().equals(result)) {
+                    editTextComment.setText(result);
+                    editTextComment.setSelection(result.length()); // Set cursor to the end
+                }
+            }
+        });
 
         Intent receivedIntent = getIntent();
         pid = receivedIntent.getStringExtra("pid");

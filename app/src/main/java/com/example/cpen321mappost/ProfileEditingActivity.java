@@ -1,6 +1,8 @@
 package com.example.cpen321mappost;
 
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 
@@ -39,6 +41,28 @@ public class ProfileEditingActivity extends AppCompatActivity {
         cancelButton = findViewById(R.id.edit_profile_cancel_button);
 
         newValueText = findViewById(R.id.textInputEditText);
+        //Implement the live checking:
+        newValueText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No need to implement anything here for this case
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // No need to implement anything here for this case
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String result = s.toString().replaceAll("<", "");
+                if (!s.toString().equals(result)) {
+                    newValueText.setText(result);
+                    newValueText.setSelection(result.length()); // Set cursor to the end
+                }
+            }
+        });
+
 
         Intent intent = getIntent();
 
