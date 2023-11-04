@@ -10,10 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class ProfileActivity extends AppCompatActivity {
-
-
     private User user;
-    private ProfileManager profileManager;
     final static String TAG = "ProfileManager Activity";
 
     //ChatGPT usage: Partial
@@ -34,7 +31,7 @@ public class ProfileActivity extends AppCompatActivity {
         Button viewPostsButton;
 
         user = User.getInstance();
-        profileManager = new ProfileManager();
+        ProfileManager profileManager = new ProfileManager();
 
         Log.d(TAG, "User ID: " + user.getUserId() + "," + "User Email: " + user.getUserEmail() + "," + "User name: " + user.getUserName() + ",");
 

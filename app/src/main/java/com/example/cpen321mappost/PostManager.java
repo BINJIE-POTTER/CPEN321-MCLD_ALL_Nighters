@@ -20,7 +20,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class PostManager {
-    private static final String TAG = "UserDataFetcher"; // Tag for your log messages
+    private static final String TAG = "UserDataFetcher";
+    final Gson gson = new Gson();
 
     //ChatGPT usage: Partial
     public void getSinglePostData(String pid, final Activity activity, final JsonCallback<Post> callback){
@@ -36,38 +37,39 @@ public class PostManager {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(() -> {
-                    Log.e(TAG, "Failed to get post data", e);
+
+                    Log.e(TAG, "FAILURE GET POST: " + e);
+
                     callback.onFailure(e);
+
                 });
             }
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
                 activity.runOnUiThread(() -> {
-                    if (response.isSuccessful()) {
-                        try {
-                            if (response.code() == 200) {
-                                // The operation was successful.
-                                Log.d(TAG, "Data posted successfully!");
-                                String responseData = response.body().string();
-                                Gson gson = new Gson();
-                                Post post = gson.fromJson(responseData, Post.class);
-                                callback.onSuccess(post); // already on UI thread, safe to call directly
 
-                            } else {
-                                // Handle other response codes (like 4xx or 5xx errors)
-                                IOException exception = new IOException("Unexpected response when posting data: " + response);
-                                Log.e(TAG, "Error posting data", exception);
-                                callback.onFailure(exception); // Notify callback about the failure
-                            }
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        } finally {
-                            response.close(); // Important to avoid leaking resources
-                        }
+                    if (!response.isSuccessful()) {
+
+                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+
+                        callback.onFailure(new IOException("Unexpected response " + response));
+
                     } else {
-                        IOException exception = new IOException("Unexpected code " + response);
-                        Log.e(TAG, "Error posting data", exception);
-                        callback.onFailure(exception); // Notify callback about the failure
+
+                        Log.d(TAG, "GET POST SUCCEED!");
+
+                        assert response.body() != null;
+                        String responseData = null;
+                        try {
+                            responseData = response.body().string();
+                        } catch (IOException e) {
+                            Log.e(TAG, e.toString());
+                        }
+
+                        Post post = gson.fromJson(responseData, Post.class);
+
+                        callback.onSuccess(post);
+
                     }
                 });
             }
@@ -89,33 +91,30 @@ public class PostManager {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(() -> {
-                    Log.e(TAG, "Failed to delete post", e);
-                    callback.onFailure(e); // Notify callback about the failure
+
+                    Log.e(TAG, "FAILURE DELETE USER: " + e);
+
+                    callback.onFailure(e);
+
                 });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 activity.runOnUiThread(() -> {
-                    if (response.isSuccessful()) {
-                        try {
-                            if (response.code() == 200) {
-                                Log.d(TAG, "Post deleted successfully!");
-                                callback.onSuccess(null); // Notify callback about the successful deletion
-                            } else {
-                                IOException exception = new IOException("Unexpected response when deleting post: " + response);
-                                Log.e(TAG, "Error deleting post", exception);
-                                callback.onFailure(exception); // Notify callback about the failure
-                            }
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        } finally {
-                            response.close();
-                        }
+
+                    if (!response.isSuccessful()) {
+
+                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+
+                        callback.onFailure(new IOException("Unexpected response " + response));
+
                     } else {
-                        IOException exception = new IOException("Unexpected code " + response);
-                        Log.e(TAG, "Error deleting post", exception);
-                        callback.onFailure(exception); // Notify callback about the failure
+
+                        Log.d(TAG, "DELETE POST SUCCEED");
+
+                        callback.onSuccess(null);
+
                     }
                 });
             }
@@ -135,8 +134,6 @@ public class PostManager {
         Log.d(TAG, "This is the liked post data: " + jsonBody);
 
         RequestBody body = RequestBody.create(jsonBody, MediaType.parse("application/json; charset=utf-8"));
-
-        // Build the request
         Request request = new Request.Builder()
                 .url(url)
                 .put(body)
@@ -146,33 +143,30 @@ public class PostManager {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(() -> {
-                    Log.e(TAG, "Failed to like user", e);
-                    callback.onFailure(e); // Notify callback about the failure
+
+                    Log.e(TAG, "FAILURE LIKE POST: " + e);
+
+                    callback.onFailure(e);
+
                 });
             }
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                activity.runOnUiThread(() -> {
-                    if (response.isSuccessful()) {
-                        try {
-                            if (response.code() == 200) {
-                                // The operation was successful.
-                                Log.d(TAG, "like user successfully!");
-                                callback.onSuccess(null); // Notify callback about the success
 
-                            } else {
-                                // Handle other response codes (like 4xx or 5xx errors)
-                                IOException exception = new IOException("Unexpected response when liking user: " + response);
-                                Log.e(TAG, "Error liking user", exception);
-                                callback.onFailure(exception); // Notify callback about the failure
-                            }
-                        } finally {
-                            response.close(); // Important to avoid leaking resources
-                        }
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                activity.runOnUiThread(() -> {
+
+                    if (!response.isSuccessful()) {
+
+                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+
+                        callback.onFailure(new IOException("Unexpected response " + response));
+
                     } else {
-                        IOException exception = new IOException("Unexpected code " + response);
-                        Log.e(TAG, "Error posting data", exception);
-                        callback.onFailure(exception); // Notify callback about the failure
+
+                        Log.d(TAG, "LIKE POST SUCCEED");
+
+                        callback.onSuccess(null);
+
                     }
                 });
             }
@@ -184,7 +178,6 @@ public class PostManager {
 
         String url = "http://4.204.251.146:8081/tags/nearby/?latitude=" + latitude + "&longitude=" + longitute;
         OkHttpClient httpClient = HttpClient.getInstance();
-
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -193,40 +186,40 @@ public class PostManager {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(() -> {
-                    Log.e(TAG, "Failed to get post data", e);
+
+                    Log.e(TAG, "FAILURE GET TAGS: " + e);
+
                     callback.onFailure(e);
+
                 });
             }
+
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
                 activity.runOnUiThread(() -> {
-                    if (response.isSuccessful()) {
-                        try {
-                            if (response.code() == 200) {
-                                // The operation was successful.
-                                Log.d(TAG, "Data posted successfully!");
 
-                                String responseData = response.body().string();
-                                Gson gson = new Gson();
-                                Type listType = new TypeToken<ArrayList<String>>(){}.getType();
-                                ArrayList<String> tagsList = gson.fromJson(responseData, listType);
-                                callback.onSuccess(tagsList); // already on UI thread, safe to call directly
+                    if (!response.isSuccessful()) {
 
-                            } else {
-                                // Handle other response codes (like 4xx or 5xx errors)
-                                IOException exception = new IOException("Unexpected response when posting data: " + response);
-                                Log.e(TAG, "Error posting data", exception);
-                                callback.onFailure(exception); // Notify callback about the failure
-                            }
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        } finally {
-                            response.close(); // Important to avoid leaking resources
-                        }
+                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+
+                        callback.onFailure(new IOException("Unexpected response " + response));
+
                     } else {
-                        IOException exception = new IOException("Unexpected code " + response);
-                        Log.e(TAG, "Error posting data", exception);
-                        callback.onFailure(exception); // Notify callback about the failure
+
+                        Log.d(TAG, "GET TAGS SUCCEED");
+
+                        assert response.body() != null;
+                        String responseData = null;
+                        try {
+                            responseData = response.body().string();
+                        } catch (IOException e) {
+                            Log.e(TAG, e.toString());
+                        }
+                        Type listType = new TypeToken<ArrayList<String>>(){}.getType();
+                        ArrayList<String> tagsList = gson.fromJson(responseData, listType);
+
+                        callback.onSuccess(tagsList);
+
                     }
                 });
             }
@@ -235,6 +228,7 @@ public class PostManager {
 
     //ChatGPT usage: Partial
     public void getSearchedPosts(String searchText, final Activity activity, final PostCallback callback) {
+
         String url = "http://4.204.251.146:8081/posts/search/?keyword=" + searchText;
         OkHttpClient httpClient = HttpClient.getInstance();
         Request request = new Request.Builder()
@@ -245,52 +239,42 @@ public class PostManager {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(() -> {
-                    Log.d(TAG, "Failed to get user posts", e);
+
+                    Log.e(TAG, "FAILURE GET SEARCHED POSTS: " + e);
+
                     callback.onFailure(e);
+
                 });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 activity.runOnUiThread(() -> {
-                    try {
-                        if (!response.isSuccessful()) {
-                            Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-                            callback.onFailure(new IOException("Unexpected response " + response));
-                        } else if (response.code() == 200) {
-                            Log.d(TAG, "Succeed on get user all posts");
 
-                            List<Post> posts = null;
+                    if (!response.isSuccessful()) {
 
-                            try {
+                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
 
-                                assert response.body() != null;
-                                String responseData = response.body().string();
-                                Gson gson = new Gson();
-                                Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
-                                posts = gson.fromJson(responseData, postListType);
+                        callback.onFailure(new IOException("Unexpected response " + response));
 
-                            } catch (JsonSyntaxException e) {
+                    } else {
 
-                                Log.e(TAG, "JSON Parsing error", e);
-                                throw new IOException("Error parsing JSON", e); // Convert to IOException to handle later
+                        Log.d(TAG, "GET SEARCHED POSTS SUCCEED");
 
-                            }
+                        List<Post> posts;
 
-                            if (posts != null) {
-                                callback.onSuccess(posts); // use the correct method with List<Post>
-                            } else {
-                                throw new IOException("Error in response data"); // Handle the scenario of unsuccessful parsing
-                            }
-
-                        } else {
-                            callback.onFailure(new IOException("Unexpected response " + response));
+                        assert response.body() != null;
+                        String responseData = null;
+                        try {
+                            responseData = response.body().string();
+                        } catch (IOException e) {
+                            Log.e(TAG, e.toString());
                         }
-                    } catch (IOException e) {
-                        Log.e(TAG, "Exception handling response", e);
-                        callback.onFailure(e); // handle or pass IOException
-                    } finally {
-                        response.close(); // Important to avoid resource leaks
+                        Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
+                        posts = gson.fromJson(responseData, postListType);
+
+                        callback.onSuccess(posts);
+
                     }
                 });
             }
@@ -299,17 +283,22 @@ public class PostManager {
 
     //ChatGPT usage: Partial
     public void getTagsSelectedPosts(String latitude, String longitute, ArrayList<String> tagsList, final Activity activity, final PostCallback callback) {
-        String url = "http://4.204.251.146:8081/posts/has-tags/?latitude=" + latitude + "&longitude=" + longitute + "&tags=";
-        StringBuilder urlBuilder= new StringBuilder(url);
 
-        for(int i=0; i < tagsList.size(); i ++ )
-        {
+        String url = "http://4.204.251.146:8081/posts/has-tags/?latitude=" + latitude + "&longitude=" + longitute + "&tags=";
+        StringBuilder urlBuilder = new StringBuilder(url);
+
+        for(int i = 0; i < tagsList.size(); i++ ) {
+
             urlBuilder.append(tagsList.get(i));
-            if(i != tagsList.size() -1 )
-            {
+
+            if( i != tagsList.size() - 1 ) {
+
                 urlBuilder.append(",");
+
             }
+
         }
+
         String newUrl = urlBuilder.toString();
 
         OkHttpClient httpClient = HttpClient.getInstance();
@@ -321,52 +310,42 @@ public class PostManager {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(() -> {
-                    Log.d(TAG, "Failed to get user posts", e);
+
+                    Log.e(TAG, "FAILURE GET POSTS FILTERED BY TAGS: " + e);
+
                     callback.onFailure(e);
+
                 });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 activity.runOnUiThread(() -> {
-                    try {
-                        if (!response.isSuccessful()) {
-                            Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-                            callback.onFailure(new IOException("Unexpected response " + response));
-                        } else if (response.code() == 200) {
-                            Log.d(TAG, "Succeed on get user all posts");
 
-                            List<Post> posts = null;
+                    if (!response.isSuccessful()) {
 
-                            try {
+                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
 
-                                assert response.body() != null;
-                                String responseData = response.body().string();
-                                Gson gson = new Gson();
-                                Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
-                                posts = gson.fromJson(responseData, postListType);
+                        callback.onFailure(new IOException("Unexpected response " + response));
 
-                            } catch (JsonSyntaxException e) {
+                    } else {
 
-                                Log.e(TAG, "JSON Parsing error", e);
-                                throw new IOException("Error parsing JSON", e); // Convert to IOException to handle later
+                        Log.d(TAG, "GET POSTS FILTERED BY TAGS SUCCEED");
 
-                            }
+                        List<Post> posts;
 
-                            if (posts != null) {
-                                callback.onSuccess(posts); // use the correct method with List<Post>
-                            } else {
-                                throw new IOException("Error in response data"); // Handle the scenario of unsuccessful parsing
-                            }
-
-                        } else {
-                            callback.onFailure(new IOException("Unexpected response " + response));
+                        assert response.body() != null;
+                        String responseData = null;
+                        try {
+                            responseData = response.body().string();
+                        } catch (IOException e) {
+                            Log.e(TAG, e.toString());
                         }
-                    } catch (IOException e) {
-                        Log.e(TAG, "Exception handling response", e);
-                        callback.onFailure(e); // handle or pass IOException
-                    } finally {
-                        response.close(); // Important to avoid resource leaks
+                        Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
+                        posts = gson.fromJson(responseData, postListType);
+
+                        callback.onSuccess(posts);
+
                     }
                 });
             }
@@ -375,7 +354,8 @@ public class PostManager {
 
     //ChatGPT usage: Partial
     public void getUserAllPosts(String userId, final Activity activity, final PostCallback callback) {
-        String url = "http://4.204.251.146:8081/posts/from-user/?userId=" + userId; // Replace with your actual posts endpoint
+
+        String url = "http://4.204.251.146:8081/posts/from-user/?userId=" + userId;
         OkHttpClient httpClient = HttpClient.getInstance();
         Request request = new Request.Builder()
                 .url(url)
@@ -385,52 +365,42 @@ public class PostManager {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(() -> {
-                    Log.d(TAG, "Failed to get user posts", e);
+
+                    Log.e(TAG, "FAILURE GET POSTS BY USER: " + e);
+
                     callback.onFailure(e);
+
                 });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 activity.runOnUiThread(() -> {
-                    try {
-                        if (!response.isSuccessful()) {
-                            Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-                            callback.onFailure(new IOException("Unexpected response " + response));
-                        } else if (response.code() == 200) {
-                            Log.d(TAG, "Succeed on get user all posts");
 
-                            List<Post> posts = null;
+                    if (!response.isSuccessful()) {
 
-                            try {
+                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
 
-                                assert response.body() != null;
-                                String responseData = response.body().string();
-                                Gson gson = new Gson();
-                                Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
-                                posts = gson.fromJson(responseData, postListType);
+                        callback.onFailure(new IOException("Unexpected response " + response));
 
-                            } catch (JsonSyntaxException e) {
+                    } else {
 
-                                Log.e(TAG, "JSON Parsing error", e);
-                                throw new IOException("Error parsing JSON", e); // Convert to IOException to handle later
+                        Log.d(TAG, "GET POSTS BY USER SUCCEED");
 
-                            }
+                        List<Post> posts;
 
-                            if (posts != null) {
-                                callback.onSuccess(posts); // use the correct method with List<Post>
-                            } else {
-                                throw new IOException("Error in response data"); // Handle the scenario of unsuccessful parsing
-                            }
-
-                        } else {
-                            callback.onFailure(new IOException("Unexpected response " + response));
+                        assert response.body() != null;
+                        String responseData = null;
+                        try {
+                            responseData = response.body().string();
+                        } catch (IOException e) {
+                            Log.e(TAG, e.toString());
                         }
-                    } catch (IOException e) {
-                        Log.e(TAG, "Exception handling response", e);
-                        callback.onFailure(e); // handle or pass IOException
-                    } finally {
-                        response.close(); // Important to avoid resource leaks
+                        Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
+                        posts = gson.fromJson(responseData, postListType);
+
+                        callback.onSuccess(posts);
+
                     }
                 });
             }

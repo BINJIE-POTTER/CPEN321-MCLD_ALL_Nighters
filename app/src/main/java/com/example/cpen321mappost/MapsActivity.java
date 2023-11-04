@@ -64,7 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        com.example.cpen321mappost.databinding.ActivityMapsBinding binding = ActivityMapsBinding.inflate(getLayoutInflater());
+        ActivityMapsBinding binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -201,9 +201,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //ChatGPT usage: Partial
      public void getClusteredPostData(JSONObject coordinate, final Activity activity, final MapsActivity.JsonPostCallback callback){
 
-
-        String url = "http://4.204.251.146:8081/posts/cluster";
-
+         String url = "http://4.204.251.146:8081/posts/cluster";
+         OkHttpClient httpClient = HttpClient.getInstance();
          HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
 
          // Convert the JSONObject to query parameters
@@ -222,47 +221,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                  .url(fullUrl)
                  .build();
 
-         OkHttpClient httpClient = HttpClient.getInstance();
-
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(() -> {
-                    Log.e(TAG, "Failed to post data", e);
-                    callback.onFailure(e); // Notify callback about the failure
+
+                    Log.e(TAG, "FAILURE GET CLUSTERED POSTS: " + e);
+
+                    callback.onFailure(e);
+
                 });
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
                 activity.runOnUiThread(() -> {
-                    if (response.isSuccessful()) {
-                        try {
-                            if (response.code() == 200) {
-                                // The operation was successful.
-                                Log.d(TAG, "Data posted successfully!");
-                                assert response.body() != null;
-                                String responseData = response.body().string();
-                                Gson gson = new Gson();
-                                Cluster[] clusters = gson.fromJson(responseData, Cluster[].class);
-                                callback.onSuccess(clusters); // already on UI thread, safe to call directly
 
+                    if (!response.isSuccessful()) {
 
-                            } else {
-                                // Handle other response codes (like 4xx or 5xx errors)
-                                IOException exception = new IOException("Unexpected response when posting data: " + response);
-                                Log.e(TAG, "Error posting data", exception);
-                                callback.onFailure(exception); // Notify callback about the failure
-                            }
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        } finally {
-                            response.close(); // Important to avoid leaking resources
-                        }
+                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+
+                        callback.onFailure(new IOException("Unexpected response " + response));
+
                     } else {
-                        IOException exception = new IOException("Unexpected code " + response);
-                        Log.e(TAG, "Error posting data", exception);
-                        callback.onFailure(exception); // Notify callback about the failure
+
+                        Log.d(TAG, "GET CLUSTERED POSTS SUCCEED");
+
+                        assert response.body() != null;
+                        String responseData = null;
+                        try {
+                            responseData = response.body().string();
+                        } catch (IOException e) {
+                            Log.e(TAG, e.toString());
+                        }
+
+                        Gson gson = new Gson();
+
+                        Cluster[] clusters = gson.fromJson(responseData, Cluster[].class);
+
+                        callback.onSuccess(clusters);
+
                     }
                 });
             }

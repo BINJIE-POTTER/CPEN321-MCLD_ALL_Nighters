@@ -63,7 +63,7 @@ public class ProfileManager {
                         } catch (IOException e) {
                             Log.e(TAG, e.toString());
                         }
-                        Gson gson = new Gson();
+
                         User user = gson.fromJson(responseData, User.class);
 
                         callback.onSuccess(user);
