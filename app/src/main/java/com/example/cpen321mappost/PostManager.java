@@ -2,15 +2,18 @@ package com.example.cpen321mappost;
 
 import android.app.Activity;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
