@@ -8,11 +8,9 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -34,44 +32,41 @@ public class ProfileManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                // runOnUiThread means safe to update UI components like text
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d(TAG, "Failed to get user data");
-                        callback.onFailure(e);
-                    }
+                activity.runOnUiThread(() -> {
+
+                    Log.e(TAG, "FAILURE GET USER: " + e);
+
+                    callback.onFailure(e);
+
                 });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if (!response.isSuccessful()) {
-                                Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-                                callback.onFailure(new IOException("Unexpected response " + response));
-                                return;
-                            }
-                            if (response.code() == 200) {
-                                Log.d(TAG, "Succeed on get");
+                activity.runOnUiThread(() -> {
 
-                                assert response.body() != null;
-                                String responseData = response.body().string(); // your response data
-                                Gson gson = new Gson();
-                                User user = gson.fromJson(responseData, User.class);
-                                callback.onSuccess(user); // already on UI thread, safe to call directly
-                            } else {
-                                callback.onFailure(new IOException("Unexpected response " + response));
-                            }
+                    if (!response.isSuccessful()) {
+
+                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+
+                        callback.onFailure(new IOException("Unexpected response " + response));
+
+                    } else {
+
+                        Log.d(TAG, "GET USER SUCCEED");
+
+                        assert response.body() != null;
+                        String responseData;
+                        try {
+                            responseData = response.body().string();
                         } catch (IOException e) {
-                            Log.e(TAG, "Exception handling response", e);
-                            callback.onFailure(e); // handle or pass IOException
-                        } finally {
-                            response.close(); // Important to avoid resource leaks
+                            throw new RuntimeException(e);
                         }
+                        Gson gson = new Gson();
+                        User user = gson.fromJson(responseData, User.class);
+
+                        callback.onSuccess(user);
+
                     }
                 });
             }
@@ -81,22 +76,15 @@ public class ProfileManager {
     //ChatGPT usage: Yes
     public void putUserData(User user, final Activity activity, final User.UserCallback callback) {
 
-        // chage this to PUT
         String url = "http://4.204.251.146:8081/users/update-profile";
-
         OkHttpClient httpClient = HttpClient.getInstance();
 
-        // Convert the User object to JSON format
         Gson gson = new Gson();
-        String jsonUserData = gson.toJson(user); // 'user' is your User instance
+        String jsonUserData = gson.toJson(user);
 
-        Log.d(TAG, "PUT: changing user data");
-        Log.d(TAG, jsonUserData);
+        Log.d(TAG, "PUT NEW DATA: " + jsonUserData);
 
-        // Create a request body with the JSON representation of the user
         RequestBody body = RequestBody.create(jsonUserData, MediaType.parse("application/json; charset=utf-8"));
-
-        // Build the request
         Request request = new Request.Builder()
                 .url(url)
                 .put(body)
@@ -105,44 +93,31 @@ public class ProfileManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d(TAG, "Failed to update user data");
-                        callback.onFailure(e); // must be run on UI thread if updating UI components
-                    }
+                activity.runOnUiThread(() -> {
+
+                    Log.e(TAG, "FAILURE PUT USER: " + e);
+
+                    callback.onFailure(e);
+
                 });
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    throw new IOException("Unexpected code " + response);
-                }
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                activity.runOnUiThread(() -> {
 
-                // Here, you can also parse the response and create a User object if your API returns the updated user as a response.
-                // Otherwise, you might just want to confirm the success without parsing the response.
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // If you're just confirming the success, you can create a new 'success' method in your callback or pass a null user.
-                        // Or, if you've parsed a response, pass the updated user here.
-                        if (response.isSuccessful()) {
-                            try {
-                                // Here, we're not parsing a JSON response body, so we check the response directly.
-                                if (response.code() == 200) {
-                                    // The operation was successful. Notify the callback.
-                                    callback.onSuccess(user);
-                                } else {
-                                    // Handle other response codes (like 4xx or 5xx errors)
-                                    callback.onFailure(new IOException("Unexpected response when updating user: " + response));
-                                }
-                            } finally {
-                                response.close(); // Important to avoid leaking resources
-                            }
-                        } else {
-                            callback.onFailure(new IOException("Unexpected code " + response));
-                        }
+                    if (!response.isSuccessful()) {
+
+                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+
+                        callback.onFailure(new IOException("Unexpected response " + response));
+
+                    } else {
+
+                        Log.d(TAG, "PUT USER SUCCEED");
+
+                        callback.onSuccess(user);
+
                     }
                 });
             }
@@ -153,19 +128,14 @@ public class ProfileManager {
     public void postUserData(User user, final Activity activity, final User.UserCallback callback){
 
         String url = "http://4.204.251.146:8081/users";
-
         OkHttpClient httpClient = HttpClient.getInstance();
 
-        // Convert the User object to JSON format
         Gson gson = new Gson();
-        String jsonUserData = gson.toJson(user); // 'user' is your User instance
+        String jsonUserData = gson.toJson(user);
 
-        Log.d(TAG, "This is user data: " + jsonUserData);
+        Log.d(TAG, "POST USER DATA: " + jsonUserData);
 
-        // Create a request body with the JSON representation of the user
         RequestBody body = RequestBody.create(jsonUserData, MediaType.parse("application/json; charset=utf-8"));
-
-        // Build the request
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
@@ -174,55 +144,35 @@ public class ProfileManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.e(TAG, "Failed to post user data", e);
-                        callback.onFailure(e); // must be run on UI thread if updating UI components
-                    }
+                activity.runOnUiThread(() -> {
+
+                    Log.e(TAG, "FAILURE POST USER: " + e);
+
+                    callback.onFailure(e);
+
                 });
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    throw new IOException("Unexpected code " + response);
-                }
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                activity.runOnUiThread(() -> {
 
-                // Here, you can also parse the response and create a User object if your API returns the updated user as a response.
-                // Otherwise, you might just want to confirm the success without parsing the response.
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // If you're just confirming the success, you can create a new 'success' method in your callback or pass a null user.
-                        // Or, if you've parsed a response, pass the updated user here.
-                        if (response.isSuccessful()) {
-                            try {
-                                // Here, we're not parsing a JSON response body, so we check the response directly.
-                                if (response.code() == 200) {
-                                    // The operation was successful. Notify the callback.
-                                    activity.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            callback.onSuccess(user); // must be run on UI thread if updating UI components
-                                        }
-                                    });
+                    if (!response.isSuccessful()) {
 
-                                } else {
-                                    // Handle other response codes (like 4xx or 5xx errors)
-                                    callback.onFailure(new IOException("Unexpected response when updating user: " + response));
-                                }
-                            } finally {
-                                response.close(); // Important to avoid leaking resources
-                            }
-                        } else {
-                            callback.onFailure(new IOException("Unexpected code " + response));
-                        }
+                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+
+                        callback.onFailure(new IOException("Unexpected response " + response));
+
+                    } else {
+
+                        Log.d(TAG, "POST USER SUCCEED");
+
+                        callback.onSuccess(user);
+
                     }
                 });
             }
         });
-
     }
 
     //ChatGPT usage: Yes
@@ -237,28 +187,33 @@ public class ProfileManager {
         User author = new User(userId);
 
         ProfileManager profileManager = new ProfileManager();
-
         profileManager.getUserData(author, new Activity(), new User.UserCallback() {
             @Override
             public String onSuccess(User user) {
 
                 if (user != null) {
-                    Log.d(TAG,"preparing to send author name");
+
+                    Log.d(TAG,"AUTHOR fetched, returning author name...");
+
                     callback.onAuthorRetrieved(user.getUserName());
+
                 } else {
-                    // Handle the case where the user data is not available or parsing failed
+
                     callback.onError(new Exception("User data is not available"));
+
                 }
 
                 return null;
+
             }
 
             @Override
             public void onFailure(Exception e) {
 
+                callback.onError(e);
+
             }
         });
-
     }
 
     //ChatGPT usage: Partial
@@ -272,51 +227,45 @@ public class ProfileManager {
         Gson gson = new Gson();
         String jsonFollowingUserData = gson.toJson(followingUser);
 
-        Log.d(TAG, jsonFollowingUserData);
+        Log.d(TAG, "FOLLOW AUTHOR data: " + jsonFollowingUserData);
 
         RequestBody body = RequestBody.create(jsonFollowingUserData, MediaType.parse("application/json; charset=utf-8"));
-
-        // Build the request
         Request request = new Request.Builder()
                 .url(url)
                 .put(body)
                 .build();
+
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(() -> {
-                    Log.d(TAG, "Failed to update user data");
+
+                    Log.e(TAG, "FAILURE FOLLOWING AUTHOR: " + e);
+
                     callback.onFailure(e);
+
                 });
             }
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    throw new IOException("Unexpected code " + response);
-                }
                 activity.runOnUiThread(() -> {
-                    // If you're just confirming the success, you can create a new 'success' method in your callback or pass a null user.
-                    // Or, if you've parsed a response, pass the updated user here.
-                    if (response.isSuccessful()) {
-                        try {
-                            // Here, we're not parsing a JSON response body, so we check the response directly.
-                            if (response.code() == 200) {
-                                // The operation was successful. Notify the callback.
-                                callback.onSuccess(userId);
-                            } else {
-                                // Handle other response codes (like 4xx or 5xx errors)
-                                callback.onFailure(new IOException("Unexpected response when updating user: " + response));
-                            }
-                        } finally {
-                            response.close(); // Important to avoid leaking resources
-                        }
+
+                    if (!response.isSuccessful()) {
+
+                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+
+                        callback.onFailure(new IOException("Unexpected response " + response));
+
                     } else {
-                        callback.onFailure(new IOException("Unexpected code " + response));
+
+                        Log.d(TAG, "POST USER SUCCEED");
+
+                        callback.onSuccess(userId);
+
                     }
                 });
             }
         });
-
     }
 
     //ChatGPT usage: Yes
@@ -351,6 +300,6 @@ public class ProfileManager {
         public void setFollowingId(String followingId) {
             this.followingId = followingId;
         }
-    }
 
+    }
 }

@@ -1,23 +1,18 @@
 package com.example.cpen321mappost;
 
-import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
-    private ArrayList<String> tagList;
-    private Set<String> tagSet;
+    private final ArrayList<String> tagList;
+    private final Set<String> tagSet;
     private static final String TAG = "TagAdapter";
 
     //ChatGPT usage: Partial
@@ -62,9 +57,13 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
         holder.checkBoxTag.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
 
+                Log.d(TAG, tag + " is selected.");
+
                 tagSet.add(tag);
 
             } else {
+
+                Log.d(TAG, tag + " is released.");
 
                 tagSet.remove(tag);
 

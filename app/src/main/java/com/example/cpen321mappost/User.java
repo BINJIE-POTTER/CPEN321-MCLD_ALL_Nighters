@@ -21,6 +21,7 @@ public class User {
 
     //ChatGPT usage: Partial
     private User() {
+
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert firebaseUser != null;
 
@@ -29,17 +30,22 @@ public class User {
         this.userEmail = firebaseUser.getEmail();
         this.userGender = "none";
         this.userBirthdate = "none";
+
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
+
                     if (!task.isSuccessful()) {
+
                         Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+
                         return;
+
                     }
 
                     token = task.getResult();
 
-                    String msg = "FCM Token: " + token;
-                    Log.d(TAG, msg);
+                    Log.d(TAG, "FCM Token: " + token);
+
                 });
 
     }
@@ -68,36 +74,45 @@ public class User {
                 @Override
                 public String onSuccess(User user) {
 
-                    Log.d(TAG, "IN the user class, succeed in getting user data");
+                    Log.d(TAG, "User logged in, data successfully fetched.");
 
                     Gson gson = new Gson();
                     String jsonUserData = gson.toJson(user);
 
-                    Log.d(TAG, jsonUserData);
+                    Log.d(TAG, "User logged in with data: " + jsonUserData);
 
                     instance = gson.fromJson(jsonUserData, User.class);
 
                     return jsonUserData;
+
                 }
 
                 @Override
                 public void onFailure(Exception e) {
 
+                    Log.d(TAG, "New User, user does not have account in database.");
+
                     profileManager.postUserData(instance, new Activity(), new User.UserCallback() {
                         @Override
                         public String onSuccess(User user) {
 
+                            Log.d(TAG, "New User account is created successfully.");
+
                             return null;
+
                         }
 
                         @Override
                         public void onFailure(Exception e) {
+
+                            Log.e(TAG, "FAILURE, new user account failed to create: " + e.toString());
 
                         }
 
                     });
 
                 }
+
             });
 
         }

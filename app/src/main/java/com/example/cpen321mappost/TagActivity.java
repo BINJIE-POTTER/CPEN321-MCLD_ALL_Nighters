@@ -1,22 +1,18 @@
 package com.example.cpen321mappost;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class TagActivity extends AppCompatActivity {
     private static final PostManager postManager = new PostManager();
@@ -42,7 +38,8 @@ public class TagActivity extends AppCompatActivity {
         postManager.getTagsData(latitude, longitude, this, new PostManager.JsonCallback<ArrayList<String>>() {
             @Override
             public void onSuccess( ArrayList<String> tags) {
-                Log.d(TAG, "Get tags successfully");
+
+                Log.d(TAG, "Tags are obtained successfully: ");
                 Log.d(TAG, String.join(", ", tags));
 
                 TagAdapter tagAdapter = new TagAdapter(tags, tagsSet);
@@ -55,6 +52,7 @@ public class TagActivity extends AppCompatActivity {
                 Toast.makeText(TagActivity.this, "Failed to fetch tags!", Toast.LENGTH_LONG).show();
 
             }
+
         });
 
         buttonSaveTags.setOnClickListener(view -> {
