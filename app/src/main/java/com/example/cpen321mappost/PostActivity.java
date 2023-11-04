@@ -35,9 +35,6 @@ public class PostActivity extends AppCompatActivity {
     private ImageView imgPreview;
     private EditText titleEditText;
     private EditText mainTextEditText;
-
-    private Button uploadImageButton;
-    private Button saveButton;
     final static String TAG = "PostActivity";
 
     //ChatGPT usage: Yes
@@ -77,8 +74,8 @@ public class PostActivity extends AppCompatActivity {
         imgPreview = findViewById(R.id.imgPreview);
         titleEditText = findViewById(R.id.titleEditText);
         mainTextEditText = findViewById(R.id.mainTextEditText);
-        uploadImageButton = findViewById(R.id.uploadImageButton);
-        saveButton = findViewById(R.id.saveButton);
+        Button uploadImageButton = findViewById(R.id.uploadImageButton);
+        Button saveButton = findViewById(R.id.saveButton);
         Intent receivedIntent = getIntent();
 
         double latitude = Double.parseDouble(receivedIntent.getStringExtra("latitude"));

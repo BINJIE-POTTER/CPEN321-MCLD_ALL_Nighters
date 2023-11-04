@@ -46,7 +46,6 @@ import okhttp3.Response;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
     private static final double CLICKABLE_RADIUS = 0.005 ;
     private GoogleMap mMap;
-    private ActivityMapsBinding binding;
     private LocationManager locationManager;
     private static final String TAG = "MapsActivity";
     private Marker selectedMarker = null;
@@ -65,7 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMapsBinding.inflate(getLayoutInflater());
+        com.example.cpen321mappost.databinding.ActivityMapsBinding binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -171,7 +170,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             coordinate.put("latitude", latitude);
             coordinate.put("longitude", longitude);
         } catch (JSONException e) {
-            throw new RuntimeException(e);
+            Log.e(TAG, "FAILURE initializeBlueMarkers: " + e);
         }
         getClusteredPostData(coordinate, MapsActivity.this,new JsonPostCallback() {
             @Override

@@ -13,27 +13,26 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
-    private static List<Post> postList;
+    private final List<Post> postList;
     private static final String TAG = "PostAdapter";
     private static final ProfileManager profileManager = new ProfileManager();
 
     //ChatGPT usage: Yes
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textViewAuthor;
-        public TextView  textViewTitle;
+        public TextView textViewTitle;
         public TextView textViewContent;
         public TextView textViewLikes;
 
-
-        public ViewHolder(View view) {
+        public ViewHolder(View view, List<Post> postList) {
             super(view);
             textViewAuthor = view.findViewById(R.id.textViewAuthor);
             textViewTitle = view.findViewById(R.id.textViewTitle);
             textViewContent = view.findViewById(R.id.textViewContent);
             textViewLikes = view.findViewById(R.id.textViewLikes);
 
-            // Set an onClickListener on the entire row view
             itemView.setOnClickListener(view1 -> {
+
                 int position = getAdapterPosition(); // Get the position of the view holder
 
                 // Ensure the position is valid (exists in the dataset)
@@ -45,9 +44,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     Post clickedPost = postList.get(position);
                     PostDetailIntent.putExtra("pid", clickedPost.getPid()); // for example
 
-                    // Other data to pass to activity...
-
                     view1.getContext().startActivity(PostDetailIntent);
+
                 }
             });
         }
@@ -55,7 +53,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     //ChatGPT usage: Partial
     public PostAdapter(List<Post> postList) {
-        PostAdapter.postList = postList;
+        this.postList = postList;
     }
 
     @NonNull
@@ -63,7 +61,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_post, parent, false);
-        return new ViewHolder(itemView);
+        return new ViewHolder(itemView, postList);
     }
 
     //ChatGPT usage: Partial

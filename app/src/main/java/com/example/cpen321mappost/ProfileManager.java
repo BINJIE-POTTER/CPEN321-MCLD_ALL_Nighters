@@ -57,11 +57,11 @@ public class ProfileManager {
                         Log.d(TAG, "GET USER SUCCEED");
 
                         assert response.body() != null;
-                        String responseData;
+                        String responseData = null;
                         try {
                             responseData = response.body().string();
                         } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            Log.e(TAG, e.toString());
                         }
                         Gson gson = new Gson();
                         User user = gson.fromJson(responseData, User.class);
