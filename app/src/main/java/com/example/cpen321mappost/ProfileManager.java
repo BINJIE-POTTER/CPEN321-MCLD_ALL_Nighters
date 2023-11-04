@@ -19,6 +19,7 @@ import okhttp3.Response;
 
 public class ProfileManager {
     final static String TAG = "ProfileManager Activity";
+    final Gson gson = new Gson();
 
     //ChatGPT usage: Yes
     public void getUserData(User user, final Activity activity, final User.UserCallback callback) {
@@ -79,7 +80,6 @@ public class ProfileManager {
         String url = "http://4.204.251.146:8081/users/update-profile";
         OkHttpClient httpClient = HttpClient.getInstance();
 
-        Gson gson = new Gson();
         String jsonUserData = gson.toJson(user);
 
         Log.d(TAG, "PUT NEW DATA: " + jsonUserData);
@@ -130,7 +130,6 @@ public class ProfileManager {
         String url = "http://4.204.251.146:8081/users";
         OkHttpClient httpClient = HttpClient.getInstance();
 
-        Gson gson = new Gson();
         String jsonUserData = gson.toJson(user);
 
         Log.d(TAG, "POST USER DATA: " + jsonUserData);
@@ -224,7 +223,6 @@ public class ProfileManager {
 
         FollowingUser followingUser = new FollowingUser(User.getInstance().getUserId(), userId);
 
-        Gson gson = new Gson();
         String jsonFollowingUserData = gson.toJson(followingUser);
 
         Log.d(TAG, "FOLLOW AUTHOR data: " + jsonFollowingUserData);
