@@ -29,6 +29,14 @@
     <string name="tag_caption">Tag</string>
     <string name="tag_activity_title_caption">Tags</string>
     <string name="tag_activity_save_button">Save</string>
+    <string name="post_detail_title">Title</string>
+    <string name="post_detail_main_content">Main Content</string>
+    <string name="post_detail_likes">Likes:</string>
+    <string name="post_detail_author_button_caption">Author</string>
+    <string name="post_detail_like_button_caption">Like</string>
+    <string name="post_detail_comment_button_caption">Comment</string>
+    <string name="post_detail_post_detail">Post Detail</string>
+    <string name="post_detail_delete_button_caption">Delete</string>
 
 
 </resources>

@@ -169,12 +169,15 @@ public class ProfileEditingActivity extends AppCompatActivity {
                 @Override
                 public String onSuccess(User user) {
 
-                    Toast.makeText(ProfileEditingActivity.this, newInput + " Changed!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ProfileEditingActivity.this, "Saved!", Toast.LENGTH_LONG).show();
 
                     Intent ProfileIntent = new Intent(ProfileEditingActivity.this, ProfileActivity.class);
                     startActivity(ProfileIntent);
 
+                    finish();
+
                     return null;
+
                 }
 
                 @Override
@@ -184,14 +187,15 @@ public class ProfileEditingActivity extends AppCompatActivity {
                 }
             });
 
-
         });
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
+        cancelButton.setOnClickListener(view -> {
+
+            Intent ProfileIntent = new Intent(ProfileEditingActivity.this, ProfileActivity.class);
+            startActivity(ProfileIntent);
+
+            finish();
+
         });
 
 

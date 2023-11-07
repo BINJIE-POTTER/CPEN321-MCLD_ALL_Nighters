@@ -9,10 +9,12 @@ import androidx.annotation.Nullable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
 
 
 public class AuthenticationActivity extends AppCompatActivity {
     private AuthenticationHandler authenticationHandler;
+    final static String TAG = "Authentication Activity";
 
     //ChatGPT usage: Partial
     @Override
@@ -74,6 +76,72 @@ public class AuthenticationActivity extends AppCompatActivity {
             //else create a post method to create user
 
         }
+
+        User user = User.getInstance();
+        ProfileManager profileManager = new ProfileManager();
+        profileManager.getUserData(user, this, new User.UserCallback() {
+            @Override
+            public String onSuccess(User user) {
+
+                Log.d(TAG, "OLD TOKEN: " + user.getToken());
+
+                user.updateToken(new User.TokenCallback() {
+                    @Override
+                    public void onTokenReceived(String token) {
+
+                        Log.d(TAG, "NEW TOKEN: " + user.getToken());
+
+                        user.setToken(token);
+
+                        Log.d(TAG, "NEW TOKEN: " + user.getToken());
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                        Log.d(TAG, "TOKEN NOT RETRIEVED");
+
+                    }
+                });
+
+                profileManager.putUserData(user, AuthenticationActivity.this, new User.UserCallback() {
+                    @Override
+                    public String onSuccess(User user) {
+
+                        Log.d(TAG, "User data is sent to the database, target is updating token.");
+
+                        Gson gson = new Gson();
+                        String jsonUserData = gson.toJson(user);
+
+                        Log.d(TAG, "user data after put is: " + jsonUserData);
+
+                        return null;
+
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+
+                        Log.d(TAG, "Falied to update token.");
+
+                        finish();
+
+                    }
+                });
+
+                return null;
+
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+
+                Log.d(TAG, "Falied to get user data.");
+
+            }
+
+        });
 
         Intent intent = new Intent(AuthenticationActivity.this, MapsActivity.class);
         startActivity(intent);

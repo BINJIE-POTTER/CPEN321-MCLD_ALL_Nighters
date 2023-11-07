@@ -1,6 +1,8 @@
 package com.example.cpen321mappost;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +27,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
         TextView textViewTitle = findViewById(R.id.textViewTitle);
         TextView textViewMainContent = findViewById(R.id.textViewMainContent);
+        TextView textViewLikes = findViewById(R.id.textViewLikes);
 
         Button buttonDelete = findViewById(R.id.buttonDelete);
         Button buttonAuthor = findViewById(R.id.buttonAuthor);
@@ -35,11 +38,13 @@ public class PostDetailActivity extends AppCompatActivity {
         pid = receivedIntent.getStringExtra("pid");
 
         postManager.getSinglePostData(pid, this, new PostManager.JsonCallback<Post>() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onSuccess(Post post) {
 
                 textViewTitle.setText(post.getContent().getTitle());
                 textViewMainContent.setText(post.getContent().getBody());
+                textViewLikes.setText("Likes: " + post.getLikeCount());
 
                 uid = post.getUserId();
 
@@ -82,6 +87,8 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void result) {
 
+                Toast.makeText(PostDetailActivity.this, "Deleted!", Toast.LENGTH_LONG).show();
+
                 Intent PostPreviewListIntent = new Intent(PostDetailActivity.this, PostPreviewListActivity.class);
                 startActivity(PostPreviewListIntent);
 
@@ -95,49 +102,53 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         }));
 
-        buttonAuthor.setOnClickListener(new View.OnClickListener() {
-            //This button will navigate to PostPreviewListActivity, and show the author with a sub button
-            //and display all his posts accroding to uid
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PostDetailActivity.this, PostPreviewListActivity.class);
-                intent.putExtra("mode", "authorInfo");
-                intent.putExtra("userId", uid);
-                startActivity(intent);
-            }
+        buttonAuthor.setOnClickListener(v -> {
+
+            Intent intent = new Intent(PostDetailActivity.this, PostPreviewListActivity.class);
+            intent.putExtra("mode", "authorInfo");
+            intent.putExtra("userId", uid);
+            startActivity(intent);
+
         });
 
-        buttonLike.setOnClickListener(new View.OnClickListener() {
-            //Send to backend and update the like count
+        buttonLike.setOnClickListener(v -> postManager.likePostData(pid, PostDetailActivity.this, new PostManager.JsonCallback<Void>() {
             @Override
-            public void onClick(View v) {
-                postManager.likePostData(pid, PostDetailActivity.this, new PostManager.JsonCallback<Void>() {
+            public void onSuccess(Void result) {
+                postManager.getSinglePostData(pid, PostDetailActivity.this, new PostManager.JsonCallback<Post>() {
+                    @SuppressLint("SetTextI18n")
                     @Override
-                    public void onSuccess(Void result) {
-                        // Handle success in deleting a post here
-                        Toast.makeText(PostDetailActivity.this, "liked this post!", Toast.LENGTH_LONG).show();
+                    public void onSuccess(Post post) {
+
+                        textViewLikes.setText("Likes: " + post.getLikeCount());
 
                     }
 
                     @Override
                     public void onFailure(Exception e) {
-                        // Handle failure here
-                        Toast.makeText(PostDetailActivity.this, "Failed to like this post :(", Toast.LENGTH_LONG).show();
+
+                        Log.e(TAG, e.toString());
 
                     }
                 });
-            }
-        });
 
-        buttonComment.setOnClickListener(new View.OnClickListener() {
+                Toast.makeText(PostDetailActivity.this, "liked this post!", Toast.LENGTH_LONG).show();
+
+            }
+
             @Override
-            public void onClick(View v) {
+            public void onFailure(Exception e) {
 
-                Intent intent = new Intent(PostDetailActivity.this, CommentActivity.class);
-                intent.putExtra("pid", pid);
-                startActivity(intent);
+                Toast.makeText(PostDetailActivity.this, "Failed to like this post :(", Toast.LENGTH_LONG).show();
 
             }
+        }));
+
+        buttonComment.setOnClickListener(v -> {
+
+            Intent intent = new Intent(PostDetailActivity.this, CommentActivity.class);
+            intent.putExtra("pid", pid);
+            startActivity(intent);
+
         });
     }
 }

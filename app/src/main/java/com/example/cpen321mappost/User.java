@@ -31,22 +31,21 @@ public class User {
         this.userGender = "none";
         this.userBirthdate = "none";
 
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
+        updateToken(new TokenCallback() {
+            @Override
+            public void onTokenReceived(String token) {
 
-                    if (!task.isSuccessful()) {
+                setToken(token);
 
-                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+            }
 
-                        return;
+            @Override
+            public void onError(Exception e) {
 
-                    }
+                Log.e(TAG, e.toString());
 
-                    token = task.getResult();
-
-                    Log.d(TAG, "FCM Token: " + token);
-
-                });
+            }
+        });
 
     }
 
@@ -69,7 +68,6 @@ public class User {
 
             instance = new User();
             profileManager = new ProfileManager();
-
             profileManager.getUserData(instance, new Activity(), new UserCallback() {
                 @Override
                 public String onSuccess(User user) {
@@ -82,6 +80,10 @@ public class User {
                     Log.d(TAG, "User logged in with data: " + jsonUserData);
 
                     instance = gson.fromJson(jsonUserData, User.class);
+
+                    String jsonUserData2 = gson.toJson(user);
+
+                    Log.d(TAG, "The user instance now is: " + jsonUserData2);
 
                     return jsonUserData;
 
@@ -125,6 +127,11 @@ public class User {
     public interface UserCallback {
         String onSuccess(User user);
         void onFailure(Exception e);
+    }
+
+    public interface TokenCallback {
+        void onTokenReceived(String token);
+        void onError(Exception e);
     }
 
     //ChatGPT usage: No
@@ -175,6 +182,37 @@ public class User {
     //ChatGPT usage: No
     public void setUserBirthdate(String userBirthdate) {
         this.userBirthdate = userBirthdate;
+    }
+
+    public void updateToken(TokenCallback callback) {
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+
+                    if (!task.isSuccessful()) {
+
+                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+
+                        callback.onError(task.getException());
+
+                    } else {
+
+                        String retrievedToken = task.getResult();
+
+                        Log.d(TAG, "FCM Token: " + retrievedToken);
+
+                        callback.onTokenReceived(retrievedToken);
+
+                    }
+
+                });
+    }
+
+    public String getToken() {
+        return token;
+    }
+    public void setToken(String token) {
+        this.token = token;
     }
 
 }

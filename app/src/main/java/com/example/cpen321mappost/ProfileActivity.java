@@ -33,7 +33,7 @@ public class ProfileActivity extends AppCompatActivity {
         user = User.getInstance();
         ProfileManager profileManager = new ProfileManager();
 
-        Log.d(TAG, "User ID: " + user.getUserId() + "," + "User Email: " + user.getUserEmail() + "," + "User name: " + user.getUserName() + ",");
+        Log.d(TAG, "User ID: " + user.getUserId() + "," + "User Email: " + user.getUserEmail() + "," + "User name: " + user.getUserName() + "," + "User gender: " + user.getUserGender());
 
         // Initialize UI display
         nameTextView = findViewById(R.id.user_name_value_id);
@@ -52,7 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public String onSuccess(User user) {
 
-                Log.d(TAG, "Succeed on get user data");
+                Log.d(TAG, "Succeed on get user data in profile activity");
 
                 emailTextView.setText(user.getUserEmail());
                 nameTextView.setText(user.getUserName());
@@ -84,6 +84,7 @@ public class ProfileActivity extends AppCompatActivity {
             Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
             ProfileEditingIntent.putExtra("item", "userName");
             startActivity(ProfileEditingIntent);
+            finish();
 
         });
 
@@ -93,6 +94,7 @@ public class ProfileActivity extends AppCompatActivity {
             Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
             ProfileEditingIntent.putExtra("item", "userGender");
             startActivity(ProfileEditingIntent);
+            finish();
 
         });
 
@@ -102,6 +104,7 @@ public class ProfileActivity extends AppCompatActivity {
             Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
             ProfileEditingIntent.putExtra("item", "userBirthdate");
             startActivity(ProfileEditingIntent);
+            finish();
 
         });
 
@@ -111,6 +114,7 @@ public class ProfileActivity extends AppCompatActivity {
             Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
             ProfileEditingIntent.putExtra("item", "userEmail");
             startActivity(ProfileEditingIntent);
+            finish();
 
         });
 

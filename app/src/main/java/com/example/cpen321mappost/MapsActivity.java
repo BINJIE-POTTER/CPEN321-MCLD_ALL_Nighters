@@ -60,6 +60,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         void onFailure(Exception e);
     }
 
+    // TODO: implement onResume()
+
     //ChatGPT usage: Partial
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +116,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
     //ChatGPT usage: Partial
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -153,10 +154,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-
-
-
     }
+
     public void initializeBlueMarkers()
     {
 
@@ -199,7 +198,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     //ChatGPT usage: Partial
-     public void getClusteredPostData(JSONObject coordinate, final Activity activity, final MapsActivity.JsonPostCallback callback){
+     public static void getClusteredPostData(JSONObject coordinate, final Activity activity, final MapsActivity.JsonPostCallback callback){
 
          String url = "http://4.204.251.146:8081/posts/cluster";
          OkHttpClient httpClient = HttpClient.getInstance();

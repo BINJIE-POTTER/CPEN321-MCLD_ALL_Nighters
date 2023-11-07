@@ -19,11 +19,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     //ChatGPT usage: Partial
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView textViewComment;
+        public TextView textViewCommentAuthor;
+        public TextView textViewCommentContent;
 
         public ViewHolder(View view) {
             super(view);
-            textViewComment = view.findViewById(R.id.textViewComment);
+            textViewCommentAuthor = view.findViewById(R.id.textViewCommentAuthor);
+            textViewCommentContent = view.findViewById(R.id.textViewCommentContent);
         }
     }
 
@@ -51,7 +53,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
             @Override
             public void onAuthorRetrieved(String authorName) {
 
-                holder.textViewComment.setText(authorName + ": \n" + comment.getContent());
+                holder.textViewCommentAuthor.setText(authorName + " : ");
+                holder.textViewCommentContent.setText(comment.getContent());
 
             }
 

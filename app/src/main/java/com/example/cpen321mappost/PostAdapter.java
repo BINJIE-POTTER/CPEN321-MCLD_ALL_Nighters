@@ -1,5 +1,6 @@
 package com.example.cpen321mappost;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,7 +38,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
                 // Ensure the position is valid (exists in the dataset)
                 if (position != RecyclerView.NO_POSITION) {
-                    // You can start your new activity here and pass it the necessary extras.
+
                     Intent PostDetailIntent = new Intent(view1.getContext(), PostDetailActivity.class);
 
                     // Assuming 'post' has a method 'getId' to get a unique identifier for the post
@@ -65,6 +66,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
 
     //ChatGPT usage: Partial
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Post post = postList.get(position);
@@ -84,7 +86,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         holder.textViewTitle.setText(post.getContent().getTitle());
         holder.textViewContent.setText(post.getContent().getBody());
-        holder.textViewLikes.setText(String.valueOf(post.getLikeCount()));
+        holder.textViewLikes.setText("Likes: " + post.getLikeCount());
+
     }
 
     //ChatGPT usage: No

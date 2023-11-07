@@ -40,7 +40,8 @@
                 android:id="@+id/user_name_edit_button_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/user_profile_edit_button_caption" />
+                android:text="@string/user_profile_edit_button_caption"
+                style="?android:attr/buttonBarButtonStyle" />
 
         </LinearLayout>
 
@@ -125,7 +126,8 @@
                 android:id="@+id/user_gender_edit_button_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/user_profile_edit_button_caption" />
+                android:text="@string/user_profile_edit_button_caption"
+                style="?android:attr/buttonBarButtonStyle" />
 
         </LinearLayout>
 
@@ -168,7 +170,8 @@
                 android:id="@+id/user_birthdate_edit_button_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/user_profile_edit_button_caption" />
+                android:text="@string/user_profile_edit_button_caption"
+                style="?android:attr/buttonBarButtonStyle" />
 
         </LinearLayout>
 
@@ -211,7 +214,8 @@
                 android:id="@+id/user_email_edit_button_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/user_profile_edit_button_caption" />
+                android:text="@string/user_profile_edit_button_caption"
+                style="?android:attr/buttonBarButtonStyle" />
 
         </LinearLayout>
 
