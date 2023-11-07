@@ -109,7 +109,7 @@ router.put("/users/follow", async (req, res) => {
 
         // Add followingId to the user's following array
         const userUpdateResult = await mongoClient.db(MappostDB).collection("users").updateOne(
-            { userId: userId },
+            { userId },
             { $addToSet: { following: followingId } }
         );
 
@@ -124,7 +124,7 @@ router.put("/users/follow", async (req, res) => {
             return;
         }
 
-        await notifyFollowerIncrease(followingId);
+        await notifyFollowerIncrease(followingId, res);
 
         res.status(200).send("Follow operation successful.");
     } catch (err) {
@@ -158,7 +158,7 @@ router.put("/users/unfollow", async (req, res) => {
 
         // Remove followingId from the user's following array
         const userUpdateResult = await mongoClient.db(MappostDB).collection("users").updateOne(
-        { userId: userId },
+        { userId },
         { $pull: { following: followingId } }
         );
 
@@ -238,7 +238,7 @@ const checkValidUser = async (user) => {
 
 //ChatGPT usage: No
 async function userExists(userId) {
-    const user = await mongoClient.db(MappostDB).collection("users").findOne({ userId: userId });
+    const user = await mongoClient.db(MappostDB).collection("users").findOne({ userId });
     return user !== null;  // Will return true if the user exists, otherwise false
 }
 
@@ -254,7 +254,7 @@ async function isUserFollowing(userId, followingId) {
 
 
 //ChatGPT usage: No (ChatGPT's method is deprecated, thus we implemented from scratch, referenced from firebase website)
-async function notifyFollowerIncrease(userId) {
+async function notifyFollowerIncrease(userId, res) {
     if (!userId) {
         res.status(400).send("User ID and following ID must be provided.");
         return;
