@@ -31,4 +31,14 @@
         android:text="More"
         android:onClick="showMoreOptions" />
 
+    <Button
+        android:id="@+id/refreshButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="16dp"
+        android:text="Refresh"
+        android:onClick="refreshPage" />
+
 </RelativeLayout>

@@ -91,8 +91,7 @@ public class ProfileActivity extends AppCompatActivity {
         genderEditButton.setOnClickListener(view -> {
 
             Log.d(TAG,"Opening the profile editing activity");
-            Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
-            ProfileEditingIntent.putExtra("item", "userGender");
+            Intent ProfileEditingIntent = new Intent(this, ProfileEditingSpinnerActivity.class);
             startActivity(ProfileEditingIntent);
             finish();
 

@@ -36,6 +36,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/post_preview_list_mode_name_id"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/post_preview_list_mode_name_id"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        style="?android:attr/buttonBarButtonStyle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -36,6 +36,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
@@ -118,7 +120,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //ChatGPT usage: Partial
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
         if(isPermissionGranted )
@@ -202,16 +204,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
          String url = "http://4.204.251.146:8081/posts/cluster";
          OkHttpClient httpClient = HttpClient.getInstance();
-         HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+         HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder();
 
          // Convert the JSONObject to query parameters
          Iterator<String> keys = coordinate.keys();
          while (keys.hasNext()) {
              String key = keys.next();
              String value = coordinate.optString(key);
-             if (value != null) {
-                 urlBuilder.addQueryParameter(key, value);
-             }
+             urlBuilder.addQueryParameter(key, value);
          }
          String fullUrl = urlBuilder.build().toString();
 
@@ -234,32 +234,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
+                // Read the response in the background thread
+                String responseData = null;
+                if (!response.isSuccessful()) {
+                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+                } else {
+                    try {
+                        responseData = response.body().string(); // This is executed in background
+                    } catch (IOException e) {
+                        Log.e(TAG, e.toString());
+                    }
+                }
+
+                // Final response data for UI
+                String finalResponseData = responseData;
+
+                // Switch to the main thread for UI update
                 activity.runOnUiThread(() -> {
-
-                    if (!response.isSuccessful()) {
-
-                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-
-                        callback.onFailure(new IOException("Unexpected response " + response));
-
+                    if (finalResponseData == null) {
+                        callback.onFailure(new IOException("Failed to read response"));
                     } else {
-
                         Log.d(TAG, "GET CLUSTERED POSTS SUCCEED");
-
-                        assert response.body() != null;
-                        String responseData = null;
-                        try {
-                            responseData = response.body().string();
-                        } catch (IOException e) {
-                            Log.e(TAG, e.toString());
-                        }
-
                         Gson gson = new Gson();
-
-                        Cluster[] clusters = gson.fromJson(responseData, Cluster[].class);
-
+                        Cluster[] clusters = gson.fromJson(finalResponseData, Cluster[].class);
                         callback.onSuccess(clusters);
-
                     }
                 });
             }
@@ -365,6 +363,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         float[] results = new float[1];
         Location.distanceBetween(markeLatitude, markerLongitude, selectedMarker.latitude, selectedMarker.longitude, results);
         return results[0] <= radius;
+    }
+
+    public void refreshPage(View view) {
+
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+        finish();
+
     }
 
 

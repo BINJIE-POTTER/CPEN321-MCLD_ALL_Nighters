@@ -59,7 +59,13 @@ public class PostPreviewListActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         Intent intent = getIntent();
-        String mode = intent.getStringExtra("mode");
+        String mode = null;
+
+        while (mode == null) {
+
+            mode = intent.getStringExtra("mode");
+
+        }
 
         switch (Objects.requireNonNull(mode)) {
 

@@ -9,6 +9,9 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
@@ -21,7 +24,12 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+
+import com.google.gson.reflect.TypeToken;
+
 import java.io.IOException;
+import java.util.List;
+
 import org.json.JSONObject;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -61,9 +69,6 @@ public class PostActivity extends AppCompatActivity {
         void onSuccess(JSONObject postedData);
         void onFailure(Exception e);
     }
-
-
-
 
     //ChatGPT usage: Partial
     @Override
@@ -118,15 +123,18 @@ public class PostActivity extends AppCompatActivity {
                 postJsonData(postData, PostActivity.this, new JsonPostCallback() {
                     @Override
                     public void onSuccess(JSONObject postedData) {
-                        // Handle success here
+
                         Intent intent=new Intent(PostActivity.this, MapsActivity.class);
                         startActivity(intent);
+                        finish();
 
                     }
 
                     @Override
                     public void onFailure(Exception e) {
-                        // Handle failure here
+
+                        Toast.makeText(PostActivity.this, "Failed to post!", Toast.LENGTH_SHORT).show();
+
                     }
                 });
 
@@ -143,18 +151,12 @@ public class PostActivity extends AppCompatActivity {
     public void postJsonData(JSONObject postData, final Activity activity, final JsonPostCallback callback){
 
         String url = "http://4.204.251.146:8081/posts";
-
         OkHttpClient httpClient = HttpClient.getInstance();
 
-        // Convert the JSONObject to a string representation
         String jsonStrData = postData.toString();
+        Log.d(TAG, "Posting Data: " + jsonStrData);
 
-        Log.d(TAG, "This is the posted data: " + jsonStrData);
-
-        // Create a request body with the string representation of the JSONObject
         RequestBody body = RequestBody.create(jsonStrData, MediaType.parse("application/json; charset=utf-8"));
-
-        // Build the request
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
@@ -163,55 +165,46 @@ public class PostActivity extends AppCompatActivity {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.e(TAG, "Failed to post data", e);
-                        callback.onFailure(e); // Notify callback about the failure
-                    }
+                activity.runOnUiThread(() -> {
+
+                    Log.e(TAG, "FAILURE POST POSTS: " + e);
+
+                    callback.onFailure(e);
+
                 });
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (response.isSuccessful()) {
-                            try {
-                                if (response.code() == 200) {
-                                    // The operation was successful.
-                                    Log.d(TAG, "Data posted successfully!");
-                                    callback.onSuccess(postData); // Notify callback about the success
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
+                if (!response.isSuccessful()) {
 
-                                } else {
-                                    // Handle other response codes (like 4xx or 5xx errors)
-                                    IOException exception = new IOException("Unexpected response when posting data: " + response);
-                                    Log.e(TAG, "Error posting data", exception);
-                                    callback.onFailure(exception); // Notify callback about the failure
-                                }
-                            } finally {
-                                response.close(); // Important to avoid leaking resources
-                            }
-                        } else {
-                            IOException exception = new IOException("Unexpected code " + response);
-                            Log.e(TAG, "Error posting data", exception);
-                            callback.onFailure(exception); // Notify callback about the failure
-                        }
-                    }
-                });
+                    activity.runOnUiThread(() -> {
+
+                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+                        callback.onFailure(new IOException("Unexpected response " + response));
+
+                    });
+
+                } else {
+
+                    Log.d(TAG, "USER POST POSTS SUCCEED");
+
+                    activity.runOnUiThread(() -> callback.onSuccess(postData));
+
+                }
             }
         });
     }
 
     //ChatGPT usage: Partial
     public String getCurrentDateUsingCalendar () {
+
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH) + 1; // Months are indexed from 0
         int year = calendar.get(Calendar.YEAR);
 
         return day + "-" + month + "-" + year;
-    }
 
+    }
 }

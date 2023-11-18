@@ -256,7 +256,7 @@ public class ProfileManager {
 
                     } else {
 
-                        Log.d(TAG, "POST USER SUCCEED");
+                        Log.d(TAG, "FOLLOW AUTHOR SUCCEED");
 
                         callback.onSuccess(userId);
 

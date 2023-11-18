@@ -95,37 +95,37 @@ public class AuthenticationActivity extends AppCompatActivity {
 
                         Log.d(TAG, "NEW TOKEN: " + user.getToken());
 
+                        profileManager.putUserData(user, AuthenticationActivity.this, new User.UserCallback() {
+                            @Override
+                            public String onSuccess(User user) {
+
+                                Log.d(TAG, "User data is sent to the database, target is updating token.");
+
+                                Gson gson = new Gson();
+                                String jsonUserData = gson.toJson(user);
+
+                                Log.d(TAG, "user data after put is: " + jsonUserData);
+
+                                return null;
+
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+
+                                Log.d(TAG, "Falied to update token.");
+
+                                finish();
+
+                            }
+                        });
+
                     }
 
                     @Override
                     public void onError(Exception e) {
 
                         Log.d(TAG, "TOKEN NOT RETRIEVED");
-
-                    }
-                });
-
-                profileManager.putUserData(user, AuthenticationActivity.this, new User.UserCallback() {
-                    @Override
-                    public String onSuccess(User user) {
-
-                        Log.d(TAG, "User data is sent to the database, target is updating token.");
-
-                        Gson gson = new Gson();
-                        String jsonUserData = gson.toJson(user);
-
-                        Log.d(TAG, "user data after put is: " + jsonUserData);
-
-                        return null;
-
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-
-                        Log.d(TAG, "Falied to update token.");
-
-                        finish();
 
                     }
                 });

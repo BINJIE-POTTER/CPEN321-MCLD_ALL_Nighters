@@ -8,6 +8,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+
 public class User {
     private static User instance = null;
     private static ProfileManager profileManager = null;
@@ -18,6 +20,9 @@ public class User {
     private String userGender;
     private String userBirthdate;
     private String token;
+    private int postCount;
+    private ArrayList<String> following;
+    private ArrayList<String> followers;
 
     //ChatGPT usage: Partial
     private User() {
@@ -30,6 +35,9 @@ public class User {
         this.userEmail = firebaseUser.getEmail();
         this.userGender = "none";
         this.userBirthdate = "none";
+        this.postCount = 0;
+        this.following = new ArrayList<>();
+        this.followers = new ArrayList<>();
 
         updateToken(new TokenCallback() {
             @Override
@@ -58,6 +66,9 @@ public class User {
         this.userGender = "none";
         this.userBirthdate = "none";
         this.token = null;
+        this.postCount = 0;
+        this.following = null;
+        this.followers = null;
 
     }
 
@@ -211,8 +222,33 @@ public class User {
     public String getToken() {
         return token;
     }
+
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public int getPostCount() {
+        return postCount;
+    }
+
+    public void setPostCount(int postCount) {
+        this.postCount = postCount;
+    }
+
+    public ArrayList<String> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(ArrayList<String> following) {
+        this.following = following;
+    }
+
+    public ArrayList<String> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(ArrayList<String> followers) {
+        this.followers = followers;
     }
 
 }

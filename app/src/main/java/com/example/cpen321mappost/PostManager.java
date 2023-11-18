@@ -378,34 +378,33 @@ public class PostManager {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
-                activity.runOnUiThread(() -> {
+                if (!response.isSuccessful()) {
 
-                    if (!response.isSuccessful()) {
+                    activity.runOnUiThread(() -> {
 
                         Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-
                         callback.onFailure(new IOException("Unexpected response " + response));
 
-                    } else {
+                    });
 
-                        Log.d(TAG, "GET POSTS BY USER SUCCEED");
+                } else {
 
-                        List<Post> posts;
+                    Log.d(TAG, "GET POSTS BY USER SUCCEED");
+                    List<Post> posts;
 
-                        assert response.body() != null;
-                        String responseData = null;
-                        try {
-                            responseData = response.body().string();
-                        } catch (IOException e) {
-                            Log.e(TAG, e.toString());
-                        }
-                        Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
-                        posts = gson.fromJson(responseData, postListType);
-
-                        callback.onSuccess(posts);
-
+                    String responseData;
+                    assert response.body() != null;
+                    try {
+                        responseData = response.body().string();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
-                });
+                    Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
+                    posts = gson.fromJson(responseData, postListType);
+
+                    // Update UI on the main thread
+                    activity.runOnUiThread(() -> callback.onSuccess(posts));
+                }
             }
         });
     }
