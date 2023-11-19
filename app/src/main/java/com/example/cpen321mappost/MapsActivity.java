@@ -129,7 +129,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         mMap.setOnMarkerClickListener(marker -> {
-            selectedMarker = marker;
             displayLocationMenu(marker.getPosition().latitude, marker.getPosition().longitude, "create_review_Post");
             return true; // Return true to indicate the click event has been handled
         });
@@ -147,13 +146,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     isNearMarker = true;
                     break;
                 }
+                else {
+
+                }
             }
 
             if (!isNearMarker) {
                 selectedMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Selected Location"));
                 displayLocationMenu(latLng.latitude, latLng.longitude, "createPostOnly");
-                selectedMarker.remove();
-
+//                selectedMarker.remove();
             }
         });
     }
@@ -275,6 +276,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Marker marker = mMap.addMarker(new MarkerOptions()
                         .position(postLocation)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+
 
                 markerList.add(marker);
 
