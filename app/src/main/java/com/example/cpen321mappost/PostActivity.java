@@ -105,9 +105,8 @@ public class PostActivity extends AppCompatActivity {
             try {
                 // Construct the JSON object
                 JSONObject postData = new JSONObject();
-                //TODO: for testing only put real useridafterwards
-                postData.put("userId", User.getInstance().getUserId());
 
+                postData.put("userId", User.getInstance().getUserId());
                 postData.put("time", getCurrentDateUsingCalendar());
 
                 JSONObject coordinate = new JSONObject();
@@ -119,7 +118,7 @@ public class PostActivity extends AppCompatActivity {
                 content.put("title", titleEditText.getText().toString());
                 content.put("body", mainTextEditText.getText().toString());
                 postData.put("content", content);
-//                postJsonData( postData, PostActivity.this);
+
                 postJsonData(postData, PostActivity.this, new JsonPostCallback() {
                     @Override
                     public void onSuccess(JSONObject postedData) {

@@ -125,18 +125,22 @@ public class PostManager {
     }
 
     //ChatGPT usage: Partial
-    public void likePostData(String pid, final Activity activity, final JsonCallback<Void> callback) {
+    public void likePostData(boolean like, String pid, String userId, final Activity activity, final JsonCallback<Void> callback) {
 
-        String url = "http://4.204.251.146:8081/posts/like";
+        String url;
+        if (like) url = "http://4.204.251.146:8081/posts/like";
+        else      url = "http://4.204.251.146:8081/posts/unlike";
         OkHttpClient httpClient = HttpClient.getInstance();
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("pid", pid);
-        String jsonBody = jsonObject.toString();
+        JsonObject likeInfo = new JsonObject();
+        likeInfo.addProperty("userId", userId);
+        likeInfo.addProperty("pid", pid);
+        String likeInfoString = likeInfo.toString();
 
-        Log.d(TAG, "This is the liked post data: " + jsonBody);
+        if (like) Log.d(TAG, "This is the LIKED post data: " + likeInfoString);
+        else      Log.d(TAG, "This is the UNLIKED post data: " + likeInfoString);
 
-        RequestBody body = RequestBody.create(jsonBody, MediaType.parse("application/json; charset=utf-8"));
+        RequestBody body = RequestBody.create(likeInfoString, MediaType.parse("application/json; charset=utf-8"));
         Request request = new Request.Builder()
                 .url(url)
                 .put(body)
@@ -147,7 +151,8 @@ public class PostManager {
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(() -> {
 
-                    Log.e(TAG, "FAILURE LIKE POST: " + e);
+                    if (like) Log.e(TAG, "FAILURE LIKE POST: " + e);
+                    else      Log.e(TAG, "FAILURE UNLIKE POST: " + e);
 
                     callback.onFailure(e);
 
@@ -166,7 +171,8 @@ public class PostManager {
 
                     } else {
 
-                        Log.d(TAG, "LIKE POST SUCCEED");
+                        if (like) Log.d(TAG, "LIKE POST SUCCEED");
+                        else      Log.d(TAG, "UNLIKE POST SUCCEED");
 
                         callback.onSuccess(null);
 

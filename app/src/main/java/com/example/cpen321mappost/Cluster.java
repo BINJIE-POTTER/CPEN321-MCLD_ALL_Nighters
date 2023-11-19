@@ -1,4 +1,5 @@
 package com.example.cpen321mappost;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Cluster {
@@ -39,6 +40,7 @@ class Post {
     private Coordinate coordinate;
     private Content content;
     private int likeCount;
+    private ArrayList<String> likeList = new ArrayList<>();
 
     //ChatGPT usage: No
     public String getId() {
@@ -78,6 +80,12 @@ class Post {
     //ChatGPT usage: No
     public int getLikeCount() {
         return likeCount;
+    }
+    public int getLikeListSize() {
+        return likeList.size();
+    }
+    public ArrayList<String> getLikeList(){
+        return likeList;
     }
 
     //ChatGPT usage: Yes

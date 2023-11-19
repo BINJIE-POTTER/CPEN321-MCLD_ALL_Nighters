@@ -16,8 +16,11 @@ public class PostDetailActivity extends AppCompatActivity {
     private static final String TAG = "PostDetailActivity";
     private static final ProfileManager profileManager = new ProfileManager();
     private static final PostManager postManager = new PostManager();
+    private final String myUserId = User.getInstance().getUserId();
     private String pid;
     private String uid;
+    private boolean isLiked = false;
+    private boolean isFollowed = false;
 
     //ChatGPT usage: Partial
     @Override
@@ -45,6 +48,9 @@ public class PostDetailActivity extends AppCompatActivity {
                 textViewTitle.setText(post.getContent().getTitle());
                 textViewMainContent.setText(post.getContent().getBody());
                 textViewLikes.setText("Likes: " + post.getLikeCount());
+
+                isLiked = post.getLikeList().contains(myUserId);
+                buttonLike.setText(isLiked ? "Unlike" : "Like");
 
                 uid = post.getUserId();
 
@@ -89,8 +95,12 @@ public class PostDetailActivity extends AppCompatActivity {
 
                 Toast.makeText(PostDetailActivity.this, "Deleted!", Toast.LENGTH_LONG).show();
 
-                Intent PostPreviewListIntent = new Intent(PostDetailActivity.this, PostPreviewListActivity.class);
-                startActivity(PostPreviewListIntent);
+//                Intent intent = new Intent(PostDetailActivity.this, PostPreviewListActivity.class);
+//                intent.putExtra("mode", "reviewPosts");
+//                intent.putExtra("latitude", latitude);
+//                intent.putExtra("longitude", longitude);
+//                startActivity(intent);
+                finish();
 
             }
 
@@ -111,7 +121,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
         });
 
-        buttonLike.setOnClickListener(v -> postManager.likePostData(pid, PostDetailActivity.this, new PostManager.JsonCallback<Void>() {
+        buttonLike.setOnClickListener(v -> postManager.likePostData(!isLiked, pid, myUserId, PostDetailActivity.this, new PostManager.JsonCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 postManager.getSinglePostData(pid, PostDetailActivity.this, new PostManager.JsonCallback<Post>() {
@@ -131,7 +141,10 @@ public class PostDetailActivity extends AppCompatActivity {
                     }
                 });
 
-                Toast.makeText(PostDetailActivity.this, "liked this post!", Toast.LENGTH_LONG).show();
+                if (isLiked) Toast.makeText(PostDetailActivity.this, "unliked this post!", Toast.LENGTH_SHORT).show();
+                else         Toast.makeText(PostDetailActivity.this, "liked this post!", Toast.LENGTH_SHORT).show();
+                isLiked = !isLiked;
+                buttonLike.setText(isLiked ? "Unlike" : "Like");
 
             }
 
