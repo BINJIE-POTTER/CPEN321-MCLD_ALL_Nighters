@@ -273,9 +273,7 @@ public class PostPreviewListActivity extends AppCompatActivity {
                 posts.clear();
                 posts.addAll(fetchedPosts);
                 adapter.notifyDataSetChanged();
-//                displayAcheivements(fetchedPosts.size());
-                 displayAcheivements(1);
-
+                displayAcheivements(fetchedPosts.size());
 
             }
             @Override
