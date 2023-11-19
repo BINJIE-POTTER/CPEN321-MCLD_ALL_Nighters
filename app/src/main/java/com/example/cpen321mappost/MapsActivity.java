@@ -367,13 +367,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return results[0] <= radius;
     }
 
-    public void refreshPage(View view) {
+    public void refreshPage() {
 
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
         finish();
 
+    }@Override
+    protected void onResume() {
+        super.onResume();
+        if (currentLocation != null) {
+            JSONObject coordinate = new JSONObject();
+            try {
+                coordinate.put("latitude", currentLocation.getLatitude());
+                coordinate.put("longitude", currentLocation.getLongitude());
+                getClusteredPostData(coordinate, MapsActivity.this, new JsonPostCallback() {
+                    @Override
+                    public void onSuccess(Cluster[] clusters) {
+                        // Update your map with the new data
+                        addBlueMarkersToMap(clusters);
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        // Handle failure
+                        Toast.makeText(MapsActivity.this, "Failed to refresh map data", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (JSONException e) {
+                Log.e(TAG, "FAILURE refreshMapData: " + e);
+            }
+        }
     }
+
 
 
 }
