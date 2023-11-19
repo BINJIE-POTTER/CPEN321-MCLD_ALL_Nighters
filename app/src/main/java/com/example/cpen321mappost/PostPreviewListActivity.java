@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +35,9 @@ public class PostPreviewListActivity extends AppCompatActivity {
     private ProfileManager profileManager;
     private TextView modeTitle;
     private Button followButton;
+    private ImageView icon1, icon2, icon3;
+
+
 
     //ChatGPT usage: Partial
     @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
@@ -60,6 +64,10 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String mode = null;
+        icon1 = findViewById(R.id.icon1);
+        icon2 = findViewById(R.id.icon2);
+        icon3 = findViewById(R.id.icon3);
+
 
         while (mode == null) {
 
@@ -77,6 +85,7 @@ public class PostPreviewListActivity extends AppCompatActivity {
                 modeTitle.setText(User.getInstance().getUserName() + "'s Posts");
 
                 showProfile(userId);
+
 
                 break;
 
@@ -264,6 +273,9 @@ public class PostPreviewListActivity extends AppCompatActivity {
                 posts.clear();
                 posts.addAll(fetchedPosts);
                 adapter.notifyDataSetChanged();
+//                displayAcheivements(fetchedPosts.size());
+                 displayAcheivements(20);
+
 
             }
             @Override
@@ -361,6 +373,7 @@ public class PostPreviewListActivity extends AppCompatActivity {
                 posts.clear();
                 posts.addAll(fetchedPosts);
                 adapter.notifyDataSetChanged();
+               displayAcheivements(fetchedPosts.size());
 
             }
             @Override
@@ -370,6 +383,17 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
             }
         });
+    }
+    private void  displayAcheivements(int numPosts)
+    {
+        if(numPosts >= 5 )
+            icon1.setVisibility(View.VISIBLE);
+
+        if(numPosts >= 10)
+            icon2.setVisibility(View.VISIBLE);
+
+        if(numPosts>= 15)
+            icon3.setVisibility(View.VISIBLE);
     }
 
     //ChatGPT usage: No

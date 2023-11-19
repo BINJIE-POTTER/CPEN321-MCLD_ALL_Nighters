@@ -17,6 +17,52 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
+    <!-- New ImageViews for the icons, aligned horizontally -->
+    <ImageView
+        android:id="@+id/icon1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/novice"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/post_preview_list_mode_name_id"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/icon2"
+        android:layout_margin="8dp"
+        android:adjustViewBounds="true"
+        android:maxWidth="100dp"
+        android:maxHeight="100dp"/>
+
+    <ImageView
+        android:id="@+id/icon2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/explorer"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/icon1"
+        app:layout_constraintBottom_toBottomOf="@id/icon1"
+        app:layout_constraintStart_toEndOf="@id/icon1"
+        app:layout_constraintEnd_toStartOf="@id/icon3"
+        android:layout_margin="8dp"
+        android:adjustViewBounds="true"
+        android:maxWidth="100dp"
+        android:maxHeight="100dp"/>
+
+    <ImageView
+        android:id="@+id/icon3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/master"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/icon1"
+        app:layout_constraintBottom_toBottomOf="@id/icon1"
+        app:layout_constraintStart_toEndOf="@id/icon2"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="8dp"
+        android:adjustViewBounds="true"
+        android:maxWidth="100dp"
+        android:maxHeight="100dp"/>
+
+
     <!-- RecyclerView for the posts -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/postsRecyclerView"
