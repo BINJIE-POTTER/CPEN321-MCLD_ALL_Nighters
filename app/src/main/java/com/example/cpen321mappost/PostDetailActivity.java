@@ -4,13 +4,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.Objects;
+import android.graphics.BitmapFactory;
+
 
 public class PostDetailActivity extends AppCompatActivity {
     private static final String TAG = "PostDetailActivity";
@@ -37,6 +42,8 @@ public class PostDetailActivity extends AppCompatActivity {
         Button buttonLike = findViewById(R.id.buttonLike);
         Button buttonComment = findViewById(R.id.buttonComment);
 
+        ImageView imageViewPost = findViewById(R.id.imageViewPost);
+
         Intent receivedIntent = getIntent();
         pid = receivedIntent.getStringExtra("pid");
 
@@ -51,6 +58,13 @@ public class PostDetailActivity extends AppCompatActivity {
 
                 isLiked = post.getLikeList().contains(myUserId);
                 buttonLike.setText(isLiked ? "Unlike" : "Like");
+                // Set the image
+                if (post.getImageData() != null && post.getImageData().getImage() != null) {
+                    byte[] decodedString = Base64.decode(post.getImageData().getImage(), Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    imageViewPost.setImageBitmap(decodedByte);
+                }
+
 
                 uid = post.getUserId();
 
@@ -94,12 +108,6 @@ public class PostDetailActivity extends AppCompatActivity {
             public void onSuccess(Void result) {
 
                 Toast.makeText(PostDetailActivity.this, "Deleted!", Toast.LENGTH_LONG).show();
-
-//                Intent intent = new Intent(PostDetailActivity.this, PostPreviewListActivity.class);
-//                intent.putExtra("mode", "reviewPosts");
-//                intent.putExtra("latitude", latitude);
-//                intent.putExtra("longitude", longitude);
-//                startActivity(intent);
                 finish();
 
             }

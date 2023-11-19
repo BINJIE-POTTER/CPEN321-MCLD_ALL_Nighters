@@ -41,6 +41,8 @@ class Post {
     private Content content;
     private int likeCount;
     private ArrayList<String> likeList = new ArrayList<>();
+    private ImageData image;
+
 
     //ChatGPT usage: No
     public String getId() {
@@ -87,12 +89,32 @@ class Post {
     public ArrayList<String> getLikeList(){
         return likeList;
     }
+    public ImageData getImageData()
+    {
+        return image;
+    }
+
 
     //ChatGPT usage: Yes
     public interface PostCallback {
         void onSuccess(List<Post> posts);
         void onFailure(Exception e);
     }
+
+}
+
+
+// Getters and setters for image and other fields
+
+class ImageData {
+    private String contentType;
+    private String image; // This holds the Base64 encoded image data
+    public String getImage()
+    {
+        return image;
+    }
+
+
 
 }
 

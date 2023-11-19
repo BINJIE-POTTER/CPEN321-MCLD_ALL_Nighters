@@ -23,7 +23,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class PostManager {
-    private static final String TAG = "UserDataFetcher";
+    private static final String TAG = "PostManager";
     final Gson gson = new Gson();
 
     //ChatGPT usage: Partial
@@ -47,35 +47,54 @@ public class PostManager {
 
                 });
             }
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) {
-                activity.runOnUiThread(() -> {
-
-                    if (!response.isSuccessful()) {
-
-                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-
-                        callback.onFailure(new IOException("Unexpected response " + response));
-
-                    } else {
-
-                        Log.d(TAG, "GET POST SUCCEED!");
-
-                        assert response.body() != null;
-                        String responseData = null;
-                        try {
-                            responseData = response.body().string();
-                        } catch (IOException e) {
-                            Log.e(TAG, e.toString());
+//            @Override
+//            public void onResponse(@NonNull Call call, @NonNull Response response) {
+//                activity.runOnUiThread(() -> {
+//
+//                    if (!response.isSuccessful()) {
+//
+//                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+//
+//                        callback.onFailure(new IOException("Unexpected response " + response));
+//
+//                    } else {
+//
+//                        Log.d(TAG, "GET POST SUCCEED!");
+//
+//                        assert response.body() != null;
+//                        String responseData = null;
+//                        try {
+//                            responseData = response.body().string();
+//                        } catch (IOException e) {
+//                            Log.e(TAG, e.toString());
+//                        }
+//
+//                        Post post = gson.fromJson(responseData, Post.class);
+//
+//                        callback.onSuccess(post);
+//
+//                    }
+//                });
+//            }
+//
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        if (!response.isSuccessful()) {
+                            throw new IOException("Unexpected response " + response);
                         }
 
+                        // Process the response in the background thread
+                        final String responseData = response.body().string();
                         Post post = gson.fromJson(responseData, Post.class);
 
-                        callback.onSuccess(post);
-
+                        // Switch to the main thread to update UI
+                        activity.runOnUiThread(() -> {
+                            Log.d(TAG, "GET POST SUCCEED");
+                            callback.onSuccess(post);
+                        });
                     }
-                });
-            }
+
+
         });
     }
 
