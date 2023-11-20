@@ -213,13 +213,11 @@ public class PostManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.runOnUiThread(() -> {
 
-                    Log.e(TAG, "FAILURE GET TAGS: " + e);
+                Log.e(TAG, "FAILURE GET TAGS: " + e);
 
-                    callback.onFailure(e);
+                activity.runOnUiThread(() -> callback.onFailure(e));
 
-                });
             }
 
             @Override
@@ -266,45 +264,42 @@ public class PostManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.runOnUiThread(() -> {
 
-                    Log.e(TAG, "FAILURE GET SEARCHED POSTS: " + e);
+                Log.e(TAG, "FAILURE GET SEARCHED POSTS: " + e);
 
-                    callback.onFailure(e);
+                activity.runOnUiThread(() -> callback.onFailure(e));
 
-                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
-                activity.runOnUiThread(() -> {
 
-                    if (!response.isSuccessful()) {
+                String responseData = null;
 
-                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+                if (!response.isSuccessful()) {
 
-                        callback.onFailure(new IOException("Unexpected response " + response));
+                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
 
-                    } else {
+                    activity.runOnUiThread(() -> callback.onFailure(new IOException("Unexpected response " + response)));
 
-                        Log.d(TAG, "GET SEARCHED POSTS SUCCEED");
+                } else {
 
-                        List<Post> posts;
-
+                    try {
                         assert response.body() != null;
-                        String responseData = null;
-                        try {
-                            responseData = response.body().string();
-                        } catch (IOException e) {
-                            Log.e(TAG, e.toString());
-                        }
-                        Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
-                        posts = gson.fromJson(responseData, postListType);
-
-                        callback.onSuccess(posts);
-
+                        responseData = response.body().string();
+                    } catch (IOException e) {
+                        Log.e(TAG, e.toString());
                     }
-                });
+
+                    String finalResponseData = responseData;
+
+                    Log.d(TAG, "GET SEARCHED POSTS SUCCEED");
+                    Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
+                    List<Post> posts = gson.fromJson(finalResponseData, postListType);
+
+                    activity.runOnUiThread(() -> callback.onSuccess(posts));
+
+                }
             }
         });
     }
@@ -337,45 +332,41 @@ public class PostManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.runOnUiThread(() -> {
 
-                    Log.e(TAG, "FAILURE GET POSTS FILTERED BY TAGS: " + e);
+                Log.e(TAG, "FAILURE GET POSTS FILTERED BY TAGS: " + e);
 
-                    callback.onFailure(e);
+                activity.runOnUiThread(() -> callback.onFailure(e));
 
-                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
-                activity.runOnUiThread(() -> {
 
-                    if (!response.isSuccessful()) {
+                if (!response.isSuccessful()) {
 
-                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
 
-                        callback.onFailure(new IOException("Unexpected response " + response));
+                    activity.runOnUiThread(() -> callback.onFailure(new IOException("Unexpected response " + response)));
 
-                    } else {
+                } else {
 
-                        Log.d(TAG, "GET POSTS FILTERED BY TAGS SUCCEED");
+                    Log.d(TAG, "GET POSTS FILTERED BY TAGS SUCCEED");
 
-                        List<Post> posts;
+                    List<Post> posts;
 
-                        assert response.body() != null;
-                        String responseData = null;
-                        try {
-                            responseData = response.body().string();
-                        } catch (IOException e) {
-                            Log.e(TAG, e.toString());
-                        }
-                        Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
-                        posts = gson.fromJson(responseData, postListType);
-
-                        callback.onSuccess(posts);
-
+                    assert response.body() != null;
+                    String responseData = null;
+                    try {
+                        responseData = response.body().string();
+                    } catch (IOException e) {
+                        Log.e(TAG, e.toString());
                     }
-                });
+                    Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
+                    posts = gson.fromJson(responseData, postListType);
+
+                    activity.runOnUiThread(() -> callback.onSuccess(posts));
+
+                }
             }
         });
     }
@@ -392,25 +383,20 @@ public class PostManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.runOnUiThread(() -> {
 
-                    Log.e(TAG, "FAILURE GET POSTS BY USER: " + e);
+                Log.e(TAG, "FAILURE GET POSTS BY USER: " + e);
 
-                    callback.onFailure(e);
+                activity.runOnUiThread(() ->callback.onFailure(e));
 
-                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 if (!response.isSuccessful()) {
 
-                    activity.runOnUiThread(() -> {
+                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
 
-                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-                        callback.onFailure(new IOException("Unexpected response " + response));
-
-                    });
+                    activity.runOnUiThread(() -> callback.onFailure(new IOException("Unexpected response " + response)));
 
                 } else {
 
@@ -427,8 +413,8 @@ public class PostManager {
                     Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
                     posts = gson.fromJson(responseData, postListType);
 
-                    // Update UI on the main thread
                     activity.runOnUiThread(() -> callback.onSuccess(posts));
+
                 }
             }
         });

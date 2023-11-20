@@ -1,6 +1,7 @@
 package com.example.cpen321mappost;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -25,7 +26,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private String pid;
     private String uid;
     private boolean isLiked = false;
-    private boolean isFollowed = false;
+    private boolean isFollowing = false;
 
     //ChatGPT usage: Partial
     @Override
@@ -41,7 +42,9 @@ public class PostDetailActivity extends AppCompatActivity {
         Button buttonAuthor = findViewById(R.id.buttonAuthor);
         Button buttonLike = findViewById(R.id.buttonLike);
         Button buttonComment = findViewById(R.id.buttonComment);
+        Button followButton = findViewById(R.id.post_detail_follow_button_id);
 
+        CardView cardView = findViewById(R.id.cardViewPost);
         ImageView imageViewPost = findViewById(R.id.imageViewPost);
 
         Intent receivedIntent = getIntent();
@@ -58,13 +61,19 @@ public class PostDetailActivity extends AppCompatActivity {
 
                 isLiked = post.getLikeList().contains(myUserId);
                 buttonLike.setText(isLiked ? "Unlike" : "Like");
-                // Set the image
-                if (post.getImageData() != null && post.getImageData().getImage() != null) {
+
+                if (post.getImageData() != null && !Objects.equals(post.getImageData().getImage(), "")) {
+
                     byte[] decodedString = Base64.decode(post.getImageData().getImage(), Base64.DEFAULT);
                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    cardView.setVisibility(View.VISIBLE);
                     imageViewPost.setImageBitmap(decodedByte);
-                }
 
+                } else {
+
+                    cardView.setVisibility(View.GONE);
+
+                }
 
                 uid = post.getUserId();
 
@@ -75,6 +84,27 @@ public class PostDetailActivity extends AppCompatActivity {
                 } else {
 
                     buttonDelete.setVisibility(View.GONE);
+
+                    followButton.setVisibility(View.VISIBLE);
+                    profileManager.getUserData(User.getInstance(), PostDetailActivity.this, new User.UserCallback() {
+                        @Override
+                        public String onSuccess(User user) {
+
+                            isFollowing = user.getFollowing().contains(uid);
+
+                            followButton.setText(isFollowing ? "following" : "follow");
+
+                            return null;
+
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+
+                            Log.e(TAG, e.toString());
+
+                        }
+                    });
 
                 }
                 profileManager.getAuthor(post.getUserId(), new ProfileManager.AuthorCallback() {
@@ -108,6 +138,7 @@ public class PostDetailActivity extends AppCompatActivity {
             public void onSuccess(Void result) {
 
                 Toast.makeText(PostDetailActivity.this, "Deleted!", Toast.LENGTH_LONG).show();
+
                 finish();
 
             }
@@ -171,6 +202,59 @@ public class PostDetailActivity extends AppCompatActivity {
             startActivity(intent);
 
         });
+
+        followButton.setOnClickListener(view -> {
+
+            profileManager.followAuthor(isFollowing, uid, this, new ProfileManager.FollowingUserCallback() {
+                @Override
+                public void onSuccess(String userId) {
+                    profileManager.getUserData(User.getInstance(), PostDetailActivity.this, new User.UserCallback() {
+                        @Override
+                        public String onSuccess(User user) {
+
+                            isFollowing = user.getFollowing().contains(userId);
+                            followButton.setText(isFollowing ? "following" : "follow");
+                            profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
+                                @Override
+                                public void onAuthorRetrieved(String authorName) {
+
+                                    if (isFollowing) Toast.makeText(PostDetailActivity.this, "Succeed following "+ authorName +" rn!", Toast.LENGTH_SHORT).show();
+                                    else             Toast.makeText(PostDetailActivity.this, "Succeed to unfollow "+ authorName +" !", Toast.LENGTH_SHORT).show();
+
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+
+                                    Log.d(TAG, String.valueOf(e));
+
+                                }
+                            });
+
+                            return null;
+
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+
+                            Log.d(TAG, "Cannot update user info after follow" + e);
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                    Toast.makeText(PostDetailActivity.this, "Unable to follow this user :(", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, String.valueOf(e));
+
+                }
+            });
+
+        });
+
     }
 }
 

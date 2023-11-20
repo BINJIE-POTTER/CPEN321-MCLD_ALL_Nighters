@@ -286,30 +286,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //ChatGPT usage: Partial
     public void showMoreOptions(View view) {
+
         PopupMenu moreMenu = new PopupMenu(this, view);
         moreMenu.getMenu().add("Search");
         moreMenu.getMenu().add("Tag");
+
         moreMenu.setOnMenuItemClickListener(item -> {
-            switch (item.getTitle().toString()) {
+
+            switch (Objects.requireNonNull(item.getTitle()).toString()) {
+
                 case "Search":
-                    // Implement your Search action here
-                    Intent searchIntent= new Intent(MapsActivity.this,SearchActivity.class);
+
+                    Intent searchIntent= new Intent(MapsActivity.this, SearchActivity.class);
                     startActivity(searchIntent);
                     return true;
+
                 case "Tag":
-                    // Implement your Tag action here
-                    Intent tagIntent= new Intent(MapsActivity.this,TagActivity.class);
+
+                    Intent tagIntent= new Intent(MapsActivity.this, TagActivity.class);
                     double latitude= currentLocation.getLatitude();
                     double longitude= currentLocation.getLongitude();
                     tagIntent.putExtra("latitude", Double.toString(latitude));
                     tagIntent.putExtra("longitude", Double.toString(longitude));
                     startActivity(tagIntent);
                     return true;
+
                 default:
+
                     return false;
+
             }
         });
+
         moreMenu.show();
+
     }
 
     //ChatGPT usage: Partial

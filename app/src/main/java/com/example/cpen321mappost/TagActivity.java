@@ -37,7 +37,7 @@ public class TagActivity extends AppCompatActivity {
 
         postManager.getTagsData(latitude, longitude, this, new PostManager.JsonCallback<ArrayList<String>>() {
             @Override
-            public void onSuccess( ArrayList<String> tags) {
+            public void onSuccess(ArrayList<String> tags) {
 
                 Log.d(TAG, "Tags are obtained successfully: ");
                 Log.d(TAG, String.join(", ", tags));
@@ -61,7 +61,6 @@ public class TagActivity extends AppCompatActivity {
             tagIntent.putExtra("mode", "tag");
             tagIntent.putExtra("userCurrentLat", latitude);
             tagIntent.putExtra("userCurrentLon", longitude);
-
             tagIntent.putStringArrayListExtra("tagsList", new ArrayList<>(tagsSet));
             startActivity(tagIntent);
 

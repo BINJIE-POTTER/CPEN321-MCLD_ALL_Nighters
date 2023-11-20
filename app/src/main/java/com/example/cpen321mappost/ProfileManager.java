@@ -216,16 +216,19 @@ public class ProfileManager {
     }
 
     //ChatGPT usage: Partial
-    public void followAuthor(String userId, final Activity activity, final FollowingUserCallback callback) {
+    public void followAuthor(boolean isFollowing, String userId, final Activity activity, final FollowingUserCallback callback) {
 
-        String url = "http://4.204.251.146:8081/users/follow";
+        String url;
+        if (isFollowing) url= "http://4.204.251.146:8081/users/unfollow";
+        else             url= "http://4.204.251.146:8081/users/follow";
         OkHttpClient httpClient = HttpClient.getInstance();
 
         FollowingUser followingUser = new FollowingUser(User.getInstance().getUserId(), userId);
 
         String jsonFollowingUserData = gson.toJson(followingUser);
 
-        Log.d(TAG, "FOLLOW AUTHOR data: " + jsonFollowingUserData);
+        if (isFollowing) Log.d(TAG, "UNFOLLOW AUTHOR data: " + jsonFollowingUserData);
+        else             Log.d(TAG, "FOLLOW AUTHOR data: " + jsonFollowingUserData);
 
         RequestBody body = RequestBody.create(jsonFollowingUserData, MediaType.parse("application/json; charset=utf-8"));
         Request request = new Request.Builder()
@@ -238,7 +241,8 @@ public class ProfileManager {
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(() -> {
 
-                    Log.e(TAG, "FAILURE FOLLOWING AUTHOR: " + e);
+                    if (isFollowing) Log.e(TAG, "FAILURE UNFOLLOWING AUTHOR: " + e);
+                    else             Log.e(TAG, "FAILURE FOLLOWING AUTHOR: " + e);
 
                     callback.onFailure(e);
 
@@ -256,7 +260,8 @@ public class ProfileManager {
 
                     } else {
 
-                        Log.d(TAG, "FOLLOW AUTHOR SUCCEED");
+                        if (isFollowing) Log.d(TAG, "UNFOLLOW AUTHOR SUCCEED");
+                        else             Log.d(TAG, "FOLLOW AUTHOR SUCCEED");
 
                         callback.onSuccess(userId);
 

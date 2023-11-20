@@ -24,11 +24,17 @@ public class ProfileActivity extends AppCompatActivity {
         TextView genderTextView;
         TextView birthdateTextView;
         TextView userIdTextView;
+        TextView followingTextView;
+        TextView followersTextView;
+        TextView postCountTextView;
         Button nameEditButton;
         Button emailEditButton;
         Button genderEditButton;
         Button birthdateEditButton;
         Button viewPostsButton;
+        Button followingButton;
+        Button followersButton;
+        Button postCountButton;
 
         user = User.getInstance();
         ProfileManager profileManager = new ProfileManager();
@@ -41,14 +47,21 @@ public class ProfileActivity extends AppCompatActivity {
         genderTextView = findViewById(R.id.user_gender_value_id);
         birthdateTextView = findViewById(R.id.user_birthdate_value_id);
         userIdTextView = findViewById(R.id.user_id_value_id);
+        followingTextView = findViewById(R.id.user_following_count_text_id);
+        followersTextView = findViewById(R.id.user_follower_count_text_id);
+        postCountTextView = findViewById(R.id.user_post_count_text_id);
 
         nameEditButton = findViewById(R.id.user_name_edit_button_id);
         emailEditButton = findViewById(R.id.user_email_edit_button_id);
         genderEditButton = findViewById(R.id.user_gender_edit_button_id);
         birthdateEditButton = findViewById(R.id.user_birthdate_edit_button_id);
         viewPostsButton = findViewById(R.id.user_view_posts_button_id);
+        followingButton = findViewById(R.id.user_following_count_id);
+        followersButton = findViewById(R.id.user_follower_count_id);
+        postCountButton = findViewById(R.id.user_post_count_id);
 
         profileManager.getUserData(user, this, new User.UserCallback() {
+            @SuppressLint("SetTextI18n")
             @Override
             public String onSuccess(User user) {
 
@@ -59,6 +72,9 @@ public class ProfileActivity extends AppCompatActivity {
                 genderTextView.setText(user.getUserGender());
                 birthdateTextView.setText(user.getUserBirthdate());
                 userIdTextView.setText(user.getUserId());
+                followingTextView.setText(""+user.getFollowing().size());
+                followersTextView.setText(""+user.getFollowers().size());
+                postCountTextView.setText(""+user.getPostCount());
 
                 return null;
             }
@@ -100,8 +116,7 @@ public class ProfileActivity extends AppCompatActivity {
         birthdateEditButton.setOnClickListener(view -> {
 
             Log.d(TAG,"Opening the profile editing activity");
-            Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
-            ProfileEditingIntent.putExtra("item", "userBirthdate");
+            Intent ProfileEditingIntent = new Intent(this, ProfileEditingBirthdateActivity.class);
             startActivity(ProfileEditingIntent);
             finish();
 
@@ -127,6 +142,33 @@ public class ProfileActivity extends AppCompatActivity {
 
         });
 
+        postCountButton.setOnClickListener(view -> {
+
+            Log.d(TAG,"Opening the posts preview list activity");
+            Intent PostPreviewListIntent = new Intent(this, PostPreviewListActivity.class);
+            PostPreviewListIntent.putExtra("mode", "profile");
+            PostPreviewListIntent.putExtra("userId", user.getUserId());
+            startActivity(PostPreviewListIntent);
+
+        });
+
+        followingButton.setOnClickListener(view -> {
+
+            Log.d(TAG,"Opening the users list activity");
+            Intent UserListIntent = new Intent(this, UserListActivity.class);
+            UserListIntent.putExtra("mode", "followings");
+            startActivity(UserListIntent);
+
+        });
+
+        followersButton.setOnClickListener(view -> {
+
+            Log.d(TAG,"Opening the users list activity");
+            Intent UserListIntent = new Intent(this, UserListActivity.class);
+            UserListIntent.putExtra("mode", "followers");
+            startActivity(UserListIntent);
+
+        });
 
     }
 

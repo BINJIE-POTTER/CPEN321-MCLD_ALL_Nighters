@@ -27,11 +27,8 @@ public class ProfileEditingSpinnerActivity extends AppCompatActivity {
         user = User.getInstance();
         profileManager = new ProfileManager();
 
-        Button saveButton;
-        Button cancelButton;
-
-        saveButton = findViewById(R.id.edit_profile_save_button);
-        cancelButton = findViewById(R.id.edit_profile_cancel_button);
+        Button saveButton = findViewById(R.id.edit_profile_save_button);
+        Button cancelButton  = findViewById(R.id.edit_profile_cancel_button);
 
         Spinner genderSpinner = findViewById(R.id.gender_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,

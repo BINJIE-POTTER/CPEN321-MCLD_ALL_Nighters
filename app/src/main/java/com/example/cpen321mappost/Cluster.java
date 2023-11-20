@@ -114,8 +114,6 @@ class ImageData {
         return image;
     }
 
-
-
 }
 
 class Coordinate {

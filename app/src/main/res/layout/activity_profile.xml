@@ -10,6 +10,84 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Divider -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginEnd="12dp"
+            android:weightSum="3">
+
+            <!-- Section for Following Count -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="start">
+                <Button
+                    android:id="@+id/user_following_count_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/followings"
+                    style="?android:attr/buttonBarButtonStyle" />
+                <TextView
+                    android:id="@+id/user_following_count_text_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/loading" />
+            </LinearLayout>
+
+            <!-- Section for Follower Count -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="start">
+                <Button
+                    android:id="@+id/user_follower_count_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/followers"
+                    style="?android:attr/buttonBarButtonStyle" />
+                <TextView
+                    android:id="@+id/user_follower_count_text_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/loading" />
+            </LinearLayout>
+
+            <!-- Section for Post Count -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="start">
+                <Button
+                    android:id="@+id/user_post_count_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/post"
+                    style="?android:attr/buttonBarButtonStyle" />
+                <TextView
+                    android:id="@+id/user_post_count_text_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/loading" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#cccccc"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
+
         <!-- All your existing UI elements go here, for example: -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,46 +120,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/user_profile_edit_button_caption"
                 style="?android:attr/buttonBarButtonStyle" />
-
-        </LinearLayout>
-
-        <!-- Divider -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#cccccc"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp" />
-
-        <!-- User ID Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <!-- Caption (e.g., "User ID:") aligned to left -->
-            <TextView
-                android:id="@+id/user_id_id"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/user_id_caption"
-                android:textSize="18sp" />
-
-            <!-- Actual user data aligned to right -->
-            <TextView
-                android:id="@+id/user_id_value_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/user_id_value_caption"
-                android:textSize="18sp"
-                android:layout_marginEnd="10dp"
-                android:gravity="end"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground"
-                android:padding="10dp" />
 
         </LinearLayout>
 
@@ -216,6 +254,46 @@
                 android:layout_height="wrap_content"
                 android:text="@string/user_profile_edit_button_caption"
                 style="?android:attr/buttonBarButtonStyle" />
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#cccccc"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- User ID Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Caption (e.g., "User ID:") aligned to left -->
+            <TextView
+                android:id="@+id/user_id_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/user_id_caption"
+                android:textSize="18sp" />
+
+            <!-- Actual user data aligned to right -->
+            <TextView
+                android:id="@+id/user_id_value_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_id_value_caption"
+                android:textSize="18sp"
+                android:layout_marginEnd="10dp"
+                android:gravity="end"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
+                android:padding="10dp" />
 
         </LinearLayout>
 
