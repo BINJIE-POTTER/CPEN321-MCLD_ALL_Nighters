@@ -65,7 +65,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     }
 
     //ChatGPT usage: Partial
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         profileManager.getUserData(userList.get(position), new Activity(), new User.UserCallback() {
@@ -74,17 +74,30 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
                 holder.userName.setText(user.getUserName());
                 holder.userInfo.setText("Published: "+ user.getPostCount() + "      " + "Followers: "+ user.getFollowers().size());
+                profileManager.getUserData(User.getInstance(), new Activity(), new User.UserCallback() {
+                    @Override
+                    public String onSuccess(User me) {
 
-                isFollowing = User.getInstance().getFollowing().contains(user.getUserId());
-                isFollowed  = user.getFollowing().contains(User.getInstance().getUserId());
+                        isFollowing = me.getFollowing().contains(user.getUserId());
+                        isFollowed  = user.getFollowing().contains(me.getUserId());
 
-                if (isFollowing) {
+                        if (isFollowing) {
 
-                    if (isFollowed)holder.followButton.setText("mutual");
+                            if (isFollowed)holder.followButton.setText("mutual");
 
-                    else holder.followButton.setText("following");
+                            else holder.followButton.setText("following");
 
-                } else holder.followButton.setText("follow");
+                        } else holder.followButton.setText("follow");
+
+                        return null;
+
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+
+                    }
+                });
 
                 return null;
 
@@ -106,25 +119,30 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             profileManager.followAuthor(isFollowing, userList.get(position).getUserId(), new Activity(), new ProfileManager.FollowingUserCallback() {
                 @Override
                 public void onSuccess(String userId) {
-                    profileManager.getUserData(User.getInstance(), new Activity(), new User.UserCallback() {
+                    profileManager.getUserData(new User(userId), new Activity(), new User.UserCallback() {
                         @Override
                         public String onSuccess(User user) {
-
-                            isFollowing = user.getFollowing().contains(userId);
-                            holder.followButton.setText(isFollowing ? "following" : "follow");
-                            profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
+                            profileManager.getUserData(User.getInstance(), new Activity(), new User.UserCallback() {
                                 @Override
-                                public void onAuthorRetrieved(String authorName) {
+                                public String onSuccess(User me) {
 
-                                    if (isFollowing) Toast.makeText(context, "Succeed following "+ authorName +" rn!", Toast.LENGTH_SHORT).show();
-                                    else             Toast.makeText(context, "Succeed to unfollow "+ authorName +" !", Toast.LENGTH_SHORT).show();
+                                    isFollowing = me.getFollowing().contains(user.getUserId());
+                                    isFollowed  = user.getFollowing().contains(me.getUserId());
+
+                                    if (isFollowing) {
+
+                                        if (isFollowed)holder.followButton.setText("mutual");
+
+                                        else holder.followButton.setText("following");
+
+                                    } else holder.followButton.setText("follow");
+
+                                    return null;
 
                                 }
 
                                 @Override
-                                public void onError(Exception e) {
-
-                                    Log.d(TAG, String.valueOf(e));
+                                public void onFailure(Exception e) {
 
                                 }
                             });
@@ -136,12 +154,26 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                         @Override
                         public void onFailure(Exception e) {
 
-                            Log.d(TAG, "Cannot update user info after follow" + e);
+                        }
+                    });
+
+                    profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
+                        @Override
+                        public void onAuthorRetrieved(String authorName) {
+
+                            if (!isFollowing) Toast.makeText(context, "Succeed following "+ authorName +" rn!", Toast.LENGTH_SHORT).show();
+                            else             Toast.makeText(context, "Succeed to unfollow "+ authorName +" !", Toast.LENGTH_SHORT).show();
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                            Log.d(TAG, String.valueOf(e));
 
                         }
                     });
                 }
-
                 @Override
                 public void onFailure(Exception e) {
 
@@ -151,7 +183,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 }
             });
         });
-
     }
 
     //ChatGPT usage: No
@@ -170,4 +201,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         context.startActivity(PostPreviewListIntent);
 
     }
+
+
 }

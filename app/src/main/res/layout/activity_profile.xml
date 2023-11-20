@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"> <!-- this attribute is optional. If set to true, the ScrollView will stretch its content to fill the viewport -->
@@ -11,6 +13,16 @@
         android:padding="16dp">
 
         <!-- Divider -->
+        <ImageView
+            android:id="@+id/avatar_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:srcCompat="@tools:sample/avatars"
+            android:layout_marginBottom="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="@string/avatar" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -91,4 +91,15 @@ public class UserListActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+
+        Intent ProfileIntent = new Intent(this, ProfileActivity.class);
+        startActivity(ProfileIntent);
+
+        finish();
+
+    }
+
 }
