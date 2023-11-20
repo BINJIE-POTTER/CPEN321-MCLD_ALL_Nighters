@@ -189,6 +189,15 @@ public class ProfileEditingActivity extends AppCompatActivity {
 
         });
 
+    }
+    @Override
+    public void onBackPressed() {
+
+        Intent ProfileIntent = new Intent(ProfileEditingActivity.this, ProfileActivity.class);
+        startActivity(ProfileIntent);
+
+        finish();
 
     }
+
 }

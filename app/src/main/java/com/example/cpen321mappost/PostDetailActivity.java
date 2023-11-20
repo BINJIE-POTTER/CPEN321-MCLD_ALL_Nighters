@@ -27,6 +27,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private String uid;
     private boolean isLiked = false;
     private boolean isFollowing = false;
+    private int postlikes;
 
     //ChatGPT usage: Partial
     @Override
@@ -36,7 +37,6 @@ public class PostDetailActivity extends AppCompatActivity {
 
         TextView textViewTitle = findViewById(R.id.textViewTitle);
         TextView textViewMainContent = findViewById(R.id.textViewMainContent);
-        TextView textViewLikes = findViewById(R.id.textViewLikes);
 
         Button buttonDelete = findViewById(R.id.buttonDelete);
         Button buttonAuthor = findViewById(R.id.buttonAuthor);
@@ -57,10 +57,9 @@ public class PostDetailActivity extends AppCompatActivity {
 
                 textViewTitle.setText(post.getContent().getTitle());
                 textViewMainContent.setText(post.getContent().getBody());
-                textViewLikes.setText("Likes: " + post.getLikeCount());
 
                 isLiked = post.getLikeList().contains(myUserId);
-                buttonLike.setText(isLiked ? "Unlike" : "Like");
+                buttonLike.setText(isLiked ? "❤️ " + post.getLikeCount() : "🩶 " + post.getLikeCount());
 
                 if (post.getImageData() != null && !Objects.equals(post.getImageData().getImage(), "")) {
 
@@ -168,7 +167,10 @@ public class PostDetailActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Post post) {
 
-                        textViewLikes.setText("Likes: " + post.getLikeCount());
+                        postlikes = post.getLikeCount();
+
+                        isLiked = !isLiked;
+                        buttonLike.setText(isLiked ? "❤️ " + postlikes : "🩶 " + postlikes);
 
                     }
 
@@ -180,11 +182,8 @@ public class PostDetailActivity extends AppCompatActivity {
                     }
                 });
 
-                if (isLiked) Toast.makeText(PostDetailActivity.this, "unliked this post!", Toast.LENGTH_SHORT).show();
+                if (!isLiked) Toast.makeText(PostDetailActivity.this, "unliked this post!", Toast.LENGTH_SHORT).show();
                 else         Toast.makeText(PostDetailActivity.this, "liked this post!", Toast.LENGTH_SHORT).show();
-                isLiked = !isLiked;
-                buttonLike.setText(isLiked ? "Unlike" : "Like");
-
             }
 
             @Override

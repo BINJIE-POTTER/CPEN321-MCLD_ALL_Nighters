@@ -86,7 +86,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         holder.textViewTitle.setText(post.getContent().getTitle());
         holder.textViewContent.setText(post.getContent().getBody());
-        holder.textViewLikes.setText("Likes: " + post.getLikeCount());
+        holder.textViewLikes.setText("❤️ " + post.getLikeCount());
 
     }
 
