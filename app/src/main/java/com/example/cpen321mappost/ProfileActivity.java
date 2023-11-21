@@ -158,6 +158,7 @@ public class ProfileActivity extends AppCompatActivity {
             Intent UserListIntent = new Intent(this, UserListActivity.class);
             UserListIntent.putExtra("mode", "followings");
             startActivity(UserListIntent);
+            finish();
 
         });
 
@@ -167,6 +168,7 @@ public class ProfileActivity extends AppCompatActivity {
             Intent UserListIntent = new Intent(this, UserListActivity.class);
             UserListIntent.putExtra("mode", "followers");
             startActivity(UserListIntent);
+            finish();
 
         });
 

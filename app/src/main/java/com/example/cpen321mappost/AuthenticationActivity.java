@@ -145,7 +145,7 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         Intent intent = new Intent(AuthenticationActivity.this, MapsActivity.class);
         startActivity(intent);
-        finish();  // Finish the current activity
+        finish();
 
     }
 
