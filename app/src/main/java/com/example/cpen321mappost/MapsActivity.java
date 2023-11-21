@@ -202,7 +202,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //ChatGPT usage: Partial
      public static void getClusteredPostData(JSONObject coordinate, final Activity activity, final MapsActivity.JsonPostCallback callback){
-
+//
          String url = "http://4.204.251.146:8081/posts/cluster";
          OkHttpClient httpClient = HttpClient.getInstance();
          HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder();
