@@ -1,39 +1,32 @@
 package com.example.cpen321mappost;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
-import android.os.Bundle;
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
-
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Calendar;
-
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
-import com.google.gson.reflect.TypeToken;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Calendar;
 
-import org.json.JSONObject;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -154,7 +147,6 @@ public class PostActivity extends AppCompatActivity {
             builder.addFormDataPart("image", file.getName(), fileBody);
         }
 
-
         builder.addFormDataPart("postData", postData.toString());
 
         RequestBody requestBody = builder.build();
@@ -188,27 +180,37 @@ public class PostActivity extends AppCompatActivity {
     }
 
     // Method to get file path from Uri
-    private String getRealPathFromURI(Uri contentUri) {
+    public String getRealPathFromURI(Uri contentUri) {
+
         String result;
         Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
+
         if (cursor == null) {
+
             result = contentUri.getPath();
+
         } else {
+
             cursor.moveToFirst();
             int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
             result = cursor.getString(idx);
             cursor.close();
+
         }
+
         return result;
+
     }
 
     //ChatGPT usage: Partial
     public String getCurrentDateUsingCalendar() {
+
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH) + 1; // Months are indexed from 0
         int year = calendar.get(Calendar.YEAR);
 
         return day + "-" + month + "-" + year;
+
     }
 }

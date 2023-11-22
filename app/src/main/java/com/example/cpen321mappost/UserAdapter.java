@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +22,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.Objects;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private final List<User> userList;
@@ -74,6 +78,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
                 holder.userName.setText(user.getUserName());
                 holder.userInfo.setText("Published: "+ user.getPostCount() + "      " + "Followers: "+ user.getFollowers().size());
+
+                if (user.getUserAvatar() != null && !Objects.equals(user.getUserAvatar().getImage(), "")) {
+
+                    byte[] decodedString = Base64.decode(user.getUserAvatar().getImage(), Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    holder.avatarImageView.setImageBitmap(decodedByte);
+
+                }
+
                 profileManager.getUserData(User.getInstance(), new Activity(), new User.UserCallback() {
                     @Override
                     public String onSuccess(User me) {

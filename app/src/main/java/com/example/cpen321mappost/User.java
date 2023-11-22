@@ -23,6 +23,7 @@ public class User {
     private int postCount;
     private ArrayList<String> following;
     private ArrayList<String> followers;
+    private ImageData userAvatar;
 
     //ChatGPT usage: Partial
     private User() {
@@ -38,6 +39,7 @@ public class User {
         this.postCount = 0;
         this.following = new ArrayList<>();
         this.followers = new ArrayList<>();
+        this.userAvatar = new ImageData();
 
         updateToken(new TokenCallback() {
             @Override
@@ -69,6 +71,7 @@ public class User {
         this.postCount = 0;
         this.following = null;
         this.followers = null;
+        this.userAvatar = null;
 
     }
 
@@ -249,6 +252,14 @@ public class User {
 
     public void setFollowers(ArrayList<String> followers) {
         this.followers = followers;
+    }
+
+    public ImageData getUserAvatar() {
+        return userAvatar;
+    }
+
+    public void setUserAvatar(ImageData userAvatar) {
+        this.userAvatar = userAvatar;
     }
 
 }

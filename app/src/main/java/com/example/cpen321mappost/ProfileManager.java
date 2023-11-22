@@ -1,17 +1,25 @@
 package com.example.cpen321mappost;
 
+import static java.security.AccessController.getContext;
+
 import android.app.Activity;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -44,32 +52,30 @@ public class ProfileManager {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
-                activity.runOnUiThread(() -> {
 
-                    if (!response.isSuccessful()) {
+                if (!response.isSuccessful()) {
 
-                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
 
-                        callback.onFailure(new IOException("Unexpected response " + response));
+                    activity.runOnUiThread(() -> callback.onFailure(new IOException("Unexpected response " + response)));
 
-                    } else {
+                } else {
 
-                        Log.d(TAG, "GET USER SUCCEED");
+                    Log.d(TAG, "GET USER SUCCEED");
 
-                        assert response.body() != null;
-                        String responseData = null;
-                        try {
-                            responseData = response.body().string();
-                        } catch (IOException e) {
-                            Log.e(TAG, e.toString());
-                        }
-
-                        User user = gson.fromJson(responseData, User.class);
-
-                        callback.onSuccess(user);
-
+                    assert response.body() != null;
+                    String responseData = null;
+                    try {
+                        responseData = response.body().string();
+                    } catch (IOException e) {
+                        Log.e(TAG, e.toString());
                     }
-                });
+
+                    User user = gson.fromJson(responseData, User.class);
+
+                    activity.runOnUiThread(() -> callback.onSuccess(user));
+
+                }
             }
         });
     }
@@ -93,33 +99,29 @@ public class ProfileManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.runOnUiThread(() -> {
 
-                    Log.e(TAG, "FAILURE PUT USER: " + e);
+                Log.e(TAG, "FAILURE PUT USER: " + e);
 
-                    callback.onFailure(e);
+                activity.runOnUiThread(() -> callback.onFailure(e));
 
-                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
-                activity.runOnUiThread(() -> {
 
-                    if (!response.isSuccessful()) {
+                if (!response.isSuccessful()) {
 
-                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
 
-                        callback.onFailure(new IOException("Unexpected response " + response));
+                    activity.runOnUiThread(() -> callback.onFailure(new IOException("Unexpected response " + response)));
 
-                    } else {
+                } else {
 
-                        Log.d(TAG, "PUT USER SUCCEED");
+                    Log.d(TAG, "PUT USER SUCCEED");
 
-                        callback.onSuccess(user);
+                    activity.runOnUiThread(() -> callback.onSuccess(user));
 
-                    }
-                });
+                }
             }
         });
     }
@@ -143,33 +145,29 @@ public class ProfileManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.runOnUiThread(() -> {
 
-                    Log.e(TAG, "FAILURE POST USER: " + e);
+                Log.e(TAG, "FAILURE POST USER: " + e);
 
-                    callback.onFailure(e);
+                activity.runOnUiThread(() -> callback.onFailure(e));
 
-                });
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
-                activity.runOnUiThread(() -> {
 
-                    if (!response.isSuccessful()) {
+                if (!response.isSuccessful()) {
 
-                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
 
-                        callback.onFailure(new IOException("Unexpected response " + response));
+                    activity.runOnUiThread(() -> callback.onFailure(new IOException("Unexpected response " + response)));
 
-                    } else {
+                } else {
 
-                        Log.d(TAG, "POST USER SUCCEED");
+                    Log.d(TAG, "POST USER SUCCEED");
 
-                        callback.onSuccess(user);
+                    activity.runOnUiThread(() -> callback.onSuccess(user));
 
-                    }
-                });
+                }
             }
         });
     }
@@ -239,17 +237,69 @@ public class ProfileManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+
+                if (isFollowing) Log.e(TAG, "FAILURE UNFOLLOWING AUTHOR: " + e);
+                else             Log.e(TAG, "FAILURE FOLLOWING AUTHOR: " + e);
+
+                activity.runOnUiThread(() -> callback.onFailure(e));
+
+            }
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+
+                if (!response.isSuccessful()) {
+
+                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+
+                    activity.runOnUiThread(() -> callback.onFailure(new IOException("Unexpected response " + response)));
+
+                } else {
+
+                    if (isFollowing) Log.d(TAG, "UNFOLLOW AUTHOR SUCCEED");
+                    else             Log.d(TAG, "FOLLOW AUTHOR SUCCEED");
+
+                    activity.runOnUiThread(() -> callback.onSuccess(userId));
+
+                }
+            }
+        });
+    }
+
+    public void uploadUserAvatar(File avatarFile, final Activity activity, final User.UserCallback callback) {
+
+        String url = "http://4.204.251.146:8081/users/update-avatar";
+        OkHttpClient httpClient = HttpClient.getInstance();
+
+        MultipartBody.Builder builder = new MultipartBody.Builder();
+        builder.setType(MultipartBody.FORM);
+
+        RequestBody fileBody = RequestBody.create(MediaType.parse("image/*"), avatarFile);
+        builder.addFormDataPart("image", avatarFile.getName(), fileBody);
+        builder.addFormDataPart("userId", User.getInstance().getUserId());
+
+        RequestBody requestBody = builder.build();
+
+        Log.d(TAG, requestBody.toString());
+
+        Request request = new Request.Builder()
+                .url(url)
+                .put(requestBody)
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 activity.runOnUiThread(() -> {
 
-                    if (isFollowing) Log.e(TAG, "FAILURE UNFOLLOWING AUTHOR: " + e);
-                    else             Log.e(TAG, "FAILURE FOLLOWING AUTHOR: " + e);
+                    Log.e(TAG, "FAILURE UPLOAD USER AVATAR: " + e);
 
                     callback.onFailure(e);
 
                 });
             }
+
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
                 activity.runOnUiThread(() -> {
 
                     if (!response.isSuccessful()) {
@@ -260,10 +310,9 @@ public class ProfileManager {
 
                     } else {
 
-                        if (isFollowing) Log.d(TAG, "UNFOLLOW AUTHOR SUCCEED");
-                        else             Log.d(TAG, "FOLLOW AUTHOR SUCCEED");
+                        Log.d(TAG, "PUT USER SUCCEED");
 
-                        callback.onSuccess(userId);
+                        callback.onSuccess(null);
 
                     }
                 });
@@ -305,4 +354,5 @@ public class ProfileManager {
         }
 
     }
+
 }

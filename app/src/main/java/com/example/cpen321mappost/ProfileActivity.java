@@ -1,17 +1,104 @@
 package com.example.cpen321mappost;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity {
     private User user;
-    final static String TAG = "ProfileManager Activity";
+    private final static String TAG = "ProfileManager Activity";
+    private final ProfileManager profileManager = new ProfileManager();
+    private ImageView avatarImageView;
+
+    private final ActivityResultLauncher<String[]> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
+                if (isGranted.containsValue(false)) {
+                    Toast.makeText(this, "Permission denied to read storage", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+    //ChatGPT usage: Yes
+    private final ActivityResultLauncher<Intent> getImage = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Uri imageUri = result.getData().getData();
+
+                    if (imageUri != null) {
+
+                        File avatarFile = new File(getRealPathFromURI(imageUri));
+                        profileManager.uploadUserAvatar(avatarFile, this, new User.UserCallback() {
+                            @Override
+                            public String onSuccess(User user) {
+
+                                Log.d(TAG,"AVATAR UPLOAD SUCCEED!");
+
+                                profileManager.getUserData(User.getInstance(), ProfileActivity.this, new User.UserCallback() {
+                                    @Override
+                                    public String onSuccess(User user) {
+
+                                        Log.d(TAG, "Succeed on get user data in profile activity");
+
+                                        if (user.getUserAvatar() != null && !Objects.equals(user.getUserAvatar().getImage(), "")) {
+
+                                            byte[] decodedString = Base64.decode(user.getUserAvatar().getImage(), Base64.DEFAULT);
+                                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                                            avatarImageView.setImageBitmap(decodedByte);
+
+                                        }
+
+                                        return null;
+
+                                    }
+                                    @Override
+                                    public void onFailure(Exception e) {
+
+                                        Log.e(TAG, e.toString());
+
+                                    }
+                                });
+
+                                return null;
+
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+
+                                Log.e(TAG, e.toString());
+
+                            }
+                        });
+                    }
+                }
+            });
 
     //ChatGPT usage: Partial
     @Override
@@ -37,7 +124,6 @@ public class ProfileActivity extends AppCompatActivity {
         Button postCountButton;
 
         user = User.getInstance();
-        ProfileManager profileManager = new ProfileManager();
 
         Log.d(TAG, "User ID: " + user.getUserId() + "," + "User Email: " + user.getUserEmail() + "," + "User name: " + user.getUserName() + "," + "User gender: " + user.getUserGender());
 
@@ -60,6 +146,8 @@ public class ProfileActivity extends AppCompatActivity {
         followersButton = findViewById(R.id.user_follower_count_id);
         postCountButton = findViewById(R.id.user_post_count_id);
 
+        avatarImageView = findViewById(R.id.avatar_profile);
+
         profileManager.getUserData(user, this, new User.UserCallback() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -76,7 +164,16 @@ public class ProfileActivity extends AppCompatActivity {
                 followersTextView.setText(""+user.getFollowers().size());
                 postCountTextView.setText(""+user.getPostCount());
 
+                if (user.getUserAvatar() != null && !Objects.equals(user.getUserAvatar().getImage(), "")) {
+
+                    byte[] decodedString = Base64.decode(user.getUserAvatar().getImage(), Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    avatarImageView.setImageBitmap(decodedByte);
+
+                }
+
                 return null;
+
             }
 
             @SuppressLint("SetTextI18n")
@@ -88,8 +185,6 @@ public class ProfileActivity extends AppCompatActivity {
                 genderTextView.setText("error");
                 birthdateTextView.setText("error");
                 userIdTextView.setText("error");
-
-                //Toast.makeText(ProfileActivity.this, "Failed to load user info!", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -172,6 +267,90 @@ public class ProfileActivity extends AppCompatActivity {
 
         });
 
+        avatarImageView.setOnClickListener(view -> {
+
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissionLauncher.launch(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE});
+
+            } else {
+
+                Intent pickImage = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                getImage.launch(pickImage);
+
+            }
+        });
     }
+
+    public String getRealPathFromURI(Uri contentUri) {
+
+        String result = null;
+        Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
+
+        if (cursor != null) {
+
+            if (cursor.moveToFirst()) {
+
+                int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+
+                if (idx != -1) result = cursor.getString(idx);
+
+            }
+
+            cursor.close();
+
+        }
+
+        // If direct path extraction failed, try reading from the stream
+        if (result == null) {
+
+            try (InputStream inputStream = getContentResolver().openInputStream(contentUri)) {
+
+                if (inputStream != null) {
+
+                    File tempFile = createTemporaryFileFromStream(inputStream, contentUri.getLastPathSegment());
+                    if (tempFile != null) result = tempFile.getAbsolutePath();
+
+                }
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
+
+            }
+        }
+
+        return result;
+
+    }
+
+    private File createTemporaryFileFromStream(InputStream inputStream, String fileName) {
+
+        try {
+
+            File tempFile = File.createTempFile("temp_" + fileName, null, getCacheDir());
+
+            try (OutputStream out = Files.newOutputStream(tempFile.toPath())) {
+
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+
+                    out.write(buffer, 0, bytesRead);
+
+                }
+            }
+
+            return tempFile;
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+            return null;
+
+        }
+    }
+
 
 }

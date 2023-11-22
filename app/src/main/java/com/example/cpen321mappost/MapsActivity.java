@@ -377,13 +377,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return results[0] <= radius;
     }
 
-    public void refreshPage() {
+    public void refreshPage(View view) {
 
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
         finish();
 
-    }@Override
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (currentLocation != null) {
