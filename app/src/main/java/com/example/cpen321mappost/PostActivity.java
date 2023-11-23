@@ -76,8 +76,8 @@ public class PostActivity extends AppCompatActivity {
         imgPreview = findViewById(R.id.imgPreview);
         titleEditText = findViewById(R.id.titleEditText);
         mainTextEditText = findViewById(R.id.mainTextEditText);
-        Button uploadImageButton = findViewById(R.id.uploadImageButton);
-        Button saveButton = findViewById(R.id.saveButton);
+        Button cancelButton = findViewById(R.id.edit_profile_cancel_button);
+        Button saveButton = findViewById(R.id.edit_profile_save_button);
         Intent receivedIntent = getIntent();
 
         double latitude = Double.parseDouble(receivedIntent.getStringExtra("latitude"));
@@ -89,9 +89,15 @@ public class PostActivity extends AppCompatActivity {
         }
 
         //Upload the image
-        uploadImageButton.setOnClickListener(v -> {
+        imgPreview.setOnClickListener(v -> {
             Intent pickImage = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             getImage.launch(pickImage);
+        });
+
+        cancelButton.setOnClickListener(v -> {
+
+            finish();
+
         });
 
         //Save the content of post
