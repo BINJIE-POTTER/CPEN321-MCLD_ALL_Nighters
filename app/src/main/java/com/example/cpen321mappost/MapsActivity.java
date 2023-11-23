@@ -68,12 +68,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         ActivityMapsBinding binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
+
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
         requestLocationPermissions();
+
         Button userProfileButton = findViewById(R.id.userProfileButton);
         userProfileButton.setOnClickListener(v -> {
             Intent intent = new Intent(MapsActivity.this, ProfileActivity.class);
@@ -146,9 +152,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     isNearMarker = true;
                     break;
                 }
-                else {
-
-                }
             }
 
             if (!isNearMarker) {
@@ -189,12 +192,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "Failed to get nearby blue markers on map", Toast.LENGTH_SHORT).show();
                 final Toast toast = Toast.makeText(MapsActivity.this, "Failed to get nearby blue markers on map", Toast.LENGTH_LONG);
                 final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        toast.show();
-                    }
-                }, 3000); // 3000ms delay to show the toast again after the initial showing
+                handler.postDelayed(toast::show, 3000); // 3000ms delay to show the toast again after the initial showing
             }
         });
 
@@ -207,7 +205,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
          OkHttpClient httpClient = HttpClient.getInstance();
          HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder();
 
-         // Convert the JSONObject to query parameters
          Iterator<String> keys = coordinate.keys();
          while (keys.hasNext()) {
              String key = keys.next();
@@ -216,7 +213,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
          }
          String fullUrl = urlBuilder.build().toString();
 
-         // Build the GET request
          Request request = new Request.Builder()
                  .url(fullUrl)
                  .build();

@@ -29,15 +29,15 @@
 
     <Spinner
         android:id="@+id/gender_spinner"
-        android:layout_width="247dp"
-        android:layout_height="101dp"
+        android:layout_width="251dp"
+        android:layout_height="55dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight="100dp"
         app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.142" />
+        app:layout_constraintVertical_bias="0.101" />
 
     <!-- ... other views ... -->
 
