@@ -221,34 +221,53 @@ public class PostManager {
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) {
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected response " + response);
+                }
+
+                // Process the response in the background thread
+                final String responseData = response.body().string();
+                Type listType = new TypeToken<ArrayList<String>>(){}.getType();
+                ArrayList<String> tagsList = gson.fromJson(responseData, listType);
+
+                // Switch to the main thread to update UI
                 activity.runOnUiThread(() -> {
-
-                    if (!response.isSuccessful()) {
-
-                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-
-                        callback.onFailure(new IOException("Unexpected response " + response));
-
-                    } else {
-
-                        Log.d(TAG, "GET TAGS SUCCEED");
-
-                        assert response.body() != null;
-                        String responseData = null;
-                        try {
-                            responseData = response.body().string();
-                        } catch (IOException e) {
-                            Log.e(TAG, e.toString());
-                        }
-                        Type listType = new TypeToken<ArrayList<String>>(){}.getType();
-                        ArrayList<String> tagsList = gson.fromJson(responseData, listType);
-
-                        callback.onSuccess(tagsList);
-
-                    }
+                    Log.d(TAG, "GET POST SUCCEED");
+                    callback.onSuccess(tagsList);
                 });
             }
+
+
+//            @Override
+//            public void onResponse(@NonNull Call call, @NonNull Response response) {
+//                activity.runOnUiThread(() -> {
+//
+//                    if (!response.isSuccessful()) {
+//
+//                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+//
+//                        callback.onFailure(new IOException("Unexpected response " + response));
+//
+//                    } else {
+//
+//                        Log.d(TAG, "GET TAGS SUCCEED");
+//
+//                        assert response.body() != null;
+//                        String responseData = null;
+//                        try {
+//                            responseData = response.body().string();
+//                        } catch (IOException e) {
+//                            Log.e(TAG, e.toString());
+//                        }
+//                        Type listType = new TypeToken<ArrayList<String>>(){}.getType();
+//                        ArrayList<String> tagsList = gson.fromJson(responseData, listType);
+//
+//                        callback.onSuccess(tagsList);
+//
+//                    }
+//                });
+//            }
         });
     }
 
@@ -270,37 +289,56 @@ public class PostManager {
                 activity.runOnUiThread(() -> callback.onFailure(e));
 
             }
-
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) {
-
-                String responseData = null;
-
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected response " + response);
+                }
 
-                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-
-                    activity.runOnUiThread(() -> callback.onFailure(new IOException("Unexpected response " + response)));
-
-                } else {
-
-                    try {
-                        assert response.body() != null;
-                        responseData = response.body().string();
-                    } catch (IOException e) {
-                        Log.e(TAG, e.toString());
-                    }
-
-                    String finalResponseData = responseData;
-
+                // Process the response in the background thread
+                final String responseData = response.body().string();
                     Log.d(TAG, "GET SEARCHED POSTS SUCCEED");
                     Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
-                    List<Post> posts = gson.fromJson(finalResponseData, postListType);
+                    List<Post> posts = gson.fromJson(responseData, postListType);
 
-                    activity.runOnUiThread(() -> callback.onSuccess(posts));
-
-                }
+                // Switch to the main thread to update UI
+                activity.runOnUiThread(() -> {
+                    Log.d(TAG, "GET POST SUCCEED");
+                    callback.onSuccess(posts);
+                });
             }
+
+//
+//            @Override
+//            public void onResponse(@NonNull Call call, @NonNull Response response) {
+//
+//                String responseData = null;
+//
+//                if (!response.isSuccessful()) {
+//
+//                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+//
+//                    activity.runOnUiThread(() -> callback.onFailure(new IOException("Unexpected response " + response)));
+//
+//                } else {
+//
+//                    try {
+//                        assert response.body() != null;
+//                        responseData = response.body().string();
+//                    } catch (IOException e) {
+//                        Log.e(TAG, e.toString());
+//                    }
+//
+//                    String finalResponseData = responseData;
+//
+//                    Log.d(TAG, "GET SEARCHED POSTS SUCCEED");
+//                    Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
+//                    List<Post> posts = gson.fromJson(finalResponseData, postListType);
+//
+//                    activity.runOnUiThread(() -> callback.onSuccess(posts));
+//
+//                }
+//            }
         });
     }
 
@@ -338,36 +376,54 @@ public class PostManager {
                 activity.runOnUiThread(() -> callback.onFailure(e));
 
             }
-
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) {
-
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (!response.isSuccessful()) {
-
-                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-
-                    activity.runOnUiThread(() -> callback.onFailure(new IOException("Unexpected response " + response)));
-
-                } else {
-
-                    Log.d(TAG, "GET POSTS FILTERED BY TAGS SUCCEED");
-
-                    List<Post> posts;
-
-                    assert response.body() != null;
-                    String responseData = null;
-                    try {
-                        responseData = response.body().string();
-                    } catch (IOException e) {
-                        Log.e(TAG, e.toString());
-                    }
-                    Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
-                    posts = gson.fromJson(responseData, postListType);
-
-                    activity.runOnUiThread(() -> callback.onSuccess(posts));
-
+                    throw new IOException("Unexpected response " + response);
                 }
+
+                // Process the response in the background thread
+                final String responseData = response.body().string();
+                Log.d(TAG, "GET SEARCHED POSTS SUCCEED");
+                Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
+                List<Post> posts = gson.fromJson(responseData, postListType);
+
+                // Switch to the main thread to update UI
+                activity.runOnUiThread(() -> {
+                    Log.d(TAG, "GET POST SUCCEED");
+                    callback.onSuccess(posts);
+                });
             }
+
+//            @Override
+//            public void onResponse(@NonNull Call call, @NonNull Response response) {
+//
+//                if (!response.isSuccessful()) {
+//
+//                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+//
+//                    activity.runOnUiThread(() -> callback.onFailure(new IOException("Unexpected response " + response)));
+//
+//                } else {
+//
+//                    Log.d(TAG, "GET POSTS FILTERED BY TAGS SUCCEED");
+//
+//                    List<Post> posts;
+//
+//                    assert response.body() != null;
+//                    String responseData = null;
+//                    try {
+//                        responseData = response.body().string();
+//                    } catch (IOException e) {
+//                        Log.e(TAG, e.toString());
+//                    }
+//                    Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
+//                    posts = gson.fromJson(responseData, postListType);
+//
+//                    activity.runOnUiThread(() -> callback.onSuccess(posts));
+//
+//                }
+//            }
         });
     }
 
