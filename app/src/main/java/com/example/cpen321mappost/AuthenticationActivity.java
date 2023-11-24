@@ -15,6 +15,8 @@ import com.google.gson.Gson;
 public class AuthenticationActivity extends AppCompatActivity {
     private AuthenticationHandler authenticationHandler;
     final static String TAG = "Authentication Activity";
+    public static boolean TEST_MODE = false;
+
 
     //ChatGPT usage: Partial
     @Override
@@ -41,8 +43,6 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_authentication);
 
-
-
         findViewById(R.id.btnGoogleSignIn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,13 +68,6 @@ public class AuthenticationActivity extends AppCompatActivity {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         //TODO:Ask for firebase cloud mesasging token, ask for permission
         if (firebaseUser != null) {
-            // User is already authenticated
-
-            //User currentUser = User.initializeUser(firebaseUser);
-            // TODO:
-            //if current user by email exist in database, fetch the user
-            //else create a post method to create user
-
         }
 
         User user = User.getInstance();
@@ -105,7 +98,6 @@ public class AuthenticationActivity extends AppCompatActivity {
                                 String jsonUserData = gson.toJson(user);
 
                                 Log.d(TAG, "user data after put is: " + jsonUserData);
-
                                 return null;
 
                             }

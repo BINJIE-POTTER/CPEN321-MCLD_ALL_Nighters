@@ -60,7 +60,6 @@ public class PostActivity extends AppCompatActivity {
                     imgPreview.setImageURI(imageUri);
                 }
             });
-
     //ChatGPT usage: Yes
     public interface JsonPostCallback {
         void onSuccess(JSONObject postedData);

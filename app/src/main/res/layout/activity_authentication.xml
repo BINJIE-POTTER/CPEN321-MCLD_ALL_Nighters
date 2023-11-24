@@ -19,23 +19,11 @@
         android:drawablePadding="8dp"
         android:text="Continue with Google"
         android:textColor="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/btnFacebookSignIn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btnFacebookSignIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/black"
-        android:drawablePadding="8dp"
-        android:text="Continue with Facebook"
-        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <!--        android:drawableStart="@drawable/facebook_icon" -->
     />
 </androidx.constraintlayout.widget.ConstraintLayout>
