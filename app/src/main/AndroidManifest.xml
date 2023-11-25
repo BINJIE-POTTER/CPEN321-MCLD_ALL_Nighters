@@ -46,9 +46,6 @@
             android:name=".SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".CommentActivity"
-            android:exported="false" />
-        <activity
             android:name=".PostDetailActivity"
             android:exported="false" />
         <activity
@@ -95,14 +92,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".MessageHandler"
-            android:exported="false"
-            android:permission="TODO">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>
