@@ -1,11 +1,12 @@
 //Backend-server used to connect to mongodb
 var express = require("express")
-const userRoutes = require('./_userRoutes');
+var app = express();
+const userRoutes = require('./_userRoutes').router;
 const postRoutes = require('./_postRoutes').router;
 const commentRoutes = require('./_commentRoutes');
 const tagRoutes = require('./_tagRoutes');
 
-var app = express();
+
 app.use(express.json());
 
 app.use(userRoutes);
@@ -34,12 +35,18 @@ app.get('/', (req, res) => {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await mongoClient.connect();
-    console.log("Successfully connected to database");
-    db_init();
-    var server = app.listen(port, (req, res) => {
-      console.log("Server successfully running at http://%s:%s", IPv4, port)
-    })
+    if (process.env.NODE_ENV !== 'test') {
+      await mongoClient.connect();
+      console.log("Successfully connected to database");
+      await db_init();
+    }
+
+    if (process.env.NODE_ENV !== 'test') {
+      var server = app.listen(port, (req, res) => {
+        console.log("Server successfully running at http://%s:%s", IPv4, port)
+      });
+    }
+
   } catch(err){
     console.log(err);
     await mongoClient.close()
@@ -89,3 +96,5 @@ async function db_init(){
     }
   }
 }
+
+module.exports = app;

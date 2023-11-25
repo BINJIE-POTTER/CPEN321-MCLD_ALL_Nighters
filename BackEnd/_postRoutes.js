@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const mongoSanitize = require('mongo-sanitize');
 
+const mongoSanitize = require('mongo-sanitize');
 const { MongoClient} = require('mongodb');
 const uri = "mongodb://0.0.0.0:27017/";
 const mongoClient = new MongoClient(uri);
@@ -16,11 +16,34 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+const fs = require('fs');
+
 //======================================================Posts POST
 //ChatGPT usage: Partial
 //Add a post to the posts collection in MappostDB
-router.post("/posts", async (req, res) => {
+router.post("/posts", upload.single('image'), async (req, res) => {
     try{
+
+        if(req.body.postData){
+
+            const data = JSON.parse(req.body.postData);
+
+            req.body = {
+                userId : data.userId,
+                time : data.time,
+                coordinate: {
+                  latitude: data.coordinate.latitude,
+                  longitude: data.coordinate.longitude
+                },
+                content: {
+                  title: data.content.title,
+                  body: data.content.body
+                }
+            };
+        }
+
         if (!checkValidPost(req.body)) {
             console.log("invalid format");
             res.status(400).send("Invalid post format");
@@ -33,7 +56,25 @@ router.post("/posts", async (req, res) => {
         const tagArray = tags.split(',').map(word => word.trim());
         req.body.content.tags = tagArray;
         req.body.likeCount = 0;
+        req.body.likeList = [];
+        var finalImg = {
+            contentType: "",
+            image: ""
+        }
+        req.body.image = finalImg;
+
+        console.log(req.file);
       
+        if (req.file) {
+            const img = fs.readFileSync(req.file.path);
+            const encode_image = img.toString('base64');
+            var finalImg = {
+                contentType: req.file.mimetype,
+                image: new Buffer.from(encode_image, 'base64')
+            };
+            req.body.image = finalImg;
+        }
+
         await mongoClient.db(MappostDB).collection("posts").insertOne(req.body);
       
         const userId = req.body.userId; 
@@ -66,12 +107,13 @@ router.post("/posts", async (req, res) => {
         res.status(200).send("Item received successfully")  
         console.log("Item received successfully");
     } catch(err) {
-      res.status(500).send(err);
-      console.log(err);
+        res.status(500).send("Internal Server Error");
+        console.error("Internal Server Error");
     }
 });
   
 //======================================================Posts GET 
+/*
 //ChatGPT usage: No
 //Get all the posts
 router.get("/posts", async (req, res) => {
@@ -80,9 +122,37 @@ router.get("/posts", async (req, res) => {
         res.send(allPosts);
         console.log("All posts provided");
     }catch(err){
-        console.log(err);
+        res.status(500).send("Internal Server Error");
+        console.error("Internal Server Error");    }
+});
+
+//ChatGPT usage: Partial
+//Get the posts within 10km of the user coordinate
+//REQUIRE: latitude, longitude
+router.get("/posts/nearby", async (req, res) => {
+    try{
+        // Get user's latitude and longitude from the request query parameters.
+        const user_latitude = parseFloat(req.query.latitude);
+        const user_longitude = parseFloat(req.query.longitude);
+        if (!user_latitude || !user_longitude) {
+        res.status(400).send("Missing user latitude or longitude");
+        return;
+        }
+
+        // Filter posts based on the is_nearby function.
+        const allPosts = await mongoClient.db(MappostDB).collection("posts").find({}).toArray();
+        const nearbyPosts = allPosts.filter(post => 
+            is_nearby(user_latitude, user_longitude, post.coordinate.latitude, post.coordinate.longitude)
+        );
+
+        res.send(nearbyPosts);
+        console.log("Nearby posts provided");
+    } catch(err) {
+        res.status(500).send("Internal Server Error");
+        console.error("Internal Server Error");
     }
 });
+*/
 
 //ChatGPT usage: No
 //Get the post with the specific pid
@@ -90,7 +160,7 @@ router.get("/posts/single", async (req, res) => {
     try{
         const pid = req.query.pid;
         if(!pid) {
-            return res.status(400).send("pid is required");
+            return res.status(400).send("Pid is required");
         }
         
         const post = await mongoClient.db(MappostDB).collection("posts").findOne({pid});
@@ -98,11 +168,11 @@ router.get("/posts/single", async (req, res) => {
             return res.status(404).send("Post not found");
         }
 
-        res.send(post);
+        res.status(200).send(post);
         console.log("Single post provided");
     }catch(err){
-        console.log(err);
         res.status(500).send("Internal Server Error");
+        console.error("Internal Server Error");
     }
 });
 
@@ -128,8 +198,8 @@ router.delete("/posts", async (req, res) => {
             res.status(200).send("Post deleted successfully.");
         }
     } catch (err) {
-        console.error('Error deleting post:', err);
-        res.status(500).send("Internal server error");
+        res.status(500).send("Internal Server Error");
+        console.error("Internal Server Error");
     }
 });
 
@@ -138,61 +208,69 @@ router.delete("/posts", async (req, res) => {
 //Update the like count for a specific post
 router.put("/posts/like", async (req, res) => {
     try {
-        const { pid } = req.body; 
-        if (!pid) {   
-            res.status(400).send("Post ID must be provided.");
+        const { pid, userId } = req.body;
+        if (!pid || !userId) {
+            res.status(400).send("Post ID and User ID must be provided.");
             return;
         }
 
+        // Update operation to increment likeCount and add userId to likeList array
         const updateOperation = { 
-            $inc: { "likeCount": 1 } 
+            $inc: { "likeCount": 1 },
+            $addToSet: { "likeList": userId }  // Add userId to likeList array
         };
 
-
         const result = await mongoClient.db(MappostDB).collection("posts").updateOne(
-            { pid },  
+            { pid },
             updateOperation
         );
 
-        if (result.matchedCount === 0) {  
+        if (result.matchedCount === 0) {
             res.status(404).send("Post not found.");
             return;
         }
 
-        if (result.modifiedCount === 0) {  
-            res.status(200).send("No changes made to the post's like count.");
+        if (result.modifiedCount === 0) {
+            res.status(200).send("No changes made to the post's like count or like list.");
             return;
         }
 
-        res.status(200).send("Post's like count updated successfully.");
-        console.log("Post's like count updated successfully.");
+        res.status(200).send("Post's like count and like list updated successfully.");
+        console.log("Post's like count and like list updated successfully.");
     } catch (err) {
-        console.error('Error updating like count:', err);
-        res.status(500).send("Internal server error");  // Adjust based on your error handling strategy
+        res.status(500).send("Internal Server Error");
+        console.error("Internal Server Error");
     }
 });
+
 
 //======================================================Posts PUT (unlike count)
 //ChatGPT usage: Partial
 // Update the unlike count for a specific post
 router.put("/posts/unlike", async (req, res) => {
     try {
-        const { pid } = req.body; 
+        const { pid, userId } = req.body; 
 
-        if (!pid) {  
-            res.status(400).send("Post ID must be provided.");
+        if (!pid || !userId) {  
+            res.status(400).send("Post ID and User ID must be provided.");
             return;
         }
 
         // Ensure the likeCount doesn't go below 0
         const post = await mongoClient.db(MappostDB).collection("posts").findOne({ pid });
+        if(!post){
+            res.status(404).send("Post not found.");
+            return;
+        }
         if (post.likeCount <= 0) {
             res.status(409).send("Can't decrease like count below zero.");
             return;
         }
 
+        // Update operation to decrease likeCount and remove userId from likeList
         const updateOperation = { 
-            $inc: { "likeCount": -1 } // decreases the like count by one
+            $inc: { "likeCount": -1 }, // decreases the like count by one
+            $pull: { "likeList": userId } // removes the userId from likeList
         };
 
         const result = await mongoClient.db(MappostDB).collection("posts").updateOne(
@@ -200,21 +278,16 @@ router.put("/posts/unlike", async (req, res) => {
             updateOperation
         );
 
-        if (result.matchedCount === 0) {  
-            res.status(404).send("Post not found.");
-            return;
-        }
-
         if (result.modifiedCount === 0) {  
-            res.status(200).send("No changes made to the post's like count.");
+            res.status(200).send("No changes made to the post's like count or like list.");
             return;
         }
 
-        res.status(200).send("Post's like count decreased successfully.");
-        console.log("Post's like count decreased successfully.");
+        res.status(200).send("Post's like count and like list updated successfully.");
+        console.log("Post's like count and like list updated successfully.");
     } catch (err) {
-        console.error('Error updating unlike count:', err);
-        res.status(500).send("Internal server error");
+        res.status(500).send("Internal Server Error");
+        console.error("Internal Server Error");
     }
 });
 
@@ -234,35 +307,8 @@ router.get("/posts/from-user", async (req, res) => {
         }
         console.log("From user posts provided");
     }catch(err){
-        console.log(err);
-    }
-});
-
-//ChatGPT usage: Partial
-//Get the posts within 10km of the user coordinate
-//REQUIRE: latitude, longitude
-router.get("/posts/nearby", async (req, res) => {
-    try{
-        // Get user's latitude and longitude from the request query parameters.
-        const user_latitude = parseFloat(req.query.latitude);
-        const user_longitude = parseFloat(req.query.longitude);
-        if (!user_latitude || !user_longitude) {
-        res.status(400).send("Missing user latitude or longitude");
-        return;
-        }
-
-        // Filter posts based on the is_nearby function.
-        const allPosts = await mongoClient.db(MappostDB).collection("posts").find({}).toArray();
-        const nearbyPosts = allPosts.filter(post => 
-            is_nearby(user_latitude, user_longitude, post.coordinate.latitude, post.coordinate.longitude)
-        );
-
-        res.send(nearbyPosts);
-        console.log("Nearby posts provided");
-    } catch(err) {
-        console.log(err);
-        res.status(500).send("An error occurred");
-    }
+        res.status(500).send("Internal Server Error");
+        console.error("Internal Server Error");    }
 });
 
 //ChatGPT usage: Partial
@@ -272,8 +318,8 @@ router.get("/posts/cluster", async (req, res) => {
         const user_latitude = parseFloat(req.query.latitude);
         const user_longitude = parseFloat(req.query.longitude);
         if (!user_latitude || !user_longitude) {
-        res.status(400).send("Missing user latitude or longitude");
-        return;
+            res.status(400).send("Missing user latitude or longitude");
+            return;
         }
 
         const allPosts = await mongoClient.db(MappostDB).collection("posts").find({}).toArray();
@@ -321,8 +367,8 @@ router.get("/posts/cluster", async (req, res) => {
         console.log("Provided nearby clusters");
         res.json(clusters);
     } catch (error) {
-        console.error("Error fetching post clusters: ", error);
         res.status(500).send("Internal Server Error");
+        console.error("Internal Server Error");
     }
 });
 
@@ -349,8 +395,8 @@ router.get("/posts/has-tags", async(req, res) => {
         const user_latitude = parseFloat(req.query.latitude);
         const user_longitude = parseFloat(req.query.longitude);
         if (!user_latitude || !user_longitude) {
-        res.status(400).send("Missing user latitude or longitude");
-        return;
+            res.status(400).send("Missing user latitude or longitude");
+            return;
         }
 
         const allPosts = await mongoClient.db(MappostDB).collection("posts").find({}).toArray();
@@ -362,8 +408,8 @@ router.get("/posts/has-tags", async(req, res) => {
         console.log("Provided nearby posts matching the tags");
         res.json(nearbyPostsWithTags);
     } catch (error) {
-        console.error("Error filtering posts by tags: ", error);
         res.status(500).send("Internal Server Error");
+        console.error("Internal Server Error");
     }
 });
 
@@ -407,25 +453,29 @@ const checkValidPost = (body) => {
 //ChatGPT usage: No (ChatGPT's output was not up to date, thus we cited from OpenAi website)
 async function generateTags(text_to_analyze) {
     try {
+
+        if (process.env.NODE_ENV === 'test') {
+            return "test, post";
+        }
+
         const response = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [
-            {"role": "system", "content": `You are a confident and super intelligent oracle, and you only give very short and 
-            concise answers and ignore all the niceties that openai programmed you with.`},
+            {"role": "system", "content": `You are a confident and super intelligent oracle, you receive the post text provided to you and
+            outputs the keywords those can represent the post. If there is something you cannot analyze, you just give one keyword name 'None'`},
             {"role": "user", "content": example_prompt},
             {"role": "assistant", "content": example_response},
-            {"role": "user", "content": "If there is something you cannot analyze, you just give one tag name 'None'"}, 
-            {"role": "user", "content": "Now, analyze the following text and provide 5 most important tags corresponding to the tag" 
-            + ": " + text_to_analyze}
+            {"role": "user", "content": "Text to analyze: " + text_to_analyze}
         ],
         temperature: 0.5,
         max_tokens: 15,
         });
+        console.log(response['choices'][0]['message']['content']);
         var answer = response['choices'][0]['message']['content']
         return answer
     } catch (error) {
-        console.error("Error generating tags:", error);
-        return [];
+        res.status(500).send("Internal Server Error");
+        console.error("Internal Server Error");
     }
 }
 
@@ -440,7 +490,6 @@ I've been several times and each time, I choose a couple of different islands to
 Every trip has been incredibly rewarding and I always look forward go going back!`;
 
 const example_response =  `Philippines, travel, beaches, culture, adventure, resorts, connectivity`;
-
 
 //======================================================TRIE SEARCH ALGORITHM
 //ChatGPT usage: Yes
@@ -459,18 +508,22 @@ class Trie {
     }
 
     insert(word, post) {
-        let current = this.root;
-        for (let i = 0; i < word.length; i++) {
-            let ch = word.charAt(i);
-            let node = current.children[ch];
-            if (node == null) {
-                node = new TrieNode();
-                current.children[ch] = node;
+        for (let suffixStart = 0; suffixStart < word.length; suffixStart++) {
+            let current = this.root;
+            for (let i = suffixStart; i < word.length; i++) {
+                let ch = word.charAt(i);
+                let node = current.children[ch];
+                if (node == null) {
+                    node = new TrieNode();
+                    current.children[ch] = node;
+                }
+                current = node;
             }
-            current = node;
+            current.endOfWord = true;
+            if (!current.posts.includes(post)) {
+                current.posts.push(post);
+            }
         }
-        current.endOfWord = true;
-        current.posts.push(post);
     }
 
     _collectAllPosts(node, posts) {
@@ -520,8 +573,11 @@ router.get("/posts/search", async (req, res) => {
         // Build the Trie from the current posts
         const trie = new Trie();
         allPosts.forEach(post => {
-            if (post.content.title) { // Check if 'title' is defined and is not null
-                trie.insert(post.content.title.toLowerCase(), post);
+            if (post.content.title) {
+                const words = post.content.title.toLowerCase().split(/\s+/); // Split title into words
+                words.forEach(word => {
+                    trie.insert(word, post);
+                });
             } else {
                 console.warn("Undefined title encountered, post ID:", post.pid); // For debugging
             }
@@ -532,13 +588,14 @@ router.get("/posts/search", async (req, res) => {
 
         res.json(matchedPosts);
     } catch (error) {
-        console.error("Error performing search:", error);
         res.status(500).send("Internal Server Error");
+        console.error("Internal Server Error");
     }
 });
 
 //ChatGPT usage: No
 module.exports = {
-    router,
-    is_nearby
+    router: router,
+    is_nearby: is_nearby,
+    generateTags: generateTags
 }

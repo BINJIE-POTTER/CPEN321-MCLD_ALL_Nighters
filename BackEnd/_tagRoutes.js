@@ -17,10 +17,11 @@ const MappostDB = "MappostDB";
 router.get("/tags", async (req, res) => {
   try{
     const allTags = await mongoClient.db(MappostDB).collection("tags").find({}).toArray();
-    res.send(allTags);
+    res.status(200).send(allTags);
     console.log("All posts provided");
   }catch(err){
-    console.log(err);
+    console.error("Internal Server Error");
+    res.status(500).send("Internal Server Error");
   }
 });
 
@@ -54,8 +55,8 @@ router.get("/tags/nearby", async (req, res) => {
     res.status(200).send(uniqueTags);
     
   } catch (err) {
-    console.log("Could not send nearby tags");
-    res.status(500).send(err);
+    console.log("Internal Server Error");
+    res.status(500).send("Internal Server Error");
   }
 });
 

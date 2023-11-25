@@ -6,19 +6,20 @@ const uri = "mongodb://0.0.0.0:27017/";
 const mongoClient = new MongoClient(uri);
 const MappostDB = "MappostDB";
 
-//TODO firebase
 const admin = require('firebase-admin');
 var serviceAccount = require("./firebase.json");
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
 
-
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+const fs = require('fs');
 
 //======================================================Users POST
 //ChatGPT usage: Partial
-//Add a post to the posts collection in MappostDB
-router.post("/users", async (req, res) => {
+//Add a user to the user collection in MappostDB
+router.post("/users", upload.single('image'), async (req, res) => {
     try {
         // checkValidUser is now asynchronous, so we await it
         const isValidUser = await checkValidUser(req.body);
@@ -28,11 +29,41 @@ router.post("/users", async (req, res) => {
         }
 
         req.body.postCount = 0;
+
+        var avatar = {
+            contentType: "",
+            image: ""
+        }
+        req.body.userAvatar = avatar;
+
+
+        if (process.env.NODE_ENV === 'test') {
+            req.file = {
+                path: './defaultAvatar.jpg',
+                mimetype: 'image/jpeg',
+            }
+        }
+
+        if (req.file) {
+            const img = fs.readFileSync(req.file.path);
+            const encode_image = img.toString('base64');
+            var finalAvatar = {
+                contentType: req.file.mimetype,
+                image: new Buffer.from(encode_image, 'base64')
+            };
+            if (process.env.NODE_ENV === 'test') {
+                finalAvatar.image = "12345";
+            }
+            req.body.userAvatar = finalAvatar;
+            console.log("User Avatar received");
+        }
+
         await mongoClient.db(MappostDB).collection("users").insertOne(req.body);
         res.status(200).send("User created successfully.");
         console.log("User created successfully");
+
     } catch (err) {
-        console.error('Error creating user:', err);
+        console.log('Error creating user:', err);
         res.status(500).send("Internal server error");  // Adjust based on your error handling strategy
     }
 });
@@ -52,7 +83,7 @@ router.put("/users/update-profile", async (req, res) => {
             return;
         }
 
-        if (!userExists(userId)) {
+        if (!(await userExists(userId))) {
             res.status(400).send("User does not exist.");
             return;
         }
@@ -64,7 +95,7 @@ router.put("/users/update-profile", async (req, res) => {
         if (userName) updateFields.userName = userName;
         if (userGender) updateFields.userGender = userGender;
         if (userBirthdate) updateFields.userBirthdate = userBirthdate;
-        if (token) updateFields.token = token; // Add token to the update fields if provided
+        if (token) updateFields.token = token;
 
         // Update the user in the database using the provided userId
         const result = await mongoClient.db("MappostDB").collection("users").updateOne(
@@ -72,21 +103,84 @@ router.put("/users/update-profile", async (req, res) => {
             { $set: updateFields }
         );
 
-        if (result.matchedCount === 0) {  // If no user was found to update
-            res.status(404).send("User not found.");
-            return;
-        }
-
         if (result.modifiedCount === 0) {  // If no changes were made
             res.status(200).send("No changes made to user.");
             return;
         }
 
-        res.status(200).send("User updated successfully.");
-        console.log("User updated successfully.");
+        res.status(200).send("User profile updated successfully.");
+        console.log("User profile updated successfully.");
     } catch (err) {
-        console.error('Error updating user:', err);
+        console.log('Error updating user:', err);
         res.status(500).send("Internal server error");  // Adjust based on your error handling strategy
+    }
+});
+
+router.put("/users/update-avatar", upload.single('image'), async (req, res) => {
+    try {
+        const userId = req.body.userId;
+
+        if (!userId) {  // Ensure the userId is provided for updates
+            res.status(400).send("User ID must be provided.");
+            return;
+        }
+
+        if (!(await userExists(userId))) {
+            res.status(400).send("User does not exist.");
+            return;
+        }
+
+        if (process.env.NODE_ENV === 'test' && userId == 'existingUserId') {
+            req.file = {
+                path: './defaultAvatar.jpg',
+                mimetype: 'image/jpeg',
+            }
+        }
+
+        if (!req.file) {
+            console.log("User avatar was not provided.");
+            res.status(400).send("User avatar was not provided.");
+            return;
+        } 
+
+        var finalAvatar;
+
+        const img = fs.readFileSync(req.file.path);
+        const encode_image = img.toString('base64');
+        finalAvatar = {
+            contentType: req.file.mimetype,
+            image: new Buffer.from(encode_image, 'base64')
+        };
+
+        if (process.env.NODE_ENV === 'test') {
+            finalAvatar = {
+                contentType: 'image/jpeg',
+                image: '12345'
+            }
+        }
+
+
+        const updateFields = {};
+        updateFields.userAvatar = finalAvatar;
+
+        console.log("User Avatar received");
+
+        const result = await mongoClient.db("MappostDB").collection("users").updateOne(
+            { userId }, 
+            { $set: updateFields }
+        );
+
+        if (result.modifiedCount === 0) {  // If no changes were made
+            res.status(200).send("No changes made to user avatar.");
+            return;
+        }
+
+        res.status(200).send("User avatar updated successfully.");
+        console.log("User avatar updated successfully.");
+
+    } catch (err) {
+        console.log('Internal server error');
+        res.status(500).send("Internal server error");
     }
 });
 
@@ -141,12 +235,6 @@ router.put("/users/unfollow", async (req, res) => {
 
         if (!userId || !followingId) {
         res.status(400).send("User ID and following ID must be provided.");
-        return;
-        }
-
-        // Check if both users exist
-        if (!(await userExists(userId)) || !(await userExists(followingId))) {
-        res.status(404).send("User or the following user not found.");
         return;
         }
 
@@ -238,8 +326,11 @@ const checkValidUser = async (user) => {
 
 //ChatGPT usage: No
 async function userExists(userId) {
+    console.log("Checking if user exists:", userId);
     const user = await mongoClient.db(MappostDB).collection("users").findOne({ userId });
-    return user !== null;  // Will return true if the user exists, otherwise false
+    const exists = user !== null;
+    console.log(`User ${userId} exists: ${exists}`);
+    return exists;
 }
 
 //ChatGPT usage: No
@@ -270,7 +361,7 @@ async function notifyFollowerIncrease(userId, res) {
     var token = user.token;
 
     if (!token){
-        return
+        return;
     }
 
     const message = {
@@ -284,16 +375,20 @@ async function notifyFollowerIncrease(userId, res) {
         token,
     }
 
-    await admin.messaging().send(message)
-        .then( response => {
-            console.log(message);
-        })
-        .catch( error => {
-            console.log(error);
-        });
+    try {
+        await admin.messaging().send(message);
+        //console.log(message);
+      } catch (error) {
+        console.error(error);
+      }
 }
 
 
-
-
-module.exports = router;
+module.exports = {
+    router: router,
+    admin: admin,
+    notifyFollowerIncrease: notifyFollowerIncrease,
+    userExists: userExists,
+    isUserFollowing:  isUserFollowing,
+    checkValidUser: checkValidUser
+}

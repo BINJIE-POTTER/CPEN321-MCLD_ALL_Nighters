@@ -26,8 +26,8 @@ router.post("/comments", async (req, res) => {
         res.status(200).send("Item received successfully")
         console.log("Item received successfully");
     } catch(err) {
-        res.status(500).send(err);
-        console.log(err);
+        console.error("Internal Server Error");
+        res.status(500).send("Internal Server Error");
     }
 });
   
@@ -42,11 +42,12 @@ router.get("/comments", async (req, res) => {
             res.status(400).send("Missing post_id (pid)");
         } else {
             const postComments = allComments.filter(comment => comment.pid == req.query.pid);
-            res.send(postComments);
+            res.status(200).send(postComments);
         }
         console.log("Comment of posts provided");
     }catch(err){
-        console.log(err);
+        console.error("Internal Server Error");
+        res.status(500).send("Internal Server Error");
     }
 });
   
@@ -80,16 +81,18 @@ router.delete("/comments", async (req, res) => {
         const deleteResult = await mongoClient.db(MappostDB).collection("comments").deleteOne({ cid, pid});
   
         if (deleteResult.deletedCount === 0) {
-            throw new Error("Failed to delete the comment");
+            res.status(500).send("Database Error");
+            console.error("Database Error");
+            return;
         }
   
         res.status(200).send("Comment deleted successfully");
         console.log("Comment deleted");
     } catch (err) {
-        res.status(500).send(err.toString());
-        console.log(err);
+        res.status(500).send("Internal Server Error");
+        console.error("Internal Server Error");
     }
-  });
+});
   
 //======================================================Comments Helper Functions
 //ChatGPT usage: No
