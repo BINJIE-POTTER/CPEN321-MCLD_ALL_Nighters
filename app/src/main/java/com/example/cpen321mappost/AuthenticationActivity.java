@@ -1,15 +1,15 @@
 package com.example.cpen321mappost;
 
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.gson.Gson;
 
 
 public class AuthenticationActivity extends AppCompatActivity {
@@ -75,72 +75,10 @@ public class AuthenticationActivity extends AppCompatActivity {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         //TODO:Ask for firebase cloud mesasging token, ask for permission
         if (firebaseUser != null) {
+
+            User user = User.getInstance();
+
         }
-
-        User user = User.getInstance();
-        ProfileManager profileManager = new ProfileManager();
-        profileManager.getUserData(user, this, new User.UserCallback() {
-            @Override
-            public String onSuccess(User user) {
-
-                Log.d(TAG, "OLD TOKEN: " + user.getToken());
-
-                user.updateToken(new User.TokenCallback() {
-                    @Override
-                    public void onTokenReceived(String token) {
-
-                        Log.d(TAG, "NEW TOKEN: " + user.getToken());
-
-                        user.setToken(token);
-
-                        Log.d(TAG, "NEW TOKEN: " + user.getToken());
-
-                        profileManager.putUserData(user, AuthenticationActivity.this, new User.UserCallback() {
-                            @Override
-                            public String onSuccess(User user) {
-
-                                Log.d(TAG, "User data is sent to the database, target is updating token.");
-
-                                Gson gson = new Gson();
-                                String jsonUserData = gson.toJson(user);
-
-                                Log.d(TAG, "user data after put is: " + jsonUserData);
-                                return null;
-
-                            }
-
-                            @Override
-                            public void onFailure(Exception e) {
-
-                                Log.d(TAG, "Falied to update token.");
-
-                                finish();
-
-                            }
-                        });
-
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-
-                        Log.d(TAG, "TOKEN NOT RETRIEVED");
-
-                    }
-                });
-
-                return null;
-
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-
-                Log.d(TAG, "Falied to get user data.");
-
-            }
-
-        });
 
         Intent intent = new Intent(AuthenticationActivity.this, MapsActivity.class);
         startActivity(intent);

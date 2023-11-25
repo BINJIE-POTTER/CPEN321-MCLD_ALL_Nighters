@@ -2,6 +2,7 @@ package com.example.cpen321mappost;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -321,7 +322,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //ChatGPT usage: Partial
     private void displayLocationMenu( double latitude, double longitude, String openMode) {
 
-        View view = getLayoutInflater().inflate(R.layout.layout_location_menu, null);
+        @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.layout_location_menu, null);
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         bottomSheetDialog.setContentView(view);
 

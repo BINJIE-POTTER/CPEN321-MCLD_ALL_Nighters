@@ -36,31 +36,16 @@ public class User {
         this.userEmail = firebaseUser.getEmail();
         this.userGender = "none";
         this.userBirthdate = "none";
+        this.token = "";
         this.postCount = 0;
         this.following = new ArrayList<>();
         this.followers = new ArrayList<>();
         this.userAvatar = new ImageData();
 
-        updateToken(new TokenCallback() {
-            @Override
-            public void onTokenReceived(String token) {
-
-                setToken(token);
-
-            }
-
-            @Override
-            public void onError(Exception e) {
-
-                Log.e(TAG, e.toString());
-
-            }
-        });
-
     }
 
     //ChatGPT usage: No
-    public User(String userId){
+    public User (String userId) {
 
         this.userId = userId;
         this.userName = "none";
@@ -71,6 +56,21 @@ public class User {
         this.postCount = 0;
         this.following = null;
         this.followers = null;
+        this.userAvatar = null;
+
+    }
+
+    public User (User user, String token) {
+
+        this.userId = user.getUserId();
+        this.userName = user.getUserName();
+        this.userEmail = user.getUserEmail();
+        this.userGender = user.getUserGender();
+        this.userBirthdate = user.getUserBirthdate();
+        this.token = token;
+        this.postCount = user.getPostCount();
+        this.following = user.getFollowing();
+        this.followers = user.getFollowers();
         this.userAvatar = null;
 
     }
@@ -86,20 +86,35 @@ public class User {
                 @Override
                 public String onSuccess(User user) {
 
-                    Log.d(TAG, "User logged in, data successfully fetched.");
+                    Log.d(TAG, "USER LOGGED IN, DATA IS IN DATABASE");
+                    Log.d(TAG, "OLD TOKEN: " + user.getToken());
 
-                    Gson gson = new Gson();
-                    String jsonUserData = gson.toJson(user);
+                    updateToken(new TokenCallback() {
+                        @Override
+                        public void onTokenReceived(String token) {
 
-                    Log.d(TAG, "User logged in with data: " + jsonUserData);
+                            user.token = token;
+                            Log.d(TAG, "NEW TOKEN: " + user.getToken());
 
-                    instance = gson.fromJson(jsonUserData, User.class);
+                            Gson gson = new Gson();
+                            String jsonUserData = gson.toJson(user);
 
-                    String jsonUserData2 = gson.toJson(user);
+                            instance = gson.fromJson(jsonUserData, User.class);
 
-                    Log.d(TAG, "The user instance now is: " + jsonUserData2);
+                            Log.d(TAG, "USER LOGGED IN WITH UPDATED TOKEN DATA: " + jsonUserData);
 
-                    return jsonUserData;
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                            Log.e(TAG, e.toString());
+
+                        }
+                    });
+
+                    return null;
 
                 }
 
@@ -198,7 +213,7 @@ public class User {
         this.userBirthdate = userBirthdate;
     }
 
-    public void updateToken(TokenCallback callback) {
+    public static void updateToken(TokenCallback callback) {
 
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {

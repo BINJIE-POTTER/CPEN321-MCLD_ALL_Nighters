@@ -49,7 +49,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-core:21.1.1")
     implementation ("com.google.firebase:firebase-messaging:23.3.1")
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
-    implementation("com.google.android.gms:play-services-maps:18.2.0") // For Google Sign-In
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")

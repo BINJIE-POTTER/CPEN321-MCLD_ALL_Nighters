@@ -1,12 +1,6 @@
 package com.example.cpen321mappost;
 
-import static java.security.AccessController.getContext;
-
 import android.app.Activity;
-import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -15,6 +9,7 @@ import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -268,7 +263,11 @@ public class ProfileManager {
     public void uploadUserAvatar(File avatarFile, final Activity activity, final User.UserCallback callback) {
 
         String url = "http://4.204.251.146:8081/users/update-avatar";
-        OkHttpClient httpClient = HttpClient.getInstance();
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS) // Increase connect timeout
+                .writeTimeout(10, TimeUnit.SECONDS) // Increase write timeout
+                .readTimeout(10, TimeUnit.SECONDS) // Increase read timeout
+                .build();
 
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM);
