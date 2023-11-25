@@ -24,6 +24,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.rule.GrantPermissionRule;
 
 import org.junit.After;
 import org.junit.Before;
@@ -34,6 +35,7 @@ import org.junit.runner.RunWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 
+import com.example.cpen321mappost.AuthenticationActivity;
 import com.example.cpen321mappost.MainActivity;
 import com.example.cpen321mappost.MapsActivity;
 import com.example.cpen321mappost.PostActivity;
@@ -42,21 +44,42 @@ import com.example.cpen321mappost.R;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class CreatePostTest {
+
+
     @Rule
-    public ActivityScenarioRule<MapsActivity> activityRule = new ActivityScenarioRule<>(MapsActivity.class);
+    public GrantPermissionRule permissionRule = GrantPermissionRule.grant(
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION // If needed
+    );
+
+    private ActivityScenario<AuthenticationActivity> activityScenario;
 
         @Before
         public void setUp() throws Exception {
+            // Set the test mode flag before launching the activity
+            AuthenticationActivity.TEST_MODE = true;
+
+            // Manually launch the activity
+            activityScenario = ActivityScenario.launch(AuthenticationActivity.class);
+
+            // Initialize Intents for Espresso-Intents
             Intents.init();
         }
 
         @After
         public void tearDown() throws Exception {
+            AuthenticationActivity.TEST_MODE = true;
+
             Intents.release();
         }
 
     @Test
     public void testCreatePostFlow() {
+        try {
+            Thread.sleep(10000); // Wait for 2 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // Verify that the current activity is MapsActivity
         intended(hasComponent(MapsActivity.class.getName()));
 
