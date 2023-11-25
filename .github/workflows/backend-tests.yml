@@ -8,9 +8,6 @@ jobs:
   test-backend-routes:
     runs-on: ubuntu-latest
 
-    env:
-      NODE_ENV: 'test'
-
     services:
       mongodb:
         image: mongo
@@ -30,6 +27,6 @@ jobs:
       run: npm install
       working-directory: ./BackEnd
 
-    - name: Run BackEnd tests
-      run: npm test
+    - name: Run Tests
+      run: npx cross-env NODE_ENV=test npm test
       working-directory: ./BackEnd
