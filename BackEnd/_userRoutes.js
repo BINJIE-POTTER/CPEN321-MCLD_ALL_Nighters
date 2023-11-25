@@ -391,7 +391,6 @@ async function notifyFollowerIncrease(userId, res) {
 
 module.exports = {
     router: router,
-    admin: admin,
     notifyFollowerIncrease: notifyFollowerIncrease,
     userExists: userExists,
     isUserFollowing:  isUserFollowing,
