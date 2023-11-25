@@ -6,11 +6,13 @@ const uri = "mongodb://0.0.0.0:27017/";
 const mongoClient = new MongoClient(uri);
 const MappostDB = "MappostDB";
 
-const admin = require('firebase-admin');
-var serviceAccount = require("./firebase.json");
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-});
+if (process.env.NODE_ENV !== 'test') {
+    const admin = require('firebase-admin');
+    var serviceAccount = require("./firebase.json");
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+    });
+}
 
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
@@ -361,6 +363,7 @@ async function notifyFollowerIncrease(userId, res) {
     var token = user.token;
 
     if (!token){
+        console.log("This user does not have a token")
         return;
     }
 
@@ -376,11 +379,13 @@ async function notifyFollowerIncrease(userId, res) {
     }
 
     try {
-        await admin.messaging().send(message);
-        //console.log(message);
-      } catch (error) {
+        if (process.env.NODE_ENV !== 'test') {
+            await admin.messaging().send(message);
+        }
+        console.log(message);
+    } catch (error) {
         console.error(error);
-      }
+    }
 }
 
 
