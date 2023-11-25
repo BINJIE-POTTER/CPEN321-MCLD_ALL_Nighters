@@ -10,11 +10,15 @@ const MappostDB = "MappostDB";
 const { v4: uuidv4 } = require('uuid');
 
 require('dotenv').config();
+
 const { OpenAI } = require('openai');
-//const { all } = require('./_userRoutes');
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+var openai;
+if (process.env.NODE_ENV !== 'test') {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
+}
+
 
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
@@ -453,26 +457,25 @@ const checkValidPost = (body) => {
 //ChatGPT usage: No (ChatGPT's output was not up to date, thus we cited from OpenAi website)
 async function generateTags(text_to_analyze) {
     try {
-
-        if (process.env.NODE_ENV === 'test') {
+        if (process.env.NODE_ENV !== 'test') {
+            const response = await openai.chat.completions.create({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {"role": "system", "content": `You are a confident and super intelligent oracle, you receive the post text provided to you and
+                    outputs the keywords those can represent the post. If there is something you cannot analyze, you just give one keyword name 'None'`},
+                    {"role": "user", "content": example_prompt},
+                    {"role": "assistant", "content": example_response},
+                    {"role": "user", "content": "Text to analyze: " + text_to_analyze}
+                ],
+                temperature: 0.5,
+                max_tokens: 15,
+            });
+            console.log(response['choices'][0]['message']['content']);
+            var answer = response['choices'][0]['message']['content']
+            return answer
+        } else {
             return "test, post";
         }
-
-        const response = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: [
-            {"role": "system", "content": `You are a confident and super intelligent oracle, you receive the post text provided to you and
-            outputs the keywords those can represent the post. If there is something you cannot analyze, you just give one keyword name 'None'`},
-            {"role": "user", "content": example_prompt},
-            {"role": "assistant", "content": example_response},
-            {"role": "user", "content": "Text to analyze: " + text_to_analyze}
-        ],
-        temperature: 0.5,
-        max_tokens: 15,
-        });
-        console.log(response['choices'][0]['message']['content']);
-        var answer = response['choices'][0]['message']['content']
-        return answer
     } catch (error) {
         res.status(500).send("Internal Server Error");
         console.error("Internal Server Error");
