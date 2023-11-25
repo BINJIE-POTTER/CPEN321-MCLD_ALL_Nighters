@@ -27,6 +27,10 @@ jobs:
       run: npm install
       working-directory: ./BackEnd
 
+    - name: Install cross-env developer
+      run: npm install --save-dev cross-env
+      working-directory: ./BackEnd
+
     - name: Run Tests
       run: npx cross-env NODE_ENV=test npm test
       working-directory: ./BackEnd
