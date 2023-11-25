@@ -23,10 +23,10 @@ jobs:
       with:
         node-version: '16'
 
-    - name: Install backend dependencies
+    - name: Install EackEnd dependencies
       run: npm install
-      working-directory: ./backend
+      working-directory: ./BackEnd
 
-    - name: Run backend tests
+    - name: Run BackEnd tests
       run: npm test
-      working-directory: ./backend
+      working-directory: ./BackEnd
