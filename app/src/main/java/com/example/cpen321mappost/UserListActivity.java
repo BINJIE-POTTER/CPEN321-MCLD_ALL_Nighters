@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserListActivity extends AppCompatActivity {
-    private final static String TAG = "User List Activity";
+    private final static String TAG = "UserList Activity";
     private final static ProfileManager profileManager = new ProfileManager();
 
     @Override
@@ -36,8 +36,9 @@ public class UserListActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String mode = intent.getStringExtra("mode");
+        String userId = intent.getStringExtra("userId");
 
-        profileManager.getUserData(User.getInstance(), this, new User.UserCallback() {
+        profileManager.getUserData(userId == null ? User.getInstance() : new User(userId), this, new User.UserCallback() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public String onSuccess(User user) {
@@ -92,14 +93,14 @@ public class UserListActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onBackPressed() {
-
-        Intent ProfileIntent = new Intent(this, ProfileActivity.class);
-        startActivity(ProfileIntent);
-
-        finish();
-
-    }
+//    @Override
+//    public void onBackPressed() {
+//
+//        Intent ProfileIntent = new Intent(this, ProfileActivity.class);
+//        startActivity(ProfileIntent);
+//
+//        finish();
+//
+//    }
 
 }

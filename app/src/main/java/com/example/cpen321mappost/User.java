@@ -93,7 +93,7 @@ public class User {
                         @Override
                         public void onTokenReceived(String token) {
 
-                            user.token = token;
+                            user.setToken(token);
                             Log.d(TAG, "NEW TOKEN: " + user.getToken());
 
                             Gson gson = new Gson();
@@ -103,6 +103,23 @@ public class User {
 
                             Log.d(TAG, "USER LOGGED IN WITH UPDATED TOKEN DATA: " + jsonUserData);
 
+                            profileManager.putUserData(new User(instance, token), new Activity(), new UserCallback() {
+                                @Override
+                                public String onSuccess(User user) {
+
+                                    Log.d(TAG, "TOKEN SENT TO DATABASE: " + user.getToken());
+
+                                    return null;
+
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+
+                                    Log.e(TAG, e.toString());
+
+                                }
+                            });
 
                         }
 
@@ -128,6 +145,47 @@ public class User {
                         public String onSuccess(User user) {
 
                             Log.d(TAG, "New User account is created successfully.");
+                            updateToken(new TokenCallback() {
+                                @Override
+                                public void onTokenReceived(String token) {
+
+                                    user.setToken(token);
+                                    Log.d(TAG, "NEW TOKEN: " + user.getToken());
+
+                                    Gson gson = new Gson();
+                                    String jsonUserData = gson.toJson(user);
+
+                                    instance = gson.fromJson(jsonUserData, User.class);
+
+                                    Log.d(TAG, "USER LOGGED IN WITH UPDATED TOKEN DATA: " + jsonUserData);
+
+                                    profileManager.putUserData(instance, new Activity(), new UserCallback() {
+                                        @Override
+                                        public String onSuccess(User user) {
+
+                                            Log.d(TAG, "TOKEN SENT TO DATABASE: " + user.getToken());
+
+                                            return null;
+
+                                        }
+
+                                        @Override
+                                        public void onFailure(Exception e) {
+
+                                            Log.e(TAG, e.toString());
+
+                                        }
+                                    });
+
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+
+                                    Log.e(TAG, e.toString());
+
+                                }
+                            });
 
                             return null;
 

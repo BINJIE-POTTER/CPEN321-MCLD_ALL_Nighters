@@ -109,6 +109,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                     @Override
                     public void onFailure(Exception e) {
 
+                        Log.e(TAG, e.toString());
+
                     }
                 });
 
@@ -119,14 +121,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             @Override
             public void onFailure(Exception e) {
 
+                Log.e(TAG, e.toString());
+
             }
         });
 
-        holder.innerLinearLayout.setOnClickListener((View.OnClickListener) view -> {
-
-            onItemClicked(position);
-
-        });
+        holder.innerLinearLayout.setOnClickListener((View.OnClickListener) view -> onItemClicked(position));
 
         holder.followButton.setOnClickListener(view -> {
             profileManager.followAuthor(isFollowing, userList.get(position).getUserId(), new Activity(), new ProfileManager.FollowingUserCallback() {
@@ -150,6 +150,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
                                     } else holder.followButton.setText("follow");
 
+                                    profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
+                                        @Override
+                                        public void onAuthorRetrieved(String authorName) {
+
+                                            if (isFollowing) Toast.makeText(context, "Succeed to follow "+ authorName +"!", Toast.LENGTH_SHORT).show();
+                                            else             Toast.makeText(context, "Succeed to unfollow "+ authorName +"!", Toast.LENGTH_SHORT).show();
+
+                                        }
+
+                                        @Override
+                                        public void onError(Exception e) {
+
+                                            Log.d(TAG, String.valueOf(e));
+
+                                        }
+                                    });
+
                                     return null;
 
                                 }
@@ -166,23 +183,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
                         @Override
                         public void onFailure(Exception e) {
-
-                        }
-                    });
-
-                    profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
-                        @Override
-                        public void onAuthorRetrieved(String authorName) {
-
-                            if (!isFollowing) Toast.makeText(context, "Succeed following "+ authorName +" rn!", Toast.LENGTH_SHORT).show();
-                            else             Toast.makeText(context, "Succeed to unfollow "+ authorName +" !", Toast.LENGTH_SHORT).show();
-
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-
-                            Log.d(TAG, String.valueOf(e));
 
                         }
                     });

@@ -36,13 +36,11 @@ public class ProfileManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                activity.runOnUiThread(() -> {
 
-                    Log.e(TAG, "FAILURE GET USER: " + e);
+                Log.e(TAG, "FAILURE GET USER: " + e);
 
-                    callback.onFailure(e);
+                activity.runOnUiThread(() -> callback.onFailure(e));
 
-                });
             }
 
             @Override

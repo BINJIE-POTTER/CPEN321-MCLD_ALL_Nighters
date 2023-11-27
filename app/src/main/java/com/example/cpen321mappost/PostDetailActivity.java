@@ -193,9 +193,17 @@ public class PostDetailActivity extends AppCompatActivity {
 
         avatarImageView.setOnClickListener(v -> {
 
-            Intent intent = new Intent(PostDetailActivity.this, PostPreviewListActivity.class);
-            intent.putExtra("mode", "authorInfo");
-            intent.putExtra("userId", uid);
+            Intent intent;
+
+            if (Objects.equals(myUserId, uid)) intent = new Intent(PostDetailActivity.this, ProfileActivity.class);
+
+            else {
+
+                intent = new Intent(PostDetailActivity.this, VisitorPageAvtivity.class);
+                intent.putExtra("userId", uid);
+
+            }
+
             startActivity(intent);
 
         });

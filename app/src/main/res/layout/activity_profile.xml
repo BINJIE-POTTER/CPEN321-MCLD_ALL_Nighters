@@ -12,7 +12,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Divider -->
         <androidx.cardview.widget.CardView
             android:id="@+id/avatar_profile_cardView"
             android:layout_width="wrap_content"
@@ -103,7 +102,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/loading" />
             </LinearLayout>
-
         </LinearLayout>
 
         <View
@@ -322,15 +320,86 @@
 
         </LinearLayout>
 
-        <!-- ... other UI elements ... -->
+        <!-- Divider -->
+        <View
+            android:id="@+id/last_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:visibility="gone"
+            android:background="#cccccc"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:id="@+id/achievement_board"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:padding="16dp"
+            android:weightSum="1"
+            android:gravity="center">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/novice"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:contentDescription="@string/novice"
+                    android:focusable="true"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/novice_achievement" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/explorer"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="gone"
+                    android:background="?attr/selectableItemBackground"
+                    app:srcCompat="@drawable/explorer_achievement"
+                    android:contentDescription="@string/novice" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/master"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="gone"
+                    android:background="?attr/selectableItemBackground"
+                    app:srcCompat="@drawable/master_achievement"
+                    android:contentDescription="@string/novice" />
+            </RelativeLayout>
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/user_view_posts_button_id"
-            android:layout_width="131dp"
+            android:layout_width="122dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:padding="16dp"
             android:layout_gravity="center"
+            android:elevation="4dp"
+            android:padding="16dp"
             android:text="@string/user_view_posts_caption" />
 
     </LinearLayout>

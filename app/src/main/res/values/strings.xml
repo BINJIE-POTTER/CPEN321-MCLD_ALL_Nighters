@@ -46,6 +46,8 @@
     <string name="add_a_comment">Add a comment...</string>
     <string name="comment">comment</string>
     <string name="publish">Send</string>
+    <string name="novice">Novice</string>
+    <string name="achievement">achievement</string>
 
     <string-array name="gender_array">
         <item>Male</item>

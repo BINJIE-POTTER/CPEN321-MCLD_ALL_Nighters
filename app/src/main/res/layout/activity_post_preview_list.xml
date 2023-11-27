@@ -20,50 +20,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/icon1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:adjustViewBounds="true"
-        android:maxWidth="100dp"
-        android:maxHeight="100dp"
-        android:src="@drawable/novice"
-        android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@id/icon2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/post_preview_list_mode_name_id" />
-
-    <ImageView
-        android:id="@+id/icon2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:adjustViewBounds="true"
-        android:maxWidth="100dp"
-        android:maxHeight="100dp"
-        android:src="@drawable/explorer"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/icon1"
-        app:layout_constraintEnd_toStartOf="@id/icon3"
-        app:layout_constraintStart_toEndOf="@id/icon1"
-        app:layout_constraintTop_toTopOf="@id/icon1" />
-
-    <ImageView
-        android:id="@+id/icon3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:adjustViewBounds="true"
-        android:maxWidth="100dp"
-        android:maxHeight="100dp"
-        android:src="@drawable/master"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/icon1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/icon2"
-        app:layout_constraintTop_toTopOf="@id/icon1" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/postsRecyclerView"
         android:layout_width="411dp"

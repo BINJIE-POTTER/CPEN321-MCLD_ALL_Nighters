@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -140,14 +141,19 @@ public class PostActivity extends AppCompatActivity {
 
     //ChatGPT usage: Partial
     public void postJsonData(Uri imageUri, JSONObject postData, final Activity activity, final JsonPostCallback callback) {
+
         String url = "http://4.204.251.146:8081/posts";
-        OkHttpClient httpClient = HttpClient.getInstance();
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS) // Increase connect timeout
+                .writeTimeout(10, TimeUnit.SECONDS) // Increase write timeout
+                .readTimeout(10, TimeUnit.SECONDS) // Increase read timeout
+                .build();
 
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM);
 
         if (imageUri != null) {
-            File file = new File(getRealPathFromURI(imageUri));
+            File file = new File(new ProfileActivity().getRealPathFromURI(imageUri, this));
             RequestBody fileBody = RequestBody.create(MediaType.parse("image/*"), file);
             builder.addFormDataPart("image", file.getName(), fileBody);
         }
@@ -182,29 +188,6 @@ public class PostActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    // Method to get file path from Uri
-    public String getRealPathFromURI(Uri contentUri) {
-
-        String result;
-        Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
-
-        if (cursor == null) {
-
-            result = contentUri.getPath();
-
-        } else {
-
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(idx);
-            cursor.close();
-
-        }
-
-        return result;
-
     }
 
     //ChatGPT usage: Partial
