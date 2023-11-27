@@ -15,5 +15,7 @@ public class MainActivity extends AppCompatActivity {
         Intent authenticationIntent =new Intent(MainActivity.this,AuthenticationActivity.class);
         startActivity(authenticationIntent);
 
+        finish();
+
     }
 }

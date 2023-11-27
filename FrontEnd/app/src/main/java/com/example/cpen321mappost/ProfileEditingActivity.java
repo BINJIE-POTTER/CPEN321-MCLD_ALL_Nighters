@@ -1,19 +1,18 @@
 package com.example.cpen321mappost;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.widget.Button;
-
-import com.google.android.material.textfield.TextInputEditText;
-
-import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
 
@@ -22,24 +21,22 @@ public class ProfileEditingActivity extends AppCompatActivity {
     private User user;
     final static String TAG = "ProfileEditing Activity";
 
-
     //ChatGPT usage: Partial
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
+
         TextInputEditText newValueText;
         Button saveButton;
         Button cancelButton;
 
-
         user = User.getInstance();
         profileManager = new ProfileManager();
 
+        newValueText = findViewById(R.id.textInputEditText);
         saveButton = findViewById(R.id.edit_profile_save_button);
         cancelButton = findViewById(R.id.edit_profile_cancel_button);
-
-        newValueText = findViewById(R.id.textInputEditText);
 
         //Implement the live checking:
         newValueText.addTextChangedListener(new TextWatcher() {
@@ -71,8 +68,8 @@ public class ProfileEditingActivity extends AppCompatActivity {
         profileManager.getUserData(user, this, new User.UserCallback() {
             @Override
             public String onSuccess(User user) {
-                String hint;
 
+                String hint;
 
                 switch (Objects.requireNonNull(item)) {
 
@@ -112,23 +109,18 @@ public class ProfileEditingActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Exception e) {
+
                 Toast.makeText(ProfileEditingActivity.this, "Failed to get User Data in ProfileEditingActivity", Toast.LENGTH_SHORT).show();
                 final Toast toast = Toast.makeText(ProfileEditingActivity.this, "Failed to get User Data in ProfileEditingActivity", Toast.LENGTH_LONG);
                 final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        toast.show();
-                    }
-                }, 3000); // 3000ms delay to show the toast again after the initial showing
-
+                handler.postDelayed(toast::show, 3000); // 3000ms delay to show the toast again after the initial showing
 
             }
         });
 
         saveButton.setOnClickListener(view -> {
 
-            String newInput = newValueText.getText().toString();
+            String newInput = Objects.requireNonNull(newValueText.getText()).toString();
 
             switch (Objects.requireNonNull(item)) {
 
@@ -197,6 +189,15 @@ public class ProfileEditingActivity extends AppCompatActivity {
 
         });
 
+    }
+    @Override
+    public void onBackPressed() {
+
+        Intent ProfileIntent = new Intent(ProfileEditingActivity.this, ProfileActivity.class);
+        startActivity(ProfileIntent);
+
+        finish();
 
     }
+
 }

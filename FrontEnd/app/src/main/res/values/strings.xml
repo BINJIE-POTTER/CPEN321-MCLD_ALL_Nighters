@@ -4,7 +4,7 @@
     <string name="default_web_client_id">667120763376-1be03htv6s11a7be9d1k2d57hdnftt5m.apps.googleusercontent.com</string>
 
     <string name="user_name_caption">Name</string>
-    <string name="user_id_caption">Mappost ID</string>
+    <string name="user_id_caption">ID</string>
     <string name="user_gender_caption">Gender</string>
     <string name="user_birthdate_caption">Birth Date</string>
     <string name="user_email_caption">Email</string>
@@ -20,23 +20,39 @@
     <string name="edit_profile_save_button_caption">Save</string>
     <string name="edit_profile_cancel_button_caption">Cancel</string>
 
-    <string name="image_content_desc">non_for_now</string>
+    <string name="image_content_desc">none_for_now</string>
     <string name="post_item_title">Title</string>
     <string name="post_item_author">Author</string>
     <string name="user_view_posts_caption">view posts</string>
     <string name="post_preview_list_mode_name">Mode Name</string>
-    <string name="follow_button">Follow</string>
+    <string name="follow_button"> </string>
     <string name="tag_caption">Tag</string>
     <string name="tag_activity_title_caption">Tags</string>
     <string name="tag_activity_save_button">Save</string>
     <string name="post_detail_title">Title</string>
     <string name="post_detail_main_content">Main Content</string>
-    <string name="post_detail_likes">Likes:</string>
     <string name="post_detail_author_button_caption">Author</string>
     <string name="post_detail_like_button_caption">Like</string>
     <string name="post_detail_comment_button_caption">Comment</string>
     <string name="post_detail_post_detail">Post Detail</string>
     <string name="post_detail_delete_button_caption">Delete</string>
+    <string name="default_notification_channel_id">follower_update_channel</string>
+    <string name="post">Published: </string>
+    <string name="followings">following: </string>
+    <string name="followers">followers: </string>
+    <string name="loading">…</string>
+    <string name="avatar">Avatar</string>
+    <string name="user_list_following_follower">FollowType</string>
+    <string name="add_a_comment">Add a comment...</string>
+    <string name="comment">comment</string>
+    <string name="publish">Send</string>
+
+    <string-array name="gender_array">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Non-binary</item>
+        <item>Prefer not to say</item>
+    </string-array>
 
 
 </resources>

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,13 +20,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class PostPreviewListActivity extends AppCompatActivity {
-    private final static String TAG = "PostPreviewListActivity Activity";
+    private final static String TAG = "Post Preview List Activity";
     private static final ClusterManager clusterManager = ClusterManager.getInstance();
     private String userId;
     private PostAdapter adapter;
@@ -34,6 +36,8 @@ public class PostPreviewListActivity extends AppCompatActivity {
     private ProfileManager profileManager;
     private TextView modeTitle;
     private Button followButton;
+    private boolean isFollowing = false;
+    private ImageView icon1, icon2, icon3;
 
     //ChatGPT usage: Partial
     @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
@@ -58,14 +62,16 @@ public class PostPreviewListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
+        icon1 = findViewById(R.id.icon1);
+        icon2 = findViewById(R.id.icon2);
+        icon3 = findViewById(R.id.icon3);
+
         Intent intent = getIntent();
         String mode = intent.getStringExtra("mode");
 
         switch (Objects.requireNonNull(mode)) {
 
             case "profile":
-
-                followButton.setVisibility(View.GONE);
 
                 userId = intent.getStringExtra("userId");
                 modeTitle.setText(User.getInstance().getUserName() + "'s Posts");
@@ -101,7 +107,25 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
                 }
 
-                showAuthorInfo(userId);
+                profileManager.getUserData(User.getInstance(), this, new User.UserCallback() {
+                    @Override
+                    public String onSuccess(User user) {
+
+                        isFollowing = user.getFollowing().contains(userId);
+
+                        showAuthorInfo(userId, isFollowing);
+
+                        return null;
+
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+
+                        Log.e(TAG, e.toString());
+
+                    }
+                });
 
                 break;
 
@@ -133,26 +157,43 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
         followButton.setOnClickListener(view -> {
 
-            profileManager.followAuthor(userId, this, new ProfileManager.FollowingUserCallback() {
+            profileManager.followAuthor(isFollowing, userId, this, new ProfileManager.FollowingUserCallback() {
                 @Override
                 public void onSuccess(String userId) {
-
-                    profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
+                    profileManager.getUserData(User.getInstance(), PostPreviewListActivity.this, new User.UserCallback() {
                         @Override
-                        public void onAuthorRetrieved(String authorName) {
+                        public String onSuccess(User user) {
 
-                            Toast.makeText(PostPreviewListActivity.this, "Succeed following "+ authorName +" rn!", Toast.LENGTH_LONG).show();
+                            isFollowing = user.getFollowing().contains(userId);
+                            followButton.setText(isFollowing ? "following" : "follow");
+                            profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
+                                @Override
+                                public void onAuthorRetrieved(String authorName) {
+
+                                    if (isFollowing) Toast.makeText(PostPreviewListActivity.this, "Succeed following "+ authorName +" rn!", Toast.LENGTH_SHORT).show();
+                                    else             Toast.makeText(PostPreviewListActivity.this, "Succeed to unfollow "+ authorName +" !", Toast.LENGTH_SHORT).show();
+
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+
+                                    Log.d(TAG, String.valueOf(e));
+
+                                }
+                            });
+
+                            return null;
 
                         }
 
                         @Override
-                        public void onError(Exception e) {
+                        public void onFailure(Exception e) {
 
-                            Log.d(TAG, String.valueOf(e));
+                            Log.d(TAG, "Cannot update user info after follow" + e);
 
                         }
                     });
-
                 }
 
                 @Override
@@ -192,8 +233,22 @@ public class PostPreviewListActivity extends AppCompatActivity {
         } else if ("authorInfo".equals(mode)) {
 
             userId = intent.getStringExtra("userId");
+            profileManager.getUserData(User.getInstance(), this, new User.UserCallback() {
+                @Override
+                public String onSuccess(User user) {
 
-            showAuthorInfo(userId);
+                    isFollowing = user.getFollowing().contains(userId);
+
+                    showAuthorInfo(userId, isFollowing);
+
+                    return null;
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                }
+            });
 
         } else if ("search".equals(mode)) {
 
@@ -213,26 +268,43 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
         followButton.setOnClickListener(view -> {
 
-            profileManager.followAuthor(userId, this, new ProfileManager.FollowingUserCallback() {
+            profileManager.followAuthor(isFollowing, userId, this, new ProfileManager.FollowingUserCallback() {
                 @Override
                 public void onSuccess(String userId) {
-
-                    profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
+                    profileManager.getUserData(User.getInstance(), PostPreviewListActivity.this, new User.UserCallback() {
                         @Override
-                        public void onAuthorRetrieved(String authorName) {
+                        public String onSuccess(User user) {
 
-                            Toast.makeText(PostPreviewListActivity.this, "Succeed following "+ authorName +" rn!", Toast.LENGTH_LONG).show();
+                            isFollowing = user.getFollowing().contains(userId);
+                            followButton.setText(isFollowing ? "following" : "follow");
+                            profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
+                                @Override
+                                public void onAuthorRetrieved(String authorName) {
+
+                                    if (isFollowing) Toast.makeText(PostPreviewListActivity.this, "Succeed following "+ authorName +" rn!", Toast.LENGTH_SHORT).show();
+                                    else             Toast.makeText(PostPreviewListActivity.this, "Succeed to unfollow "+ authorName +" !", Toast.LENGTH_SHORT).show();
+
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+
+                                    Log.d(TAG, String.valueOf(e));
+
+                                }
+                            });
+
+                            return null;
 
                         }
 
                         @Override
-                        public void onError(Exception e) {
+                        public void onFailure(Exception e) {
 
-                            Log.d(TAG, String.valueOf(e));
+                            Log.d(TAG, "Cannot update user info after follow" + e);
 
                         }
                     });
-
                 }
 
                 @Override
@@ -243,9 +315,7 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
                 }
             });
-
         });
-
     }
 
     //ChatGPT usage: Partial
@@ -258,6 +328,7 @@ public class PostPreviewListActivity extends AppCompatActivity {
                 posts.clear();
                 posts.addAll(fetchedPosts);
                 adapter.notifyDataSetChanged();
+                displayAcheivements(fetchedPosts.size());
 
             }
             @Override
@@ -311,7 +382,10 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
                 if (!found) {
 
-                    Toast.makeText(PostPreviewListActivity.this, "No nearby posts found!", Toast.LENGTH_LONG).show();
+                    posts.clear();
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(PostPreviewListActivity.this, "No nearby posts found!", Toast.LENGTH_SHORT).show();
+                    finish();
 
                 }
 
@@ -327,13 +401,14 @@ public class PostPreviewListActivity extends AppCompatActivity {
     }
 
     //ChatGPT usage: No
-    private void showAuthorInfo(String userId) {
+    private void showAuthorInfo(String userId, boolean isFollowing) {
         profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onAuthorRetrieved(String authorName) {
 
                 modeTitle.setText(authorName + "'s Posts");
+                followButton.setText(isFollowing ? "following" : "follow");
 
             }
 
@@ -355,6 +430,7 @@ public class PostPreviewListActivity extends AppCompatActivity {
                 posts.clear();
                 posts.addAll(fetchedPosts);
                 adapter.notifyDataSetChanged();
+                displayAcheivements(fetchedPosts.size());
 
             }
             @Override
@@ -405,6 +481,7 @@ public class PostPreviewListActivity extends AppCompatActivity {
                     posts.addAll(fetchedPosts);
                     adapter.notifyDataSetChanged();
 
+
                 }
                 @Override
                 public void onFailure(Exception e) {
@@ -415,4 +492,17 @@ public class PostPreviewListActivity extends AppCompatActivity {
             });
         }
     }
+
+    private void displayAcheivements(int numPosts)
+    {
+        if(numPosts >= 5 )
+            icon1.setVisibility(View.VISIBLE);
+
+        if(numPosts >= 10)
+            icon2.setVisibility(View.VISIBLE);
+
+        if(numPosts>= 15)
+            icon3.setVisibility(View.VISIBLE);
+    }
+
 }

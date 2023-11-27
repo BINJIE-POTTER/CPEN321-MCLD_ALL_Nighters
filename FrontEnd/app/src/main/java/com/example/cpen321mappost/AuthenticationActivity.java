@@ -15,11 +15,20 @@ import com.google.gson.Gson;
 public class AuthenticationActivity extends AppCompatActivity {
     private AuthenticationHandler authenticationHandler;
     final static String TAG = "Authentication Activity";
+    public static boolean TEST_MODE = false;
+
 
     //ChatGPT usage: Partial
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        if (TEST_MODE) {
+//            // Bypass authentication and directly start MapsActivity
+//            Intent intent = new Intent(AuthenticationActivity.this, MapsActivity.class);
+//            startActivity(intent);
+//            finish();
+//            return;
+//        }
         authenticationHandler = new AuthenticationHandler(this, new AuthenticationHandler.AuthCallback() {
             @Override
             public void onAuthSuccess(FirebaseUser user) {
@@ -40,8 +49,6 @@ public class AuthenticationActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_authentication);
-
-
 
         findViewById(R.id.btnGoogleSignIn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,13 +75,6 @@ public class AuthenticationActivity extends AppCompatActivity {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         //TODO:Ask for firebase cloud mesasging token, ask for permission
         if (firebaseUser != null) {
-            // User is already authenticated
-
-            //User currentUser = User.initializeUser(firebaseUser);
-            // TODO:
-            //if current user by email exist in database, fetch the user
-            //else create a post method to create user
-
         }
 
         User user = User.getInstance();
@@ -95,37 +95,36 @@ public class AuthenticationActivity extends AppCompatActivity {
 
                         Log.d(TAG, "NEW TOKEN: " + user.getToken());
 
+                        profileManager.putUserData(user, AuthenticationActivity.this, new User.UserCallback() {
+                            @Override
+                            public String onSuccess(User user) {
+
+                                Log.d(TAG, "User data is sent to the database, target is updating token.");
+
+                                Gson gson = new Gson();
+                                String jsonUserData = gson.toJson(user);
+
+                                Log.d(TAG, "user data after put is: " + jsonUserData);
+                                return null;
+
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+
+                                Log.d(TAG, "Falied to update token.");
+
+                                finish();
+
+                            }
+                        });
+
                     }
 
                     @Override
                     public void onError(Exception e) {
 
                         Log.d(TAG, "TOKEN NOT RETRIEVED");
-
-                    }
-                });
-
-                profileManager.putUserData(user, AuthenticationActivity.this, new User.UserCallback() {
-                    @Override
-                    public String onSuccess(User user) {
-
-                        Log.d(TAG, "User data is sent to the database, target is updating token.");
-
-                        Gson gson = new Gson();
-                        String jsonUserData = gson.toJson(user);
-
-                        Log.d(TAG, "user data after put is: " + jsonUserData);
-
-                        return null;
-
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-
-                        Log.d(TAG, "Falied to update token.");
-
-                        finish();
 
                     }
                 });
@@ -145,7 +144,7 @@ public class AuthenticationActivity extends AppCompatActivity {
 
         Intent intent = new Intent(AuthenticationActivity.this, MapsActivity.class);
         startActivity(intent);
-        finish();  // Finish the current activity
+        finish();
 
     }
 

@@ -36,6 +36,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
@@ -43,7 +45,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
+
     private static final double CLICKABLE_RADIUS = 0.005 ;
     private GoogleMap mMap;
     private LocationManager locationManager;
@@ -53,6 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public LatLng currentLatLng;
     private ArrayList<Marker> markerList= null;
     private boolean isPermissionGranted =false;
+    public static boolean TEST_MODE = false;
 
     //ChatGPT usage: Yes
     public interface JsonPostCallback {
@@ -66,12 +72,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         ActivityMapsBinding binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
+
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
         requestLocationPermissions();
+
         Button userProfileButton = findViewById(R.id.userProfileButton);
         userProfileButton.setOnClickListener(v -> {
             Intent intent = new Intent(MapsActivity.this, ProfileActivity.class);
@@ -118,7 +130,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //ChatGPT usage: Partial
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
         if(isPermissionGranted )
@@ -126,13 +138,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             initializeBlueMarkers();
         }
 
+
         mMap.setOnMarkerClickListener(marker -> {
-            selectedMarker = marker;
             displayLocationMenu(marker.getPosition().latitude, marker.getPosition().longitude, "create_review_Post");
             return true; // Return true to indicate the click event has been handled
         });
 
         mMap.setOnMapClickListener(latLng -> {
+
             if (selectedMarker != null) {
                 selectedMarker.remove();
             }
@@ -150,8 +163,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (!isNearMarker) {
                 selectedMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Selected Location"));
                 displayLocationMenu(latLng.latitude, latLng.longitude, "createPostOnly");
-                selectedMarker.remove();
-
+//                selectedMarker.remove();
             }
         });
     }
@@ -186,12 +198,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "Failed to get nearby blue markers on map", Toast.LENGTH_SHORT).show();
                 final Toast toast = Toast.makeText(MapsActivity.this, "Failed to get nearby blue markers on map", Toast.LENGTH_LONG);
                 final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        toast.show();
-                    }
-                }, 3000); // 3000ms delay to show the toast again after the initial showing
+                handler.postDelayed(toast::show, 3000); // 3000ms delay to show the toast again after the initial showing
             }
         });
 
@@ -202,20 +209,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
          String url = "http://4.204.251.146:8081/posts/cluster";
          OkHttpClient httpClient = HttpClient.getInstance();
-         HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+         HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder();
 
-         // Convert the JSONObject to query parameters
          Iterator<String> keys = coordinate.keys();
          while (keys.hasNext()) {
              String key = keys.next();
              String value = coordinate.optString(key);
-             if (value != null) {
-                 urlBuilder.addQueryParameter(key, value);
-             }
+             urlBuilder.addQueryParameter(key, value);
          }
          String fullUrl = urlBuilder.build().toString();
 
-         // Build the GET request
          Request request = new Request.Builder()
                  .url(fullUrl)
                  .build();
@@ -234,32 +237,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
+                // Read the response in the background thread
+                String responseData = null;
+                if (!response.isSuccessful()) {
+                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
+                } else {
+                    try {
+                        responseData = response.body().string(); // This is executed in background
+                    } catch (IOException e) {
+                        Log.e(TAG, e.toString());
+                    }
+                }
+
+                // Final response data for UI
+                String finalResponseData = responseData;
+
+                // Switch to the main thread for UI update
                 activity.runOnUiThread(() -> {
-
-                    if (!response.isSuccessful()) {
-
-                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-
-                        callback.onFailure(new IOException("Unexpected response " + response));
-
+                    if (finalResponseData == null) {
+                        callback.onFailure(new IOException("Failed to read response"));
                     } else {
-
                         Log.d(TAG, "GET CLUSTERED POSTS SUCCEED");
-
-                        assert response.body() != null;
-                        String responseData = null;
-                        try {
-                            responseData = response.body().string();
-                        } catch (IOException e) {
-                            Log.e(TAG, e.toString());
-                        }
-
                         Gson gson = new Gson();
-
-                        Cluster[] clusters = gson.fromJson(responseData, Cluster[].class);
-
+                        Cluster[] clusters = gson.fromJson(finalResponseData, Cluster[].class);
                         callback.onSuccess(clusters);
-
                     }
                 });
             }
@@ -278,6 +279,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .position(postLocation)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
 
+
                 markerList.add(marker);
 
             }
@@ -286,30 +288,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //ChatGPT usage: Partial
     public void showMoreOptions(View view) {
+
         PopupMenu moreMenu = new PopupMenu(this, view);
         moreMenu.getMenu().add("Search");
         moreMenu.getMenu().add("Tag");
+
         moreMenu.setOnMenuItemClickListener(item -> {
-            switch (item.getTitle().toString()) {
+
+            switch (Objects.requireNonNull(item.getTitle()).toString()) {
+
                 case "Search":
-                    // Implement your Search action here
-                    Intent searchIntent= new Intent(MapsActivity.this,SearchActivity.class);
+
+                    Intent searchIntent= new Intent(MapsActivity.this, SearchActivity.class);
                     startActivity(searchIntent);
                     return true;
+
                 case "Tag":
-                    // Implement your Tag action here
-                    Intent tagIntent= new Intent(MapsActivity.this,TagActivity.class);
+
+                    Intent tagIntent= new Intent(MapsActivity.this, TagActivity.class);
                     double latitude= currentLocation.getLatitude();
                     double longitude= currentLocation.getLongitude();
                     tagIntent.putExtra("latitude", Double.toString(latitude));
                     tagIntent.putExtra("longitude", Double.toString(longitude));
                     startActivity(tagIntent);
                     return true;
+
                 default:
+
                     return false;
+
             }
         });
+
         moreMenu.show();
+
     }
 
     //ChatGPT usage: Partial
@@ -331,18 +343,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         createPostButton.setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
             Intent intent = new Intent(MapsActivity.this, PostActivity.class);
-            intent.putExtra("latitude", Double.toString(latitude));
-            intent.putExtra("longitude", Double.toString(longitude));
-            startActivity(intent);
+            if(TEST_MODE)
+            {
+                double Mocklatitude = 37.42553124314847;
+                double Mocklongitude = -122.07808557897808;
+                intent.putExtra("latitude", Double.toString(Mocklatitude));
+                intent.putExtra("longitude", Double.toString(Mocklongitude));
+                startActivity(intent);
+            }else {
+                intent.putExtra("latitude", Double.toString(latitude));
+                intent.putExtra("longitude", Double.toString(longitude));
+                startActivity(intent);
+            }
         });
 
         reviewPostsButton.setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
             Intent intent = new Intent(MapsActivity.this, PostPreviewListActivity.class);
             intent.putExtra("mode", "reviewPosts");
-            intent.putExtra("latitude", latitude);
-            intent.putExtra("longitude", longitude);
-            startActivity(intent);
+
+            if(TEST_MODE)
+            {
+                double Mocklatitude = 37.42553124314847;
+                double Mocklongitude = -122.07808557897808;
+                intent.putExtra("latitude", Mocklatitude);
+                intent.putExtra("longitude", Mocklongitude);
+                startActivity(intent);
+                startActivity(intent);
+            }else {
+                intent.putExtra("latitude", latitude);
+                intent.putExtra("longitude", longitude);
+                startActivity(intent);
+            }
+
         });
 
         bottomSheetDialog.show();
@@ -366,6 +399,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Location.distanceBetween(markeLatitude, markerLongitude, selectedMarker.latitude, selectedMarker.longitude, results);
         return results[0] <= radius;
     }
+
+    public void refreshPage(View view) {
+
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+        finish();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (currentLocation != null) {
+            JSONObject coordinate = new JSONObject();
+            try {
+                coordinate.put("latitude", currentLocation.getLatitude());
+                coordinate.put("longitude", currentLocation.getLongitude());
+                getClusteredPostData(coordinate, MapsActivity.this, new JsonPostCallback() {
+                    @Override
+                    public void onSuccess(Cluster[] clusters) {
+                        // Update your map with the new data
+                        addBlueMarkersToMap(clusters);
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        // Handle failure
+                        Toast.makeText(MapsActivity.this, "Failed to refresh map data", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (JSONException e) {
+                Log.e(TAG, "FAILURE refreshMapData: " + e);
+            }
+        }
+    }
+
 
 
 }
