@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -383,7 +384,6 @@ public class PostPreviewListActivity extends AppCompatActivity {
 
                     posts.clear();
                     adapter.notifyDataSetChanged();
-
                     Toast.makeText(PostPreviewListActivity.this, "No nearby posts found!", Toast.LENGTH_SHORT).show();
                     finish();
 
@@ -480,6 +480,7 @@ public class PostPreviewListActivity extends AppCompatActivity {
                     posts.clear();
                     posts.addAll(fetchedPosts);
                     adapter.notifyDataSetChanged();
+
 
                 }
                 @Override

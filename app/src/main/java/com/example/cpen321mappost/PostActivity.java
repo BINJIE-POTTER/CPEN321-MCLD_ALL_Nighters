@@ -106,11 +106,11 @@ public class PostActivity extends AppCompatActivity {
             try {
                 // Construct the JSON object
                 JSONObject postData = new JSONObject();
-                if (TEST_MODE) {
-                    mockSendingPostData();
-
-                    return;
-                }
+//                if (TEST_MODE) {
+//                    mockSendingPostData();
+//
+//                    return;
+//                }
 
                 postData.put("userId", User.getInstance().getUserId());
                 postData.put("time", getCurrentDateUsingCalendar());
@@ -136,6 +136,7 @@ public class PostActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Exception e) {
                         Toast.makeText(PostActivity.this, "Failed to post!", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Failed to post!");
                     }
                 });
 
@@ -232,7 +233,7 @@ public class PostActivity extends AppCompatActivity {
         // Construct the JSON object
         JSONObject postData = new JSONObject();
 
-        postData.put("userId", "Y4IBmkeIspO2H1Bm4VUZbGNQQtl1");
+        postData.put("userId", "J0TIKhlLfKXhaUIwHZuS6jChFJ93");
         postData.put("time", getCurrentDateUsingCalendar());
 
         JSONObject coordinate = new JSONObject();

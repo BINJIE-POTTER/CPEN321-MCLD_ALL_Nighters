@@ -3,6 +3,8 @@ package com.example.cpen321mappost;
 import android.app.Activity;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -24,10 +26,67 @@ public class User {
     private ArrayList<String> following;
     private ArrayList<String> followers;
     private ImageData userAvatar;
+    public static boolean TEST_MODE = false;
+
 
     //ChatGPT usage: Partial
     private User() {
+        if(TEST_MODE) {
+            this.userId="MockUser123456789";
 
+            this.userName = "testUser";
+            this.userEmail = "fakeeamil@123.com";
+            this.userGender = "none";
+            this.userBirthdate = "none";
+            this.postCount = 0;
+            this.following = new ArrayList<>();
+            this.followers = new ArrayList<>();
+            this.userAvatar = new ImageData();
+
+
+//            profileManager =new ProfileManager();
+//            profileManager.getUserData(new User("MockUser123456789"), new Activity(), new UserCallback() {
+//                @Override
+//                public String onSuccess(User user) {
+//                    Log.d("UserClass","MockUser success");
+//
+//                    return null;
+//                }
+//
+//                @Override
+//                public void onFailure(Exception e) {
+//                    User mockUser= new User("MockUser123456789");
+//                    mockUser.userName = "testUser";
+//                    mockUser.userEmail = "fakeeamil@123.com";
+//                    mockUser.userGender = "none";
+//                    mockUser.userBirthdate = "none";
+//                    mockUser.postCount = 0;
+//                    mockUser.following = new ArrayList<>();
+//                    mockUser.followers = new ArrayList<>();
+//                    mockUser.userAvatar = new ImageData();
+//                    profileManager.postUserData(mockUser, new Activity(), new UserCallback() {
+//                        @Override
+//                        public String onSuccess(User user) {
+//
+//                            Log.d("UserClass","MockUser success");
+//
+//                            return null;
+//                        }
+//
+//                        @Override
+//                        public void onFailure(Exception e) {
+//                            Log.e("UserClass","in privitate user constructor class, new mockUser failed");
+//
+//
+//                        }
+//                    });
+//
+//                }
+//            });
+
+
+            return ;
+        }
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert firebaseUser != null;
 
@@ -77,6 +136,16 @@ public class User {
 
     //ChatGPT usage: Partial
     public static synchronized User getInstance() {
+//        if(TEST_MODE )
+//        {
+//            if(instance ==null)
+//            {
+//                instance =new User();
+//                return instance;
+//            }
+//
+//            return instance;
+//        }
 
         if (instance == null) {
 
