@@ -69,7 +69,7 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.4.0")
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0-alpha03")
     androidTestImplementation ("androidx.test.uiautomator:uiautomator:2.2.0")
-    androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.4.0")
+//    androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.4.0")
 
 
 
