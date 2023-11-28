@@ -11,7 +11,7 @@ const mockSend = jest.fn();
 
 jest.mock('../_userRoutes.js', () => ({
   ...jest.requireActual('../_userRoutes.js'),
-  mockSend: mockSend,
+  mockSend,
 }));
 
 // Mock MongoDB Client

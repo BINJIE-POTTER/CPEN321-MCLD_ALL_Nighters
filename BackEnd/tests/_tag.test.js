@@ -89,8 +89,8 @@ describe('GET /tags/nearby', () => {
             tags: ['tag1', 'tag2'],
             },
             coordinate: {
-            latitude: 50.0000,
-            longitude: 50.0000,
+            latitude: 50,
+            longitude: 50,
             },
         },
         {
@@ -99,8 +99,8 @@ describe('GET /tags/nearby', () => {
             tags: ['tag2', 'tag3'],
             },
             coordinate: {
-            latitude: -50.0000,
-            longitude: -50.0000,
+            latitude: -50,
+            longitude: -50,
             },
         },
     ];
@@ -123,8 +123,8 @@ describe('GET /tags/nearby', () => {
             toArray: () => samplePosts, // where mockPostsData is your mocked posts data
         });
   
-        const latNearToPostOne = 50.0000;
-        const lonNearToPostOne = 50.0000;
+        const latNearToPostOne = 50;
+        const lonNearToPostOne = 50;
 
         // Call your endpoint and assert the response
         const response = await request(app).get('/tags/nearby').query({ latitude: latNearToPostOne, longitude: lonNearToPostOne});

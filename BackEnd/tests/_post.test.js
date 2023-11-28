@@ -905,9 +905,9 @@ describe('PUT /posts/like', () => {
             }
         );
 
-        var response = await request(app)
-        .put('/posts/like')
-        .send({ pid, userId });
+        response = await request(app)
+            .put('/posts/like')
+            .send({ pid, userId });
         expect(response.status).toBe(200);
         expect(response.text).toBe("No changes made to the post's like count or like list.");
     });
