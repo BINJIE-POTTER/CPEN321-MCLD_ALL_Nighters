@@ -18,21 +18,30 @@ app.use(commentRoutes);
 app.use(tagRoutes);
 
 //Set up http and https server
-var privateKey = fs.readFileSync('cert/nginx-selfsigned2.key', 'utf8');
-var certificate = fs.readFileSync('cert/nginx-selfsigned2.crt', 'utf8');
-var credentials = { key: privateKey, cert: certificate };
+
+var privateKey;
+var certificate;
+var credentials;
+var httpServer;
+var httpsServer;
+
+if (process.env.NODE_ENV !== 'test') {
+  privateKey = fs.readFileSync('cert/nginx-selfsigned2.key', 'utf8');
+  certificate = fs.readFileSync('cert/nginx-selfsigned2.crt', 'utf8');
+  credentials = { key: privateKey, cert: certificate };
+
+  httpServer = http.createServer(app);
+  httpsServer = https.createServer(credentials, app);
+}
 
 const httpPort = 8081
 const httpsPort = 3000
-var httpServer = http.createServer(app);
-var httpsServer = https.createServer(credentials, app);
 const IPv4 = '4.204.251.146'
 
 const { MongoClient} = require('mongodb');
 const uri = "mongodb://0.0.0.0:27017/";
 const mongoClient = new MongoClient(uri);
 const MappostDB = "MappostDB";
-
 
 //To Pretty Print JSON obj
 app.set('json spaces', 2);
