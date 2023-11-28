@@ -6,9 +6,11 @@ const uri = "mongodb://0.0.0.0:27017/";
 const mongoClient = new MongoClient(uri);
 const MappostDB = "MappostDB";
 
+
+const admin = require('firebase-admin');
+var serviceAccount;
 if (process.env.NODE_ENV !== 'test') {
-    const admin = require('firebase-admin');
-    var serviceAccount = require("./firebase.json");
+    serviceAccount = require("./firebase.json");
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
     });

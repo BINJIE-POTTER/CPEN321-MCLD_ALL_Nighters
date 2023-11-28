@@ -1,11 +1,14 @@
 //Backend-server used to connect to mongodb
 var express = require("express")
 var app = express();
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+
 const userRoutes = require('./_userRoutes').router;
 const postRoutes = require('./_postRoutes').router;
 const commentRoutes = require('./_commentRoutes');
 const tagRoutes = require('./_tagRoutes');
-
 
 app.use(express.json());
 
@@ -14,8 +17,15 @@ app.use(postRoutes);
 app.use(commentRoutes);
 app.use(tagRoutes);
 
-// const getPublicIp = require('external-ip')();
-const port = 8081
+//Set up http and https server
+var privateKey = fs.readFileSync('cert/nginx-selfsigned2.key', 'utf8');
+var certificate = fs.readFileSync('cert/nginx-selfsigned2.crt', 'utf8');
+var credentials = { key: privateKey, cert: certificate };
+
+const httpPort = 8081
+const httpsPort = 3000
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
 const IPv4 = '4.204.251.146'
 
 const { MongoClient} = require('mongodb');
@@ -28,7 +38,8 @@ const MappostDB = "MappostDB";
 app.set('json spaces', 2);
 
 app.get('/', (req, res) => {
-  res.send("Hello, world")
+  const host = req.headers.host;
+  res.send(`This server is accessed via: ${host}`);
 })
 
 //ChatGPT usage: No
@@ -42,14 +53,25 @@ async function run() {
     }
 
     if (process.env.NODE_ENV !== 'test') {
-      var server = app.listen(port, (req, res) => {
-        console.log("Server successfully running at http://%s:%s", IPv4, port)
+      // var server = app.listen(httpPort, (req, res) => {
+      //   console.log("Server successfully running at http://%s:%s", IPv4, httpPort)
+      // });
+
+      httpServer.listen(httpPort, () => {
+        console.log("Server successfully running at http://%s:%s", IPv4, httpPort)
+      });
+  
+      httpsServer.listen(httpsPort, () => {
+        // httpsPort, () => { console.log(`Server is running on https://${host}:${httpsPort}`); }
+        console.log("The https server running on 3000");
       });
     }
 
   } catch(err){
     console.log(err);
-    await mongoClient.close()
+    httpServer.close();
+    httpsServer.close();
+    await mongoClient.close();
   }
 }
 run();

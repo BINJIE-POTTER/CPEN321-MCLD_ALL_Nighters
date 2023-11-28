@@ -850,7 +850,7 @@ describe('checkValidUser function', () => {
 
   const { notifyFollowerIncrease} = require('../_userRoutes');
 
-  describe('notifyFollowerIncrease', () => {
+describe('notifyFollowerIncrease', () => {
     it('should return 400 and error message if userId is not provided', async () => {
       const mockResponse = {
         status: jest.fn().mockReturnThis(),

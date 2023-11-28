@@ -13,11 +13,9 @@ require('dotenv').config();
 
 const { OpenAI } = require('openai');
 var openai;
-if (process.env.NODE_ENV !== 'test') {
-    openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    });
-}
+openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+});
 
 
 const multer = require('multer');
@@ -457,25 +455,25 @@ const checkValidPost = (body) => {
 //ChatGPT usage: No (ChatGPT's output was not up to date, thus we cited from OpenAi website)
 async function generateTags(text_to_analyze) {
     try {
-        if (process.env.NODE_ENV !== 'test') {
-            const response = await openai.chat.completions.create({
-                model: "gpt-3.5-turbo",
-                messages: [
-                    {"role": "system", "content": `You are a confident and super intelligent oracle, you receive the post text provided to you and
-                    outputs the keywords those can represent the post. If there is something you cannot analyze, you just give one keyword name 'None'`},
-                    {"role": "user", "content": example_prompt},
-                    {"role": "assistant", "content": example_response},
-                    {"role": "user", "content": "Text to analyze: " + text_to_analyze}
-                ],
-                temperature: 0.5,
-                max_tokens: 15,
-            });
-            console.log(response['choices'][0]['message']['content']);
-            var answer = response['choices'][0]['message']['content']
-            return answer
-        } else {
-            return "test, post";
-        }
+        const response = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [
+                {"role": "system", "content": `You are a confident and super intelligent oracle, you receive the post text provided to you and
+                outputs two to five keywords representing the post. If the whole text does not hold any logic, you just give one keyword name 'None'`},
+                {"role": "user", "content": example_prompt},
+                {"role": "assistant", "content": example_response},
+                {"role": "user", "content": example_prompt_2},
+                {"role": "assistant", "content": example_response_2},
+                {"role": "user", "content": example_prompt_3},
+                {"role": "assistant", "content": example_response_3},
+                {"role": "user", "content": "Text to analyze: " + text_to_analyze}
+            ],
+            temperature: 0.5,
+            max_tokens: 15,
+        });
+        console.log(response['choices'][0]['message']['content']);
+        var answer = response['choices'][0]['message']['content']
+        return answer
     } catch (error) {
         res.status(500).send("Internal Server Error");
         console.error("Internal Server Error");
@@ -492,7 +490,15 @@ of this incredible archipelago. Whether you're a beach bum, an adventure seeker 
 I've been several times and each time, I choose a couple of different islands to visit. 
 Every trip has been incredibly rewarding and I always look forward go going back!`;
 
-const example_response =  `Philippines, travel, beaches, culture, adventure, resorts, connectivity`;
+const example_response =  `Travel, Budget-friendly, Beaches, Adventure, Culture`;
+
+const example_prompt_2 = `lakjflkasjdoaiifjadlkfdja`;
+
+const example_response_2 =  `None`;
+
+const example_prompt_3 = `This is a test post`;
+
+const example_response_3 =  `Test, Post`;
 
 //======================================================TRIE SEARCH ALGORITHM
 //ChatGPT usage: Yes

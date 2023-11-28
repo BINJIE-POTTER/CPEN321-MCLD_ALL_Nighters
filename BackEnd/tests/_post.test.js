@@ -93,7 +93,7 @@ describe('Create a post', () => {
             content: {
                 title: 'Test Post',
                 body: 'This is a test post.',
-                tags:  ["test", "post"]
+                tags:  ["Test", "Post"]
             },
             time: new Date().toISOString(),
             coordinate: {
@@ -121,12 +121,12 @@ describe('Create a post', () => {
         });
         expect(mockInsertOne).toHaveBeenCalledWith(
             expect.objectContaining({
-                tagName: "test"
+                tagName: "Test"
             })
         );
         expect(mockInsertOne).toHaveBeenCalledWith(
             expect.objectContaining({
-                tagName: "post"
+                tagName: "Post"
             })
         );
         expect(mockUpdateOne).toHaveBeenCalledWith(
@@ -1110,4 +1110,33 @@ describe('PUT /posts/unlike', () => {
         expect(response.text).toEqual("Internal Server Error");
     });
 
+});
+
+
+const { generateTags } = require('../_postRoutes');
+
+describe('Tag Generation Consistency Tests', () => {
+    // Test for tag generation consistency
+    it('should generate tags with at least 90% similarity for identical posts', async () => {
+        // Same content for two posts
+        const postContent = 'This is a sample post to test tag generation consistency.';
+
+        // Generate tags for the same post twice
+        const generatedTags1 = await generateTags(postContent);
+        const generatedTags2 = await generateTags(postContent);
+
+        // Function to calculate the similarity percentage of tags
+        const calculateTagSimilarity = (tags1, tags2) => {
+            const set1 = new Set(tags1.split(',').map(tag => tag.trim()));
+            const set2 = new Set(tags2.split(',').map(tag => tag.trim()));
+            const intersection = new Set([...set1].filter(tag => set2.has(tag)));
+            return (intersection.size / Math.min(set1.size, set2.size)) * 100;
+        };
+
+        // Calculate similarity percentage
+        const similarityPercentage = calculateTagSimilarity(generatedTags1, generatedTags2);
+
+        // Check if similarity is at least 90%
+        expect(similarityPercentage).toBeGreaterThanOrEqual(90);
+    });
 });
