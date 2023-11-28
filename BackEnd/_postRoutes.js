@@ -24,8 +24,8 @@ const fs = require('fs');
 
 //======================================================Posts POST
 //ChatGPT usage: Partial
-//Add a post to the posts collection in MappostDB
 router.post("/posts", upload.single('image'), async (req, res) => {
+    //Add a post to the posts collection in MappostDB
     try{
 
         if(req.body.postData){
@@ -157,8 +157,8 @@ router.get("/posts/nearby", async (req, res) => {
 */
 
 //ChatGPT usage: No
-//Get the post with the specific pid
 router.get("/posts/single", async (req, res) => {
+    //Get the post with the specific pid
     try{
         const pid = req.query.pid;
         if(!pid) {
@@ -181,8 +181,8 @@ router.get("/posts/single", async (req, res) => {
 
 // ======================================================Posts DELETE
 //ChatGPT usage: No
-// Delete a specific post by its ID
 router.delete("/posts", async (req, res) => {
+    // Delete a specific post by its ID
     try {
         const { pid } = req.query;  // Extracting it from the query parameters
 
@@ -207,8 +207,8 @@ router.delete("/posts", async (req, res) => {
 
 //======================================================Posts PUT (like count)
 //ChatGPT usage: Partial
-//Update the like count for a specific post
 router.put("/posts/like", async (req, res) => {
+    //Update the like count for a specific post
     try {
         const { pid, userId } = req.body;
         if (!pid || !userId) {
@@ -248,8 +248,8 @@ router.put("/posts/like", async (req, res) => {
 
 //======================================================Posts PUT (unlike count)
 //ChatGPT usage: Partial
-// Update the unlike count for a specific post
 router.put("/posts/unlike", async (req, res) => {
+    // Update the unlike count for a specific post
     try {
         const { pid, userId } = req.body; 
 
@@ -296,9 +296,9 @@ router.put("/posts/unlike", async (req, res) => {
 
 //======================================================Posts GET
 //ChatGPT usage: No
-//Get the posts written by the user
-//REQUIRE: userId
 router.get("/posts/from-user", async (req, res) => {
+    //Get the posts written by the user
+    //REQUIRE: userId
     try{
         const allPosts = await mongoClient.db(MappostDB).collection("posts").find({}).toArray();
         if(!req.query.userId){
@@ -314,8 +314,8 @@ router.get("/posts/from-user", async (req, res) => {
 });
 
 //ChatGPT usage: Partial
-//Find nearby posts, but group the posts if they are too close
 router.get("/posts/cluster", async (req, res) => {
+    //Find nearby posts, but group the posts if they are too close
     try {
         const user_latitude = parseFloat(req.query.latitude);
         const user_longitude = parseFloat(req.query.longitude);
@@ -376,6 +376,7 @@ router.get("/posts/cluster", async (req, res) => {
 
 //ChatGPT usage: Partial
 router.get("/posts/has-tags", async(req, res) => {
+    //Get the posts those have the tags matching the query
     try {
         if(!req.query){
             res.status(400).send("Missing query");
@@ -563,9 +564,9 @@ class Trie {
 }
 
 //ChatGPT usage: Yes
-//Get the posts written by the user
-//REQUIRE: userId
 router.get("/posts/search", async (req, res) => {
+    //Get the posts written by the user
+    //REQUIRE: userId
     try {
         // Keyword from search query
         if (!req.query.keyword) {

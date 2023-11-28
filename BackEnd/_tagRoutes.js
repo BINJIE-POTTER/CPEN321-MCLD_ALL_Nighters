@@ -9,12 +9,12 @@ const MappostDB = "MappostDB";
 
 //======================================================Tags GET 
 //ChatGPT usage: No
-//Get all the tags
-//While it's true that this particular try...catch block doesn't handle errors in a sophisticated way 
-//(e.g., providing custom error responses to the client), 
-//having the catch block in place can still be useful for debugging and logging purposes. 
-//It allows us to catch and log any unexpected errors that might occur during the database query or response sending process.
 router.get("/tags", async (req, res) => {
+  //Get all the tags
+  //While it's true that this particular try...catch block doesn't handle errors in a sophisticated way 
+  //(e.g., providing custom error responses to the client), 
+  //having the catch block in place can still be useful for debugging and logging purposes. 
+  //It allows us to catch and log any unexpected errors that might occur during the database query or response sending process.
   try{
     const allTags = await mongoClient.db(MappostDB).collection("tags").find({}).toArray();
     res.status(200).send(allTags);
@@ -26,8 +26,8 @@ router.get("/tags", async (req, res) => {
 });
 
 //ChatGPT usage: Partial
-//Get nearby tags
 router.get("/tags/nearby", async (req, res) => {
+  //Get nearby tags those are within 10km radius of the user
   try {
     const user_latitude = parseFloat(req.query.latitude);
     const user_longitude = parseFloat(req.query.longitude);

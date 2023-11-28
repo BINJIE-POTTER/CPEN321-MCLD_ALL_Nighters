@@ -11,8 +11,8 @@ const { v4: uuidv4 } = require('uuid');
 
 //======================================================Comments POST
 //ChatGPT usage: No
-//Add a comment to the comments collection in MappostDB
 router.post("/comments", async (req, res) => {
+    //Add a comment to the comments collection in MappostDB
     try{
         if (!checkValidComment(req.body)) {
             res.status(400).send("Invalid comment format");
@@ -33,9 +33,9 @@ router.post("/comments", async (req, res) => {
   
 //======================================================Comments GET
 //ChatGPT usage: No
-//Get all the comments of a specific post
-//REQUIRE: pid
 router.get("/comments", async (req, res) => {
+    //Get all the comments of a specific post
+    //REQUIRE: pid
     try{
         const allComments = await mongoClient.db(MappostDB).collection("comments").find({}).toArray();
         if(!req.query.pid){
@@ -54,9 +54,9 @@ router.get("/comments", async (req, res) => {
 
 //======================================================Comments DELETE
 //ChatGPT usage: Partial
-//Delete a specific comment from a post in the MappostDB
-//REQUIRE: cid, pid, userId
 router.delete("/comments", async (req, res) => {
+    //Delete a specific comment from a post in the MappostDB
+    //REQUIRE: cid, pid, userId
     try {
         const { cid, pid, userId } = req.query;
   

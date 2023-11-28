@@ -22,8 +22,8 @@ const fs = require('fs');
 
 //======================================================Users POST
 //ChatGPT usage: Partial
-//Add a user to the user collection in MappostDB
 router.post("/users", upload.single('image'), async (req, res) => {
+    //Add a user to the user collection in MappostDB
     try {
         // checkValidUser is now asynchronous, so we await it
         const isValidUser = await checkValidUser(req.body);
@@ -74,8 +74,8 @@ router.post("/users", upload.single('image'), async (req, res) => {
   
 //======================================================Users PUT
 //ChatGPT usage: Partial
-//Update when user changes their profile
 router.put("/users/update-profile", async (req, res) => {
+    //Update when user changes their profile
     try {
         // Include token in the destructuring assignment
         const { userId, userEmail, userName, userGender, userBirthdate, token } = req.body;
@@ -121,6 +121,7 @@ router.put("/users/update-profile", async (req, res) => {
 });
 
 router.put("/users/update-avatar", upload.single('image'), async (req, res) => {
+    //Update user avatar if the user exists and the image file is provided
     try {
         const userId = req.body.userId;
 
@@ -190,8 +191,8 @@ router.put("/users/update-avatar", upload.single('image'), async (req, res) => {
 
 
 //ChatGPT usage: Partial
-//Update user's following array, and update the following user's follower array
 router.put("/users/follow", async (req, res) => {
+    //Update user's following array, and update the following user's follower array
     try {
         const { userId, followingId } = req.body;
 
@@ -232,8 +233,8 @@ router.put("/users/follow", async (req, res) => {
 });
 
 //ChatGPT usage: Partial
-//Remove the followingId from UserId's following array, and remove the userId from the followingId's follower array
 router.put("/users/unfollow", async (req, res) => {
+    //Remove the followingId from UserId's following array, and remove the userId from the followingId's follower array
     try {
         const { userId, followingId } = req.body;
 
@@ -275,8 +276,8 @@ router.put("/users/unfollow", async (req, res) => {
 
 //======================================================Users GET
 //ChatGPT usage: No
-//Get the user info of a specific userId
 router.get("/users", async (req, res) => {
+    //Get the user info of a specific userId
     try {
         // Extract 'userId' from query parameters instead of URL parameters
         const userId = req.query.userId;
@@ -307,7 +308,6 @@ router.get("/users", async (req, res) => {
 
 //======================================================Users Helper Functions
 //ChatGPT usage: Partial
-// Adjusted checkValidUser to be an async function
 const checkValidUser = async (user) => {
     // Validate the required fields for the user
     if (!user.userEmail || !user.userName || !user.userGender || !user.userBirthdate || !user.userId) {
