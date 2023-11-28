@@ -21,6 +21,7 @@ openai = new OpenAI({
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const fs = require('fs');
+const path = require('path');
 
 //======================================================Posts POST
 //ChatGPT usage: Partial
@@ -67,13 +68,27 @@ router.post("/posts", upload.single('image'), async (req, res) => {
 
         console.log(req.file);
       
+        // if (req.file) {
+        //     const img = fs.readFileSync(req.file.path);
+        //     const encode_image = img.toString('base64');
+        //     var finalImg = {
+        //         contentType: req.file.mimetype,
+        //         image: Buffer.from(encode_image, 'base64')
+        //     };
+        //     req.body.image = finalImg;
+        // }
+
         if (req.file) {
-            const img = fs.readFileSync(req.file.path);
+            const fullPath = path.join('uploads', path.basename(req.file.path));
+        
+            const img = fs.readFileSync(fullPath); //using a safe, constructed path
             const encode_image = img.toString('base64');
+
             var finalImg = {
-                contentType: req.file.mimetype,
-                image: new Buffer.from(encode_image, 'base64')
+              contentType: req.file.mimetype,
+              image: Buffer.from(encode_image, 'base64')
             };
+
             req.body.image = finalImg;
         }
 

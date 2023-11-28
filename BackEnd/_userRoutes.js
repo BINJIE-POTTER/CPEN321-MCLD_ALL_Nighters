@@ -19,6 +19,7 @@ if (process.env.NODE_ENV !== 'test') {
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const fs = require('fs');
+const path = require('path');
 
 //======================================================Users POST
 //ChatGPT usage: Partial
@@ -40,26 +41,46 @@ router.post("/users", upload.single('image'), async (req, res) => {
         }
         req.body.userAvatar = avatar;
 
+        var finalAvatar;
 
-        if (process.env.NODE_ENV === 'test') {
-            req.file = {
-                path: './defaultAvatar.jpg',
-                mimetype: 'image/jpeg',
-            }
-        }
+        // if (req.file) {
+        //     const img = fs.readFileSync(req.file.path);
+        //     const encode_image = img.toString('base64');
+        //     finalAvatar = {
+        //         contentType: req.file.mimetype,
+        //         image: Buffer.from(encode_image, 'base64')
+        //     };
+        //     if (process.env.NODE_ENV === 'test') {
+        //         finalAvatar.image = "12345";
+        //     }
+        //     req.body.userAvatar = finalAvatar;
+        //     console.log("User Avatar received");
+        // }
 
         if (req.file) {
-            const img = fs.readFileSync(req.file.path);
+            const fullPath = path.join(__dirname, 'uploads', path.basename(req.file.path));
+        
+            const img = fs.readFileSync(fullPath);
             const encode_image = img.toString('base64');
             var finalAvatar = {
-                contentType: req.file.mimetype,
-                image: new Buffer.from(encode_image, 'base64')
+              contentType: req.file.mimetype,
+              image: Buffer.from(encode_image, 'base64')
             };
+        
             if (process.env.NODE_ENV === 'test') {
-                finalAvatar.image = "12345";
+              finalAvatar.image = "12345";
             }
+        
             req.body.userAvatar = finalAvatar;
-            console.log("User Avatar received");
+        }
+
+        if (process.env.NODE_ENV === 'test') {
+            console.log("Mocking image");
+            finalAvatar = {
+                contentType: 'image/jpeg',
+                image: '12345'
+            };
+            req.body.userAvatar = finalAvatar;
         }
 
         await mongoClient.db(MappostDB).collection("users").insertOne(req.body);
@@ -147,23 +168,30 @@ router.put("/users/update-avatar", upload.single('image'), async (req, res) => {
             res.status(400).send("User avatar was not provided.");
             return;
         } 
-
+        
         var finalAvatar;
 
-        const img = fs.readFileSync(req.file.path);
-        const encode_image = img.toString('base64');
-        finalAvatar = {
-            contentType: req.file.mimetype,
-            image: new Buffer.from(encode_image, 'base64')
-        };
-
+        // const img = fs.readFileSync(req.file.path);
+        // const encode_image = img.toString('base64');
+        // finalAvatar = {
+        //     contentType: req.file.mimetype,
+        //     image: Buffer.from(encode_image, 'base64')
+        // };
+    
         if (process.env.NODE_ENV === 'test') {
             finalAvatar = {
                 contentType: 'image/jpeg',
                 image: '12345'
             }
+        } else {
+            const fullPath = path.join(__dirname, 'uploads', path.basename(req.file.path));
+            const img = fs.readFileSync(fullPath);
+            const encode_image = img.toString('base64');
+            finalAvatar = {
+                contentType: req.file.mimetype,
+                image: Buffer.from(encode_image, 'base64')
+            };
         }
-
 
         const updateFields = {};
         updateFields.userAvatar = finalAvatar;
