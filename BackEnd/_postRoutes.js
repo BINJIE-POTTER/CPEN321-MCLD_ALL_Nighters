@@ -470,6 +470,7 @@ const checkValidPost = (body) => {
 
 //ChatGPT usage: No (ChatGPT's output was not up to date, thus we cited from OpenAi website)
 async function generateTags(text_to_analyze) {
+    //Generate tags by providing chatgpt sample texts and let it do the work
     try {
         const response = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
@@ -491,7 +492,6 @@ async function generateTags(text_to_analyze) {
         var answer = response['choices'][0]['message']['content']
         return answer
     } catch (error) {
-        res.status(500).send("Internal Server Error");
         console.error("Internal Server Error");
     }
 }

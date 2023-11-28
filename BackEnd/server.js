@@ -53,6 +53,7 @@ app.get('/', (req, res) => {
 
 //ChatGPT usage: No
 async function run() {
+  //Startup the server and database
   try {
     // Connect the client to the server	(optional starting in v4.7)
     if (process.env.NODE_ENV !== 'test') {
@@ -62,16 +63,11 @@ async function run() {
     }
 
     if (process.env.NODE_ENV !== 'test') {
-      // var server = app.listen(httpPort, (req, res) => {
-      //   console.log("Server successfully running at http://%s:%s", IPv4, httpPort)
-      // });
-
       httpServer.listen(httpPort, () => {
         console.log("Server successfully running at http://%s:%s", IPv4, httpPort)
       });
   
       httpsServer.listen(httpsPort, () => {
-        // httpsPort, () => { console.log(`Server is running on https://${host}:${httpsPort}`); }
         console.log("The https server running on 3000");
       });
     }
