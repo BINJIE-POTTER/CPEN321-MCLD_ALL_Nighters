@@ -84,7 +84,7 @@ router.post("/posts", upload.single('image'), async (req, res) => {
             const img = fs.readFileSync(fullPath); //using a safe, constructed path
             const encode_image = img.toString('base64');
 
-            var finalImg = {
+            finalImg = {
               contentType: req.file.mimetype,
               image: Buffer.from(encode_image, 'base64')
             };
@@ -620,7 +620,7 @@ router.get("/posts/search", async (req, res) => {
 
 //ChatGPT usage: No
 module.exports = {
-    router: router,
-    is_nearby: is_nearby,
-    generateTags: generateTags
+    router,
+    is_nearby,
+    generateTags
 }

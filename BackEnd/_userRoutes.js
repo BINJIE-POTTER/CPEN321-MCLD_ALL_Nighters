@@ -62,14 +62,10 @@ router.post("/users", upload.single('image'), async (req, res) => {
         
             const img = fs.readFileSync(fullPath);
             const encode_image = img.toString('base64');
-            var finalAvatar = {
+            finalAvatar = {
               contentType: req.file.mimetype,
               image: Buffer.from(encode_image, 'base64')
             };
-        
-            if (process.env.NODE_ENV === 'test') {
-              finalAvatar.image = "12345";
-            }
         
             req.body.userAvatar = finalAvatar;
         }
@@ -420,9 +416,9 @@ async function notifyFollowerIncrease(userId, res) {
 
 
 module.exports = {
-    router: router,
-    notifyFollowerIncrease: notifyFollowerIncrease,
-    userExists: userExists,
-    isUserFollowing:  isUserFollowing,
-    checkValidUser: checkValidUser
+    router,
+    notifyFollowerIncrease,
+    userExists,
+    isUserFollowing,
+    checkValidUser
 }
