@@ -3,6 +3,7 @@ name: Backend Route Tests
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   test-backend-routes:
@@ -23,7 +24,7 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Install EackEnd dependencies
+    - name: Install BackEnd dependencies
       run: npm install
       working-directory: ./BackEnd
 
@@ -34,3 +35,5 @@ jobs:
     - name: Run Tests
       run: npx cross-env NODE_ENV=test npm test
       working-directory: ./BackEnd
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
