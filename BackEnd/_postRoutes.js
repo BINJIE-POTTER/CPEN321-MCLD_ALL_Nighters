@@ -108,9 +108,9 @@ router.post("/posts", upload.single('image'), async (req, res) => {
           throw new Error('User not found');
         }
   
-        //Insert the tags into tags collection
-        //Use Promise.all to ensure all tags are inserted before continuing
         await Promise.all(tagArray.map(async tag => {
+            //Insert the tags into tags collection
+            //Use Promise.all to ensure all tags are inserted before continuing
             try {
             await mongoClient.db(MappostDB).collection("tags").insertOne({ tagName: tag });
             } catch (error) {
