@@ -1,5 +1,4 @@
 const request = require('supertest');
-const { MongoClient } = require('mongodb');
 
 // Mock MongoDB Methods
 const mockInsertOne = jest.fn();

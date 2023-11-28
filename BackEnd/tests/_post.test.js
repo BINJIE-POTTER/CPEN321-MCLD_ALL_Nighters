@@ -1,5 +1,4 @@
 const request = require('supertest');
-const { MongoClient } = require('mongodb');
 const uuid = require('uuid');
 
 // Mock MongoDB Methods
@@ -1081,7 +1080,7 @@ describe('PUT /posts/unlike', () => {
             }
         );
 
-        var response = await request(app)
+        response = await request(app)
             .put('/posts/unlike')
             .send({ pid, userId });
         expect(response.status).toBe(409);

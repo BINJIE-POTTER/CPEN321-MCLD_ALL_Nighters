@@ -1,5 +1,4 @@
 const request = require('supertest');
-const { MongoClient } = require('mongodb');
 const uuid = require('uuid');
 
 // Mock MongoDB Methods
