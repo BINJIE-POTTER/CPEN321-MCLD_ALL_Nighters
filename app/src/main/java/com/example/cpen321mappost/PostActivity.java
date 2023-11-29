@@ -26,6 +26,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 import okhttp3.Call;
@@ -113,7 +115,10 @@ public class PostActivity extends AppCompatActivity {
 //                }
 
                 postData.put("userId", User.getInstance().getUserId());
-                postData.put("time", getCurrentDateUsingCalendar());
+                LocalDateTime now = LocalDateTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
+                String formattedDateTime = now.format(formatter);
+                postData.put("time", formattedDateTime);
 
                 JSONObject coordinate = new JSONObject();
                 coordinate.put("latitude", latitude);

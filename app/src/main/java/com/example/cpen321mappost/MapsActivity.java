@@ -145,6 +145,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         mMap.setOnMapClickListener(latLng -> {
+            if(TEST_MODE)
+            {
+                double Mocklatitude = 37.42553124314847;
+                double Mocklongitude = -122.07808557897808;
+                displayLocationMenu(Mocklatitude, Mocklongitude, "create_review_Post");
+                return;
+
+            }
 
             if (selectedMarker != null) {
                 selectedMarker.remove();
