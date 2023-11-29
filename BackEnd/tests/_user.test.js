@@ -1,5 +1,6 @@
 const request = require('supertest');
 
+
 // Mock MongoDB Methods
 const mockInsertOne = jest.fn();
 const mockUpdateOne = jest.fn();
@@ -678,9 +679,7 @@ describe('Unfollow User Route', () => {
         const mockUser = { userId, name: 'Test User', email: 'test@example.com' };
 
 
-        // MongoClient().db().collection().findOne.mockResolvedValue(mockUser);
         mockFindOne.mockResolvedValue(mockUser);
-
 
         const response = await request(app).get(`/users?userId=${userId}`);
 
@@ -711,7 +710,6 @@ describe('Unfollow User Route', () => {
         const userId = 'nonexistentUserId';
 
         // Mock database response for nonexistent user
-        // MongoClient().db().collection().findOne.mockResolvedValue(null);
         mockFindOne.mockResolvedValue(null);
 
         const response = await request(app).get(`/users?userId=${userId}`);
@@ -730,7 +728,6 @@ describe('Unfollow User Route', () => {
         const validUserId = 'validUserId';
 
         
-        // MongoClient().db().collection().findOne.mockRejectedValue(new Error('Simulated database error'));
         mockFindOne.mockRejectedValue(new Error('Simulated database error'));
 
         const response = await request(app).get(`/users?userId=${validUserId}`);
@@ -1074,7 +1071,6 @@ describe('PUT /users/update-avatar', () => {
   // Expected Output: Error message "Internal server error"
   it('should return 500 on internal server error during user retrieval', async () => {
     const mockUserId = 'existingUserId';    
-    // MongoClient().db().collection().updateOne.mockRejectedValue(new Error('Simulated database error'));
     mockUpdateOne.mockRejectedValue(new Error('Simulated database error'));
 
     const response = await request(app)

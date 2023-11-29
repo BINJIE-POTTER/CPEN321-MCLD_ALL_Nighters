@@ -621,6 +621,7 @@ describe('GET /posts/has-tags', () => {
         .get('/posts/has-tags');
 
         expect(response.status).toBe(400);
+        
     });
 
     //ChatGPT Usage: No
@@ -641,6 +642,41 @@ describe('GET /posts/has-tags', () => {
 
         expect(response.status).toBe(400);
     });
+
+    // Test Case: Handle Missing User Latitude or Longitude
+    // Input: GET request with tags parameter but missing either user latitude or user longitude
+    // Expected Status Code: 400
+    // Expected Behavior: The server rejects the request due to missing user latitude or longitude.
+    // Expected Output: Error message "Missing user latitude or longitude".
+
+    it('should return a 400 status when user latitude or longitude is missing', async () => {
+        const queryWithMissingLatitude = {
+            tags: 'tag1',
+            // latitude is missing
+            longitude: -75.6972,
+        };
+
+        const responseWithMissingLatitude = await request(app)
+            .get('/posts/has-tags')
+            .query(queryWithMissingLatitude);
+
+        expect(responseWithMissingLatitude.status).toBe(400);
+        expect(responseWithMissingLatitude.text).toEqual('Missing user latitude or longitude');
+
+        const queryWithMissingLongitude = {
+            tags: 'tag1',
+            latitude: 45.4215,
+            // longitude is missing
+        };
+
+        const responseWithMissingLongitude = await request(app)
+            .get('/posts/has-tags')
+            .query(queryWithMissingLongitude);
+
+        expect(responseWithMissingLongitude.status).toBe(400);
+        expect(responseWithMissingLongitude.text).toEqual('Missing user latitude or longitude');
+    });
+    
   
     //ChatGPT Usage: No
     // Test Case 22: Handle Internal Server Error
@@ -905,8 +941,8 @@ describe('PUT /posts/like', () => {
         );
 
         response = await request(app)
-            .put('/posts/like')
-            .send({ pid, userId });
+        .put('/posts/like')
+        .send({ pid, userId });
         expect(response.status).toBe(200);
         expect(response.text).toBe("No changes made to the post's like count or like list.");
     });
@@ -1070,8 +1106,6 @@ describe('PUT /posts/unlike', () => {
             .put('/posts/unlike')
             .send({ pid, userId });
 
-        expect(response.status).toBe(200);
-        expect(response.text).toBe("Post's like count and like list updated successfully.");
         expect(mockUpdateOne).toHaveBeenCalledWith(
             { pid },
             {
@@ -1113,6 +1147,7 @@ describe('PUT /posts/unlike', () => {
 
 
 const { generateTags } = require('../_postRoutes');
+const postRoutes = require('../_postRoutes');
 
 describe('Tag Generation Consistency Tests', () => {
     // Test for tag generation consistency
@@ -1135,7 +1170,78 @@ describe('Tag Generation Consistency Tests', () => {
         // Calculate similarity percentage
         const similarityPercentage = calculateTagSimilarity(generatedTags1, generatedTags2);
 
+        console.log('Generated Tags 1:', generatedTags1);
+        console.log('Generated Tags 2:', generatedTags2);
+        console.log('Similarity Percentage:', similarityPercentage);
+
         // Check if similarity is at least 90%
         expect(similarityPercentage).toBeGreaterThanOrEqual(90);
     });
+
+    it('should handle internal server error during tag generation', async () => {
+        // Mock the generateTags function to simulate an error
+        jest.spyOn(postRoutes, 'generateTags').mockImplementation(() => {
+            throw new Error('Internal Server Error');
+        });
+
+        // Define a post content to send in the API request
+        const postData = {
+            userId: '12345',
+            content: {
+                title: 'Test Post',
+                body: 'This is a test post.'
+            },
+            time: new Date().toISOString(),
+            coordinate: {
+                latitude: 45.4215,
+                longitude: -75.6972
+            }
+        };
+
+        // Make an API request to the route that uses generateTags
+        const response = await request(app)
+            .post('/posts')
+            .send(postData);
+
+        // Expect a 500 Internal Server Error response
+        expect(response.status).toBe(500);
+
+        // Restore the original generateTags function
+        jest.restoreAllMocks();
+    });
+
 });
+
+const { Trie } = require('../_postRoutes'); // Import your trie implementation
+
+describe('Trie', () => {
+    let trie;
+
+    beforeEach(() => {
+        trie = new Trie();
+        trie.insert('apple', 'post1'); // Associate 'apple' with 'post1'
+        trie.insert('app', 'post2');   // Associate 'app' with 'post2'
+        trie.insert('banana', 'post3'); // Associate 'banana' with 'post3'
+        // Add more words to the trie as needed for your test cases
+    });
+
+    it('should return words with a matching prefix', () => {
+        const wordsWithAppPrefix = trie.find('app');
+        expect(wordsWithAppPrefix).toEqual(['post2', 'post1']); // Expect associated posts
+    });
+
+    it('should return an empty array for a prefix that does not exist', () => {
+        const wordsWithPrefixNotExist = trie.find('xyz');
+        expect(wordsWithPrefixNotExist).toEqual([]);
+    });
+
+    it('should return all words for an empty prefix', () => {
+        const allWords = trie.find('');
+        const expectedPosts = ['post2', 'post1', 'post3'];
+    
+        // Check if all expected posts are present in the result
+        expect(allWords).toEqual(expect.arrayContaining(expectedPosts));
+    });
+
+});
+

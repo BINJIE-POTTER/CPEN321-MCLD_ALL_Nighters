@@ -622,5 +622,7 @@ router.get("/posts/search", async (req, res) => {
 module.exports = {
     router,
     is_nearby,
-    generateTags
+    generateTags,
+    TrieNode,
+    Trie,
 }

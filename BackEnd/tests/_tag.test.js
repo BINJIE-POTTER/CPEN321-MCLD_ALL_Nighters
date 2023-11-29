@@ -88,8 +88,8 @@ describe('GET /tags/nearby', () => {
             tags: ['tag1', 'tag2'],
             },
             coordinate: {
-            latitude: 50,
-            longitude: 50,
+            latitude: 50.0,
+            longitude: 50.0,
             },
         },
         {
@@ -98,8 +98,8 @@ describe('GET /tags/nearby', () => {
             tags: ['tag2', 'tag3'],
             },
             coordinate: {
-            latitude: -50,
-            longitude: -50,
+            latitude: -50.0,
+            longitude: -50.0,
             },
         },
     ];
@@ -122,8 +122,8 @@ describe('GET /tags/nearby', () => {
             toArray: () => samplePosts, // where mockPostsData is your mocked posts data
         });
   
-        const latNearToPostOne = 50;
-        const lonNearToPostOne = 50;
+        const latNearToPostOne = 50.0;
+        const lonNearToPostOne = 50.0;
 
         // Call your endpoint and assert the response
         const response = await request(app).get('/tags/nearby').query({ latitude: latNearToPostOne, longitude: lonNearToPostOne});
@@ -144,21 +144,24 @@ describe('GET /tags/nearby', () => {
         expect(response.text).toBe("Missing user latitude or longitude");
     });
 
-    //ChatGPT Usage: No
-    // Test Case 5: Handling Errors and Returning a 500 Status Code
-    // Input: GET request where an error occurs
-    // Expected Status Code: 500
-    // Expected Behavior: The server encounters an error and logs it.
-    // Expected Output: Error message and a 500 status code.
+
     it('should handle errors and return a 500 status code', async () => {
         // Mocking an error in your route by throwing an exception
-          const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
-  
-          mockFind.mockImplementationOnce(() => {
-              throw new Error("Internal Server Error");
-          });
-          const response = await request(app).get('/tags');
-          expect(response.status).toBe(500);
-          expect(consoleErrorMock).toHaveBeenCalledWith('Internal Server Error');
-      });
+        const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
+        
+        // Mocking the mongoClient to throw an exception when called
+        mockFind.mockImplementation(() => {
+            throw new Error("Database error");
+        });
+
+        const latNearToPostOne = 50.0;
+        const lonNearToPostOne = 50.0;
+
+        // Call your endpoint and assert the response
+        const response = await request(app).get('/tags/nearby').query({ latitude: latNearToPostOne, longitude: lonNearToPostOne});
+        expect(response.status).toBe(500);
+        expect(consoleErrorMock).toHaveBeenCalledWith('Internal Server Error');
+    });
+
+   
 });
