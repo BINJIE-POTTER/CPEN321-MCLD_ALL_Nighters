@@ -36,9 +36,17 @@ public class ProfileEditingActivity extends AppCompatActivity {
 
         newValueText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                Log.d(TAG, "Do nothing.");
+
+            }
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                Log.d(TAG, "Do nothing.");
+
+            }
             @Override
             public void afterTextChanged(Editable s) {
                 String result = s.toString().replaceAll("<", "");
@@ -49,32 +57,11 @@ public class ProfileEditingActivity extends AppCompatActivity {
             }
         });
 
-        Intent intent = getIntent();
-
-        String item = intent.getStringExtra("item");
-
         profileManager.getUserData(user, this, new User.UserCallback() {
             @Override
             public String onSuccess(User user) {
 
-                String hint;
-
-                assert item != null;
-                if (item.equals("userName")) {
-
-                    hint = user.getUserName();
-                    newValueText.setHint(hint);
-
-                } else if (item.equals("userEmail")) {
-
-                    hint = user.getUserEmail();
-                    newValueText.setHint(hint);
-
-                } else {
-
-                    Log.d(TAG, "Cannot resolve passed-in item.");
-
-                }
+                newValueText.setHint(user.getUserName());
 
                 return null;
 
@@ -91,35 +78,17 @@ public class ProfileEditingActivity extends AppCompatActivity {
 
             String newInput = Objects.requireNonNull(newValueText.getText()).toString();
 
-            assert item != null;
-            if (item.equals("userName")) {
+            if (newInput.length() > 20) {
 
-                if (newInput.length() > 20) {
-
-                    Toast.makeText(ProfileEditingActivity.this, "Name length too long, please keep it in 20 characters!", Toast.LENGTH_SHORT).show();
-                    return;
-
-                }
-
-            } else if (item.equals("userEmail")) {
-
-                if (!isValidEmail(newInput)) {
-
-                    Toast.makeText(ProfileEditingActivity.this, "Invalid Email, Please enter again!", Toast.LENGTH_SHORT).show();
-                    return;
-
-                }
-
-            } else {
-
-                Log.d(TAG, "Cannot resolve passed-in item.");
+                Toast.makeText(ProfileEditingActivity.this, "Name length too long, please keep it in 20 characters!", Toast.LENGTH_SHORT).show();
+                return;
 
             }
 
             profileManager.getUserData(user, this, new User.UserCallback() {
                 @Override
                 public String onSuccess(User user) {
-                    profileManager.putUserData(new User(user, null, item.equals("userName") ? newInput : null, item.equals("userEmail") ? newInput : null, null, null), ProfileEditingActivity.this, new User.UserCallback() {
+                    profileManager.putUserData(new User(user, null, newInput, null, null, null), ProfileEditingActivity.this, new User.UserCallback() {
                         @Override
                         public String onSuccess(User user) {
 
@@ -176,15 +145,4 @@ public class ProfileEditingActivity extends AppCompatActivity {
         finish();
 
     }
-
-    private static boolean isValidEmail(String email) {
-
-        if (email == null) return false;
-
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-
-        return email.matches(emailRegex);
-
-    }
-
 }

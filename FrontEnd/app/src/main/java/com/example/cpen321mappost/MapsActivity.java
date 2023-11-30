@@ -53,7 +53,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final double CLICKABLE_RADIUS = 0.005 ;
     private GoogleMap mMap;
     private boolean isInitialZoomDone = false;
-
     private LocationManager locationManager;
     private static final String TAG = "MapsActivity";
     private Marker selectedMarker = null;

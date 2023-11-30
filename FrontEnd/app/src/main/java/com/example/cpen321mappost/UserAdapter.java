@@ -174,7 +174,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                                         @Override
                                         public void onError(Exception e) {
 
-                                            Log.d(TAG, String.valueOf(e));
+                                            Log.e(TAG, e.toString());
 
                                         }
                                     });
@@ -186,6 +186,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                                 @Override
                                 public void onFailure(Exception e) {
 
+                                    Log.e(TAG, e.toString());
+
                                 }
                             });
 
@@ -195,6 +197,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
                         @Override
                         public void onFailure(Exception e) {
+
+                            Log.e(TAG, e.toString());
 
                         }
                     });

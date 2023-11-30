@@ -289,6 +289,7 @@ public class PostManager {
                 }
 
                 // Process the response in the background thread
+                assert response.body() != null;
                 final String responseData = response.body().string();
                 Log.d(TAG, "GET SEARCHED POSTS SUCCEED");
                 Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
@@ -335,12 +336,12 @@ public class PostManager {
                     Log.d(TAG, "GET POSTS BY USER SUCCEED");
                     List<Post> posts;
 
-                    String responseData;
+                    String responseData = null;
                     assert response.body() != null;
                     try {
                         responseData = response.body().string();
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        Log.e(TAG, e.toString());
                     }
                     Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
                     posts = gson.fromJson(responseData, postListType);

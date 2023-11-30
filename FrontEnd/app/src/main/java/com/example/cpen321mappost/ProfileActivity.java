@@ -37,21 +37,170 @@ import java.nio.file.Files;
 import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity {
-    private User user;
+    private final static User user = User.getInstance();
     private final static String TAG = "ProfileManager Activity";
-    private final ProfileManager profileManager = new ProfileManager();
+    private final static ProfileManager profileManager = new ProfileManager();
     private ImageView avatarImageView;
     private ActivityResultLauncher<String[]> requestPermissionLauncher;
     private ActivityResultLauncher<Intent> getImage;
     private TextView followingTextView;
     private TextView followersTextView;
     private TextView postCountTextView;
+    private TextView nameTextView;
+    private TextView emailTextView;
+    private TextView genderTextView;
+    private TextView birthdateTextView;
+    private TextView userIdTextView;
+    private Button nameEditButton;
+    private Button genderEditButton;
+    private Button birthdateEditButton;
+    private Button viewPostsButton;
+    private Button followingButton;
+    private Button followersButton;
+    private Button postCountButton;
+    private Button logInButton;
+    private Button logOutButton;
+    private ImageView novice;
+    private ImageView explorer;
+    private ImageView master;
+    private View lastDivider;
+    private LinearLayout achievementBoard;
 
     //ChatGPT usage: Partial
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        initializeGetImage();
+        initializeRequestPermissionLauncher();
+        initializeUI();
+        loadUserData();
+        setOnClickers();
+
+    }
+
+    public String getRealPathFromURI(Uri contentUri, Context context) {
+
+        String result = null;
+        Cursor cursor = context.getContentResolver().query(contentUri, null, null, null, null);
+
+        if (cursor != null) {
+
+            if (cursor.moveToFirst()) {
+
+                int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+
+                if (idx != -1) result = cursor.getString(idx);
+
+            }
+
+            cursor.close();
+
+        }
+
+        // If direct path extraction failed, try reading from the stream
+        if (result == null) {
+
+            try (InputStream inputStream = context.getContentResolver().openInputStream(contentUri)) {
+
+                if (inputStream != null) {
+
+                    File tempFile = createTemporaryFileFromStream(inputStream, contentUri.getLastPathSegment());
+                    if (tempFile != null) result = tempFile.getAbsolutePath();
+
+                }
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
+
+            }
+        }
+
+        return result;
+
+    }
+
+    private File createTemporaryFileFromStream(InputStream inputStream, String fileName) {
+
+        try {
+
+            File tempFile = File.createTempFile("temp_" + fileName, null, getCacheDir());
+
+            try (OutputStream out = Files.newOutputStream(tempFile.toPath())) {
+
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+
+                    out.write(buffer, 0, bytesRead);
+
+                }
+            }
+
+            return tempFile;
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+            return null;
+
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void displayDialog(int resId, String title, String description) {
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.dialog_image_view, null);
+
+        TextView dialogTitle = dialogView.findViewById(R.id.dialog_title);
+        ImageView dialogImageView = dialogView.findViewById(R.id.dialog_image);
+        TextView dialogTextView = dialogView.findViewById(R.id.dialog_text);
+
+        dialogTitle.setText(title);
+        dialogImageView.setImageResource(resId);
+        dialogTextView.setText(description);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        profileManager.getUserData(user, this, new User.UserCallback() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public String onSuccess(User user) {
+
+                Log.d(TAG, "Succeed on get user data in profile activity");
+
+                followingTextView.setText(""+user.getFollowing().size());
+                followersTextView.setText(""+user.getFollowers().size());
+                postCountTextView.setText(""+user.getPostCount());
+
+                return null;
+
+            }
+
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onFailure(Exception e) {
+
+                Log.e(TAG, e.toString());
+
+            }
+        });
+    }
+
+    private void initializeGetImage() {
 
         getImage = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -108,6 +257,9 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void initializeRequestPermissionLauncher() {
 
         requestPermissionLauncher =
                 registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), isGranted -> {
@@ -118,29 +270,9 @@ public class ProfileActivity extends AppCompatActivity {
                         Toast.makeText(this, "Permission denied to read storage", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
 
-        TextView nameTextView;
-        TextView emailTextView;
-        TextView genderTextView;
-        TextView birthdateTextView;
-        TextView userIdTextView;
-        Button nameEditButton;
-        Button emailEditButton;
-        Button genderEditButton;
-        Button birthdateEditButton;
-        Button viewPostsButton;
-        Button followingButton;
-        Button followersButton;
-        Button postCountButton;
-        Button logInButton;
-        Button logOutButton;
-        ImageView novice;
-        ImageView explorer;
-        ImageView master;
-        View lastDivider;
-        LinearLayout achievementBoard;
-
-        user = User.getInstance();
+    private void initializeUI() {
 
         nameTextView = findViewById(R.id.user_name_value_id);
         emailTextView = findViewById(R.id.user_email_value_id);
@@ -152,7 +284,6 @@ public class ProfileActivity extends AppCompatActivity {
         postCountTextView = findViewById(R.id.user_post_count_text_id);
 
         nameEditButton = findViewById(R.id.user_name_edit_button_id);
-        emailEditButton = findViewById(R.id.user_email_edit_button_id);
         genderEditButton = findViewById(R.id.user_gender_edit_button_id);
         birthdateEditButton = findViewById(R.id.user_birthdate_edit_button_id);
         viewPostsButton = findViewById(R.id.user_view_posts_button_id);
@@ -176,6 +307,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         avatarImageView = findViewById(R.id.avatar_profile);
 
+    }
+
+    private void loadUserData() {
         profileManager.getUserData(user, this, new User.UserCallback() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -240,6 +374,9 @@ public class ProfileActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setOnClickers() {
 
         nameEditButton.setOnClickListener(view -> {
 
@@ -288,24 +425,6 @@ public class ProfileActivity extends AppCompatActivity {
 
             Log.d(TAG,"Opening the profile editing activity");
             Intent ProfileEditingIntent = new Intent(this, ProfileEditingBirthdateActivity.class);
-            startActivity(ProfileEditingIntent);
-            finish();
-
-        });
-
-        emailEditButton.setOnClickListener(view -> {
-
-            if (!User.isLoggedIn()) {
-
-                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
-
-                return;
-
-            }
-
-            Log.d(TAG,"Opening the profile editing activity");
-            Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
-            ProfileEditingIntent.putExtra("item", "userEmail");
             startActivity(ProfileEditingIntent);
             finish();
 
@@ -440,126 +559,6 @@ public class ProfileActivity extends AppCompatActivity {
 
                 Intent pickImage = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 getImage.launch(pickImage);
-
-            }
-        });
-    }
-
-    public String getRealPathFromURI(Uri contentUri, Context context) {
-
-        String result = null;
-        Cursor cursor = context.getContentResolver().query(contentUri, null, null, null, null);
-
-        if (cursor != null) {
-
-            if (cursor.moveToFirst()) {
-
-                int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-
-                if (idx != -1) result = cursor.getString(idx);
-
-            }
-
-            cursor.close();
-
-        }
-
-        // If direct path extraction failed, try reading from the stream
-        if (result == null) {
-
-            try (InputStream inputStream = context.getContentResolver().openInputStream(contentUri)) {
-
-                if (inputStream != null) {
-
-                    File tempFile = createTemporaryFileFromStream(inputStream, contentUri.getLastPathSegment());
-                    if (tempFile != null) result = tempFile.getAbsolutePath();
-
-                }
-
-            } catch (IOException e) {
-
-                e.printStackTrace();
-
-            }
-        }
-
-        return result;
-
-    }
-
-    private File createTemporaryFileFromStream(InputStream inputStream, String fileName) {
-
-        try {
-
-            File tempFile = File.createTempFile("temp_" + fileName, null, getCacheDir());
-
-            try (OutputStream out = Files.newOutputStream(tempFile.toPath())) {
-
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-
-                    out.write(buffer, 0, bytesRead);
-
-                }
-            }
-
-            return tempFile;
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-            return null;
-
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private void displayDialog(int resId, String title, String description) {
-
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.dialog_image_view, null);
-
-        TextView dialogTitle = dialogView.findViewById(R.id.dialog_title);
-        ImageView dialogImageView = dialogView.findViewById(R.id.dialog_image);
-        TextView dialogTextView = dialogView.findViewById(R.id.dialog_text);
-
-        dialogTitle.setText(title);
-        dialogImageView.setImageResource(resId);
-        dialogTextView.setText(description);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView);
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        profileManager.getUserData(user, this, new User.UserCallback() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public String onSuccess(User user) {
-
-                Log.d(TAG, "Succeed on get user data in profile activity");
-
-                followingTextView.setText(""+user.getFollowing().size());
-                followersTextView.setText(""+user.getFollowers().size());
-                postCountTextView.setText(""+user.getPostCount());
-
-                return null;
-
-            }
-
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onFailure(Exception e) {
-
-                Log.e(TAG, e.toString());
 
             }
         });

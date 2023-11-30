@@ -38,7 +38,11 @@ public class CommentManager {
 
             }
             @Override
-            public void onPostCommentSuccess() {}
+            public void onPostCommentSuccess() {
+
+                Log.d(TAG, "should not reach here.");
+
+            }
             @Override
             public void onFailure(Exception e) {
 

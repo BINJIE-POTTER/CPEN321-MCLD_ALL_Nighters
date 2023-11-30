@@ -66,6 +66,13 @@ public class PostDetailActivity extends AppCompatActivity {
         Intent receivedIntent = getIntent();
         pid = receivedIntent.getStringExtra("pid");
 
+        initializeUIComponents(textViewTitle, textViewMainContent, textViewPostTime, authorName, buttonLike, buttonDelete, followButton, cardView, imageViewPost, avatarImageView);
+        setupListeners(editTextComment, buttonDelete, followButton, buttonComment, buttonLike, avatarImageView, recyclerViewComments);
+
+    }
+
+    private void initializeUIComponents(TextView textViewTitle, TextView textViewMainContent, TextView textViewPostTime, TextView authorName, Button buttonLike, Button buttonDelete, Button followButton, CardView cardView, ImageView imageViewPost, ImageView avatarImageView) {
+
         postManager.getSinglePostData(pid, this, new PostManager.JsonCallback<Post>() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -170,12 +177,23 @@ public class PostDetailActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void setupListeners(EditText editTextComment, Button buttonDelete, Button followButton, Button buttonComment, Button buttonLike, ImageView avatarImageView, RecyclerView recyclerViewComments) {
 
         editTextComment.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                Log.d(TAG, "Do nothing.");
+
+            }
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                Log.d(TAG, "Do nothing.");
+
+            }
             @Override
             public void afterTextChanged(Editable s) {
 
@@ -381,7 +399,10 @@ public class PostDetailActivity extends AppCompatActivity {
                 }
             });
         });
+
     }
 }
+
+
 
 

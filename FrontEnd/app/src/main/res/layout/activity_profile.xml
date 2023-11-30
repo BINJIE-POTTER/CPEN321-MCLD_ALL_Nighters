@@ -263,25 +263,17 @@
             <!-- Actual user data -->
             <TextView
                 android:id="@+id/user_email_value_id"
-                android:layout_marginStart="18dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ellipsize="end"
-                android:text="@string/user_email_value_caption"
+                android:layout_marginStart="18dp"
+                android:text="@string/user_id_value_caption"
                 android:textSize="18sp"
-                android:maxLines="1"
                 android:layout_marginEnd="10dp"
-                android:gravity="end" />
-
-            <!-- Edit button for User Email -->
-            <Button
-                android:id="@+id/user_email_edit_button_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/user_profile_edit_button_caption"
-                style="?android:attr/buttonBarButtonStyle" />
-
+                android:gravity="end"
+                android:maxLines="1"
+                android:padding="10dp" />
         </LinearLayout>
 
         <!-- Divider -->
@@ -319,10 +311,7 @@
                 android:textSize="18sp"
                 android:layout_marginEnd="10dp"
                 android:gravity="end"
-                android:clickable="true"
-                android:focusable="true"
                 android:maxLines="1"
-                android:background="?attr/selectableItemBackground"
                 android:padding="10dp" />
 
         </LinearLayout>
