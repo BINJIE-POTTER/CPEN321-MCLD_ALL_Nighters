@@ -3,12 +3,14 @@ package com.example.cpen321mappost;
 import androidx.fragment.app.FragmentActivity;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Bundle;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.cpen321mappost.databinding.ActivityMapsBinding;
@@ -133,11 +135,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = mMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.map_style));
+
+            if (!success) {
+                Log.e(TAG, "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e(TAG, "Can't find style. Error: ", e);
+        }
+
         if(isPermissionGranted )
         {
             initializeBlueMarkers();
         }
-
 
         mMap.setOnMarkerClickListener(marker -> {
             displayLocationMenu(marker.getPosition().latitude, marker.getPosition().longitude, "create_review_Post");

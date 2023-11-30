@@ -29,42 +29,21 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-
-import android.view.View;
-
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.IdlingRegistry;
-import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.idling.CountingIdlingResource;
 import androidx.test.espresso.intent.Intents;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
-import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.Until;
-
-import com.example.cpen321mappost.AuthenticationActivity;
 import com.example.cpen321mappost.MapsActivity;
-import com.example.cpen321mappost.PostActivity;
-import com.example.cpen321mappost.PostDetailActivity;
-import com.example.cpen321mappost.PostPreviewListActivity;
 import com.example.cpen321mappost.R;
 import com.example.cpen321mappost.User;
-
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
