@@ -67,16 +67,6 @@ router.post("/posts", upload.single('image'), async (req, res) => {
         req.body.image = finalImg;
 
         console.log(req.file);
-      
-        // if (req.file) {
-        //     const img = fs.readFileSync(req.file.path);
-        //     const encode_image = img.toString('base64');
-        //     var finalImg = {
-        //         contentType: req.file.mimetype,
-        //         image: Buffer.from(encode_image, 'base64')
-        //     };
-        //     req.body.image = finalImg;
-        // }
 
         if (req.file) {
             const fullPath = path.join('uploads', path.basename(req.file.path));

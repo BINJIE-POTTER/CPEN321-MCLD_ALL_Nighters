@@ -847,7 +847,7 @@ describe('checkValidUser function', () => {
     });
   });
 
-  const { notifyFollowerIncrease} = require('../_userRoutes');
+const { notifyFollowerIncrease} = require('../_userRoutes');
 
 describe('notifyFollowerIncrease', () => {
     it('should return 400 and error message if userId is not provided', async () => {
@@ -909,7 +909,7 @@ describe('notifyFollowerIncrease', () => {
       expect(mockSend).not.toHaveBeenCalled();
     });
 
-  });
+});
 
   //interface: www.mydomain.ca/users/update-profile
   describe('Update Profile Route', () => {

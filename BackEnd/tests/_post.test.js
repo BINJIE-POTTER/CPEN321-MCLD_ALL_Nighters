@@ -113,7 +113,9 @@ describe('Create a post', () => {
             .send(newPost);
 
         expect(response.statusCode).toBe(200);
+        console.log("Received Status Code: 200");
         expect(response.text).toEqual("Item received successfully");
+        console.log("Received Text: Item received successfully");
         expect(uuid.v4).toHaveBeenCalled();
         expect(mockInsertOne).toHaveBeenCalledWith({
             ...expectedPost,
@@ -151,7 +153,9 @@ describe('Create a post', () => {
             .send(invalidPost);
 
         expect(response.statusCode).toBe(400);
+        console.log("Received Status Code: 400");
         expect(response.text).toEqual("Invalid post format");
+        console.log("Received Text: Invalid post format");
     });
 
     //ChatGPT Usage: No

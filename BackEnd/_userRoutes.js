@@ -43,20 +43,6 @@ router.post("/users", upload.single('image'), async (req, res) => {
 
         var finalAvatar;
 
-        // if (req.file) {
-        //     const img = fs.readFileSync(req.file.path);
-        //     const encode_image = img.toString('base64');
-        //     finalAvatar = {
-        //         contentType: req.file.mimetype,
-        //         image: Buffer.from(encode_image, 'base64')
-        //     };
-        //     if (process.env.NODE_ENV === 'test') {
-        //         finalAvatar.image = "12345";
-        //     }
-        //     req.body.userAvatar = finalAvatar;
-        //     console.log("User Avatar received");
-        // }
-
         if (req.file) {
             const fullPath = path.join(__dirname, 'uploads', path.basename(req.file.path));
         
@@ -381,8 +367,8 @@ async function notifyFollowerIncrease(userId, res) {
     
     // Check if both users exist
     if (!(await userExists(userId))) {
-    res.status(404).send("User or the following user not found.");
-    return;
+        res.status(404).send("User or the following user not found.");
+        return;
     }
 
     const user = await mongoClient.db(MappostDB).collection("users").findOne({ userId });
