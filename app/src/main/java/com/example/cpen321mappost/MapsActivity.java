@@ -23,6 +23,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Handler;
+import android.os.Looper;
 import android.widget.PopupMenu;
 import android.util.Log;
 import android.view.View;
@@ -104,13 +105,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //ChatGPT usage: No
     private void startLocationUpdates() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
             if (lastKnownLocation != null) {
                 currentLocation = lastKnownLocation;
                 onLocationChanged(lastKnownLocation);  // Update the map with the last known location
                 isPermissionGranted = true;
+            }
+
+            if (currentLocation == null) {
+                new Handler(Looper.getMainLooper()).postDelayed(this::startLocationUpdates, 5000);
             }
         }
     }
@@ -144,10 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.e(TAG, "Can't find style. Error: ", e);
         }
 
-        if(isPermissionGranted )
-        {
-            initializeBlueMarkers();
-        }
+        if (isPermissionGranted) initializeBlueMarkers();
 
         mMap.setOnMarkerClickListener(marker -> {
             displayLocationMenu(marker.getPosition().latitude, marker.getPosition().longitude, "create_review_Post");

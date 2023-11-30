@@ -38,7 +38,6 @@ public class PostDetailActivity extends AppCompatActivity {
     private boolean isLiked = false;
     private boolean isFollowing = false;
     private int postlikes;
-    public final boolean isLoggedIn = User.isLoggedIn();
 
     //ChatGPT usage: Partial
     @Override

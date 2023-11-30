@@ -1,18 +1,13 @@
 package com.example.cpen321mappost;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.material.textfield.TextInputEditText;
-
-import java.util.Objects;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class ProfileEditingSpinnerActivity extends AppCompatActivity {
     private final ProfileManager profileManager = new ProfileManager();
