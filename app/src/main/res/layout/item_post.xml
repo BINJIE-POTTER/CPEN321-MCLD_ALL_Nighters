@@ -27,6 +27,8 @@
         android:id="@+id/post_item_has_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
         android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
@@ -71,6 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
+                android:layout_marginTop="2dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -102,7 +105,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:background="#cccccc" />
 
 </LinearLayout>

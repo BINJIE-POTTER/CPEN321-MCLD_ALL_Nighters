@@ -96,13 +96,34 @@ public class PostActivity extends AppCompatActivity {
             getImage.launch(pickImage);
         });
 
-        cancelButton.setOnClickListener(v -> {
-
-            finish();
-
-        });
+        cancelButton.setOnClickListener(v -> finish());
 
         saveButton.setOnClickListener(v -> {
+
+            if (titleEditText == null || titleEditText.getText().toString().isEmpty()) {
+
+                Toast.makeText(PostActivity.this, "Please enter valid title!", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
+
+            if (titleEditText.getText().toString().length() > 40) {
+
+                Toast.makeText(PostActivity.this, "Title too long, keep it in 40 characters!", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
+
+            if (mainTextEditText == null || mainTextEditText.getText().toString().isEmpty()) {
+
+                Toast.makeText(PostActivity.this, "Please enter valid content!", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
+
             try {
 
                 JSONObject postData = new JSONObject();
