@@ -51,6 +51,8 @@ import okhttp3.Response;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
     private static final double CLICKABLE_RADIUS = 0.005 ;
     private GoogleMap mMap;
+    private boolean isInitialZoomDone = false;
+
     private LocationManager locationManager;
     private static final String TAG = "MapsActivity";
     private Marker selectedMarker = null;
@@ -143,6 +145,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, "Can't find style. Error: ", e);
         }
+        zoomToCurrentLocation();
+
 
         if(isPermissionGranted )
         {
@@ -183,6 +187,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 displayLocationMenu(latLng.latitude, latLng.longitude, "createPostOnly");
             }
         });
+    }
+    private void zoomToCurrentLocation() {
+        if (mMap != null && currentLocation != null && currentLatLng != null) {
+            LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current Location"));
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+            isInitialZoomDone = true; // Set the flag to true after initial zoom
+        }
     }
 
     public void initializeBlueMarkers()
@@ -410,11 +423,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location) {
         currentLocation = location;
         currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-        if (mMap != null) {
-            mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current Location"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+        if (!isInitialZoomDone) {
+            // If initial zoom is not done, zoom to the current location
+            zoomToCurrentLocation();
         }
+
+//        if (mMap != null) {
+////            mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current Location"));
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+////        }
     }
 
     //ChatGPT usage: Partial
