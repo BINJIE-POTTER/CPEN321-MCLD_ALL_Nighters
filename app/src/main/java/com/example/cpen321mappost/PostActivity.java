@@ -21,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -45,6 +46,7 @@ public class PostActivity extends AppCompatActivity {
     private EditText mainTextEditText;
     private Uri imageUri;
     final static String TAG = "PostActivity";
+    public static boolean TEST_MODE = false;
 
     //ChatGPT usage: Yes
     private final ActivityResultLauncher<String[]> requestPermissionLauncher =
@@ -133,6 +135,7 @@ public class PostActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Exception e) {
                         Toast.makeText(PostActivity.this, "Failed to post!", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Failed to post!");
                     }
                 });
 
@@ -192,4 +195,81 @@ public class PostActivity extends AppCompatActivity {
             }
         });
     }
+
+    // Method to get file path from Uri
+    public String getRealPathFromURI(Uri contentUri) {
+
+        String result;
+        Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
+
+        if (cursor == null) {
+
+            result = contentUri.getPath();
+
+        } else {
+
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+
+        }
+
+        return result;
+
+    }
+
+    //ChatGPT usage: Partial
+    public String getCurrentDateUsingCalendar() {
+
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH) + 1; // Months are indexed from 0
+        int year = calendar.get(Calendar.YEAR);
+
+        return day + "-" + month + "-" + year;
+
+    }
+
+    public void mockSendingPostData() throws JSONException {
+
+        try {
+        // Construct the JSON object
+        JSONObject postData = new JSONObject();
+
+        postData.put("userId", "J0TIKhlLfKXhaUIwHZuS6jChFJ93");
+        postData.put("time", getCurrentDateUsingCalendar());
+
+        JSONObject coordinate = new JSONObject();
+        double latitude = 37.43 ;
+        double longitude = -122.01;
+        coordinate.put("latitude", latitude);
+        coordinate.put("longitude", longitude);
+        postData.put("coordinate", coordinate);
+
+        JSONObject content = new JSONObject();
+        content.put("title", titleEditText.getText().toString());
+        content.put("body", mainTextEditText.getText().toString());
+        postData.put("content", content);
+
+        postJsonData(imageUri, postData, PostActivity.this, new JsonPostCallback() {
+            @Override
+            public void onSuccess(JSONObject postedData) {
+                Intent intent = new Intent(PostActivity.this, MapsActivity.class);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(PostActivity.this, "Failed to post!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    }
+
 }

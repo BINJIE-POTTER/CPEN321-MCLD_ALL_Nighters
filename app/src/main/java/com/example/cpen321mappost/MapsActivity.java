@@ -56,6 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public LatLng currentLatLng;
     private final ArrayList<Marker> markerList = new ArrayList<>();
     private boolean isPermissionGranted = false;
+    public static boolean TEST_MODE = false;
 
     //ChatGPT usage: Yes
     public interface JsonPostCallback {
@@ -136,6 +137,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         mMap.setOnMapClickListener(latLng -> {
+            if(TEST_MODE)
+            {
+                double Mocklatitude = 37.42553124314847;
+                double Mocklongitude = -122.07808557897808;
+                displayLocationMenu(Mocklatitude, Mocklongitude, "create_review_Post");
+                return;
+
+            }
+
             if (selectedMarker != null) {
                 selectedMarker.remove();
             }
@@ -339,18 +349,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             bottomSheetDialog.dismiss();
             Intent intent = new Intent(MapsActivity.this, PostActivity.class);
-            intent.putExtra("latitude", Double.toString(latitude));
-            intent.putExtra("longitude", Double.toString(longitude));
-            startActivity(intent);
+            if(TEST_MODE)
+            {
+                double Mocklatitude = 37.42553124314847;
+                double Mocklongitude = -122.07808557897808;
+                intent.putExtra("latitude", Double.toString(Mocklatitude));
+                intent.putExtra("longitude", Double.toString(Mocklongitude));
+                startActivity(intent);
+            }else {
+                intent.putExtra("latitude", Double.toString(latitude));
+                intent.putExtra("longitude", Double.toString(longitude));
+                startActivity(intent);
+            }
         });
 
         reviewPostsButton.setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
             Intent intent = new Intent(MapsActivity.this, PostPreviewListActivity.class);
             intent.putExtra("mode", "reviewPosts");
-            intent.putExtra("latitude", latitude);
-            intent.putExtra("longitude", longitude);
-            startActivity(intent);
+
+            if(TEST_MODE)
+            {
+                double Mocklatitude = 37.42553124314847;
+                double Mocklongitude = -122.07808557897808;
+                intent.putExtra("latitude", Mocklatitude);
+                intent.putExtra("longitude", Mocklongitude);
+                startActivity(intent);
+                startActivity(intent);
+            }else {
+                intent.putExtra("latitude", latitude);
+                intent.putExtra("longitude", longitude);
+                startActivity(intent);
+            }
+
         });
 
         bottomSheetDialog.show();

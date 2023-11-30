@@ -25,6 +25,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private static final String TAG = "PostAdapter";
     private static final ProfileManager profileManager = new ProfileManager();
 
+
     //ChatGPT usage: Yes
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textViewAuthor;
@@ -81,6 +82,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Post post = postList.get(position);
+//        if()
         profileManager.getAuthor(post.getUserId(), new ProfileManager.AuthorCallback() {
             @Override
             public void onAuthorRetrieved(String authorName) {
