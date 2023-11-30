@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<testsuite name="espressotest.ReviewPostTest" tests="1" failures="0" errors="0" skipped="0" time="1.811" timestamp="2023-11-30T02:14:06" hostname="localhost">
-  <properties>
-    <property name="device" value="Pixel_3_API_29(AVD) - 10" />
-    <property name="flavor" value="" />
-    <property name="project" value=":app" />
-  </properties>
-  <testcase name="testReviewPost" classname="espressotest.ReviewPostTest" time="-1.701310444359E9" />
-</testsuite>
