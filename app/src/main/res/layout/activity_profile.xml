@@ -12,7 +12,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Divider -->
         <androidx.cardview.widget.CardView
             android:id="@+id/avatar_profile_cardView"
             android:layout_width="wrap_content"
@@ -20,7 +19,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"
-            app:cardCornerRadius="100dp"
+            app:cardCornerRadius="50dp"
             app:cardElevation="0dp">
 
             <ImageView
@@ -103,7 +102,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/loading" />
             </LinearLayout>
-
         </LinearLayout>
 
         <View
@@ -126,6 +124,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:maxLines="1"
                 android:text="@string/user_name_caption"
                 android:textSize="18sp" />
 
@@ -156,8 +155,6 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp" />
 
-        <!-- Repeat similar sections for User Gender, User Birthdate, and User Email -->
-
         <!-- User Gender Section -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -171,6 +168,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:maxLines="1"
                 android:text="@string/user_gender_caption"
                 android:textSize="18sp" />
 
@@ -226,6 +224,7 @@
                 android:text="@string/user_birthdate_value_caption"
                 android:textSize="18sp"
                 android:layout_marginEnd="10dp"
+                android:maxLines="1"
                 android:gravity="end" />
 
             <!-- Edit button for User Birthdate -->
@@ -256,19 +255,22 @@
             <!-- Caption -->
             <TextView
                 android:id="@+id/user_email_id"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/user_email_caption"
                 android:textSize="18sp" />
 
             <!-- Actual user data -->
             <TextView
                 android:id="@+id/user_email_value_id"
-                android:layout_width="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
                 android:text="@string/user_email_value_caption"
                 android:textSize="18sp"
+                android:maxLines="1"
                 android:layout_marginEnd="10dp"
                 android:gravity="end" />
 
@@ -300,42 +302,141 @@
             <!-- Caption (e.g., "User ID:") aligned to left -->
             <TextView
                 android:id="@+id/user_id_id"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/user_id_caption"
                 android:textSize="18sp" />
 
             <!-- Actual user data aligned to right -->
             <TextView
                 android:id="@+id/user_id_value_id"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:layout_marginStart="18dp"
                 android:text="@string/user_id_value_caption"
                 android:textSize="18sp"
                 android:layout_marginEnd="10dp"
                 android:gravity="end"
                 android:clickable="true"
                 android:focusable="true"
+                android:maxLines="1"
                 android:background="?attr/selectableItemBackground"
                 android:padding="10dp" />
 
         </LinearLayout>
 
-        <!-- ... other UI elements ... -->
+        <!-- Divider -->
+        <View
+            android:id="@+id/last_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:visibility="gone"
+            android:background="#cccccc"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:id="@+id/achievement_board"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:padding="16dp"
+            android:weightSum="1"
+            android:gravity="center"
+            android:baselineAligned="false">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/novice"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:contentDescription="@string/novice"
+                    android:focusable="true"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/novice_achievement" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/explorer"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="gone"
+                    android:background="?attr/selectableItemBackground"
+                    app:srcCompat="@drawable/explorer_achievement"
+                    android:contentDescription="@string/novice" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/master"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="gone"
+                    android:background="?attr/selectableItemBackground"
+                    app:srcCompat="@drawable/master_achievement"
+                    android:contentDescription="@string/novice" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
 
         <Button
             android:id="@+id/user_view_posts_button_id"
-            android:layout_width="131dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:padding="16dp"
-            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:text="@string/user_view_posts_caption" />
+
+        <Button
+            android:id="@+id/user_log_in_button_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="@string/log_in" />
+
+        <Button
+            android:id="@+id/user_log_out_button_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="@string/log_out" />
 
     </LinearLayout>
 
-
+    </LinearLayout>
 
 </ScrollView>
 

@@ -14,7 +14,8 @@ import java.util.ArrayList;
 
 public class User {
     private static User instance = null;
-    private static ProfileManager profileManager = null;
+    private static final ProfileManager profileManager = new ProfileManager();
+    private static boolean loggedIn = true;
     private static final String TAG = "User";
     private String userId;
     private String userName;
@@ -88,38 +89,32 @@ public class User {
             return ;
         }
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        assert firebaseUser != null;
+        if (firebaseUser != null) {
 
-        this.userId = firebaseUser.getUid();
-        this.userName = firebaseUser.getDisplayName();
-        this.userEmail = firebaseUser.getEmail();
+            this.userId = firebaseUser.getUid();
+            this.userName = firebaseUser.getDisplayName();
+            this.userEmail = firebaseUser.getEmail();
+
+        } else {
+
+            this.userId = "none";
+            this.userName = "none";
+            this.userEmail = "none";
+
+        }
+
         this.userGender = "none";
         this.userBirthdate = "none";
+        this.token = "";
         this.postCount = 0;
         this.following = new ArrayList<>();
         this.followers = new ArrayList<>();
         this.userAvatar = new ImageData();
 
-        updateToken(new TokenCallback() {
-            @Override
-            public void onTokenReceived(String token) {
-
-                setToken(token);
-
-            }
-
-            @Override
-            public void onError(Exception e) {
-
-                Log.e(TAG, e.toString());
-
-            }
-        });
-
     }
 
     //ChatGPT usage: No
-    public User(String userId){
+    public User (String userId) {
 
         this.userId = userId;
         this.userName = "none";
@@ -130,6 +125,21 @@ public class User {
         this.postCount = 0;
         this.following = null;
         this.followers = null;
+        this.userAvatar = null;
+
+    }
+
+    public User (User user, String token, String userName, String userEmail, String userGender, String userBirthdate) {
+
+        this.userId = user.getUserId();
+        this.userName = userName == null ? user.getUserName() : userName;
+        this.userEmail = userEmail == null ? user.getUserEmail() : userEmail;
+        this.userGender = userGender == null ? user.getUserGender() : userGender;
+        this.userBirthdate = userBirthdate == null ? user.getUserBirthdate() : userBirthdate;
+        this.token = token == null ? user.getToken() : token;
+        this.postCount = user.getPostCount();
+        this.following = user.getFollowing();
+        this.followers = user.getFollowers();
         this.userAvatar = null;
 
     }
@@ -147,28 +157,67 @@ public class User {
 //            return instance;
 //        }
 
+        if (!isLoggedIn()) {
+
+            instance = new User("-");
+
+            return instance;
+
+        }
+
         if (instance == null) {
 
             instance = new User();
-            profileManager = new ProfileManager();
             profileManager.getUserData(instance, new Activity(), new UserCallback() {
                 @Override
                 public String onSuccess(User user) {
 
-                    Log.d(TAG, "User logged in, data successfully fetched.");
+                    Log.d(TAG, "USER LOGGED IN, DATA IS IN DATABASE");
+                    Log.d(TAG, "OLD TOKEN: " + user.getToken());
 
-                    Gson gson = new Gson();
-                    String jsonUserData = gson.toJson(user);
+                    updateToken(new TokenCallback() {
+                        @Override
+                        public void onTokenReceived(String token) {
 
-                    Log.d(TAG, "User logged in with data: " + jsonUserData);
+                            user.setToken(token);
+                            Log.d(TAG, "NEW TOKEN: " + user.getToken());
 
-                    instance = gson.fromJson(jsonUserData, User.class);
+                            Gson gson = new Gson();
+                            String jsonUserData = gson.toJson(user);
 
-                    String jsonUserData2 = gson.toJson(user);
+                            instance = gson.fromJson(jsonUserData, User.class);
 
-                    Log.d(TAG, "The user instance now is: " + jsonUserData2);
+                            Log.d(TAG, "USER LOGGED IN WITH UPDATED TOKEN DATA: " + jsonUserData);
 
-                    return jsonUserData;
+                            profileManager.putUserData(new User(instance, token, null, null, null, null), new Activity(), new UserCallback() {
+                                @Override
+                                public String onSuccess(User user) {
+
+                                    Log.d(TAG, "TOKEN SENT TO DATABASE: " + user.getToken());
+
+                                    return null;
+
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+
+                                    Log.e(TAG, e.toString());
+
+                                }
+                            });
+
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+
+                            Log.e(TAG, e.toString());
+
+                        }
+                    });
+
+                    return null;
 
                 }
 
@@ -182,6 +231,47 @@ public class User {
                         public String onSuccess(User user) {
 
                             Log.d(TAG, "New User account is created successfully.");
+                            updateToken(new TokenCallback() {
+                                @Override
+                                public void onTokenReceived(String token) {
+
+                                    user.setToken(token);
+                                    Log.d(TAG, "NEW TOKEN: " + user.getToken());
+
+                                    Gson gson = new Gson();
+                                    String jsonUserData = gson.toJson(user);
+
+                                    instance = gson.fromJson(jsonUserData, User.class);
+
+                                    Log.d(TAG, "USER LOGGED IN WITH UPDATED TOKEN DATA: " + jsonUserData);
+
+                                    profileManager.putUserData(instance, new Activity(), new UserCallback() {
+                                        @Override
+                                        public String onSuccess(User user) {
+
+                                            Log.d(TAG, "TOKEN SENT TO DATABASE: " + user.getToken());
+
+                                            return null;
+
+                                        }
+
+                                        @Override
+                                        public void onFailure(Exception e) {
+
+                                            Log.e(TAG, e.toString());
+
+                                        }
+                                    });
+
+                                }
+
+                                @Override
+                                public void onError(Exception e) {
+
+                                    Log.e(TAG, e.toString());
+
+                                }
+                            });
 
                             return null;
 
@@ -204,6 +294,30 @@ public class User {
 
         return instance;
 
+    }
+
+    public static void updateToken(TokenCallback callback) {
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+
+                    if (!task.isSuccessful()) {
+
+                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+
+                        callback.onError(task.getException());
+
+                    } else {
+
+                        String retrievedToken = task.getResult();
+
+                        Log.d(TAG, "FCM Token: " + retrievedToken);
+
+                        callback.onTokenReceived(retrievedToken);
+
+                    }
+
+                });
     }
 
     //ChatGPT usage: Yes
@@ -267,30 +381,6 @@ public class User {
         this.userBirthdate = userBirthdate;
     }
 
-    public void updateToken(TokenCallback callback) {
-
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-
-                    if (!task.isSuccessful()) {
-
-                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-
-                        callback.onError(task.getException());
-
-                    } else {
-
-                        String retrievedToken = task.getResult();
-
-                        Log.d(TAG, "FCM Token: " + retrievedToken);
-
-                        callback.onTokenReceived(retrievedToken);
-
-                    }
-
-                });
-    }
-
     public String getToken() {
         return token;
     }
@@ -329,6 +419,19 @@ public class User {
 
     public void setUserAvatar(ImageData userAvatar) {
         this.userAvatar = userAvatar;
+    }
+
+    public static boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public static void setLoggedIn(boolean loggedIn) {
+        User.loggedIn = loggedIn;
+    }
+    public static void setInstance(User user) {
+
+        instance = user;
+
     }
 
 }

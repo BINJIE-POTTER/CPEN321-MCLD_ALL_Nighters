@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -86,12 +87,10 @@ public class PostActivity extends AppCompatActivity {
         double latitude = Double.parseDouble(receivedIntent.getStringExtra("latitude"));
         double longitude = Double.parseDouble(receivedIntent.getStringExtra("longitude"));
 
-        // Check permissions at runtime
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissionLauncher.launch(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE});
         }
 
-        //Upload the image
         imgPreview.setOnClickListener(v -> {
             Intent pickImage = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             getImage.launch(pickImage);
@@ -103,18 +102,13 @@ public class PostActivity extends AppCompatActivity {
 
         });
 
-        //Save the content of post
         saveButton.setOnClickListener(v -> {
             try {
-                // Construct the JSON object
+
                 JSONObject postData = new JSONObject();
-//                if (TEST_MODE) {
-//                    mockSendingPostData();
-//
-//                    return;
-//                }
 
                 postData.put("userId", User.getInstance().getUserId());
+
                 LocalDateTime now = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
                 String formattedDateTime = now.format(formatter);
@@ -153,14 +147,19 @@ public class PostActivity extends AppCompatActivity {
 
     //ChatGPT usage: Partial
     public void postJsonData(Uri imageUri, JSONObject postData, final Activity activity, final JsonPostCallback callback) {
-        String url = "http://4.204.251.146:8081/posts";
-        OkHttpClient httpClient = HttpClient.getInstance();
+
+        String url = "https://4.204.251.146:3000/posts";
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS) // Increase connect timeout
+                .writeTimeout(10, TimeUnit.SECONDS) // Increase write timeout
+                .readTimeout(10, TimeUnit.SECONDS) // Increase read timeout
+                .build();
 
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM);
 
         if (imageUri != null) {
-            File file = new File(getRealPathFromURI(imageUri));
+            File file = new File(new ProfileActivity().getRealPathFromURI(imageUri, this));
             RequestBody fileBody = RequestBody.create(MediaType.parse("image/*"), file);
             builder.addFormDataPart("image", file.getName(), fileBody);
         }

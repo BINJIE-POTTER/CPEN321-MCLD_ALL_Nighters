@@ -23,8 +23,8 @@
     <string name="image_content_desc">none_for_now</string>
     <string name="post_item_title">Title</string>
     <string name="post_item_author">Author</string>
-    <string name="user_view_posts_caption">view posts</string>
-    <string name="post_preview_list_mode_name">Mode Name</string>
+    <string name="user_view_posts_caption">my posts</string>
+    <string name="post_preview_list_mode_name"> </string>
     <string name="follow_button"> </string>
     <string name="tag_caption">Tag</string>
     <string name="tag_activity_title_caption">Tags</string>
@@ -43,9 +43,14 @@
     <string name="loading">…</string>
     <string name="avatar">Avatar</string>
     <string name="user_list_following_follower">FollowType</string>
-    <string name="add_a_comment">Add a comment...</string>
+    <string name="add_a_comment">Add a comment…</string>
     <string name="comment">comment</string>
     <string name="publish">Send</string>
+    <string name="novice">Novice</string>
+    <string name="achievement">achievement</string>
+    <string name="log_out">log out</string>
+    <string name="log_in">log in</string>
+    <string name="ddd">…</string>
 
     <string-array name="gender_array">
         <item>Male</item>

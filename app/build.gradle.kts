@@ -1,5 +1,3 @@
-import com.android.build.api.dsl.Packaging
-
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
@@ -12,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.cpen321mappost"
-        minSdk = 29
+        minSdk = 27
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -49,7 +47,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-core:21.1.1")
     implementation ("com.google.firebase:firebase-messaging:23.3.1")
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
-    implementation("com.google.android.gms:play-services-maps:18.2.0") // For Google Sign-In
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.squareup.okhttp3:okhttp:4.9.3")

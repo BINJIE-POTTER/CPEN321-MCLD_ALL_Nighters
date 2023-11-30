@@ -51,6 +51,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             followButton = view.findViewById(R.id.user_list_user_follow_button);
             innerLinearLayout =view.findViewById(R.id.innerLinearLayout);
 
+            followButton.setVisibility(View.GONE);
+
         }
     }
 
@@ -91,16 +93,26 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                     @Override
                     public String onSuccess(User me) {
 
-                        isFollowing = me.getFollowing().contains(user.getUserId());
-                        isFollowed  = user.getFollowing().contains(me.getUserId());
+                        if (Objects.equals(me.getUserId(), user.getUserId())) {
 
-                        if (isFollowing) {
+                            holder.followButton.setVisibility(View.GONE);
 
-                            if (isFollowed)holder.followButton.setText("mutual");
+                        } else {
 
-                            else holder.followButton.setText("following");
+                            holder.followButton.setVisibility(View.VISIBLE);
 
-                        } else holder.followButton.setText("follow");
+                            isFollowing = me.getFollowing().contains(user.getUserId());
+                            isFollowed  = user.getFollowing().contains(me.getUserId());
+
+                            if (isFollowing) {
+
+                                if (isFollowed) holder.followButton.setText("mutual");
+
+                                else holder.followButton.setText("following");
+
+                            } else holder.followButton.setText("follow");
+
+                        }
 
                         return null;
 
@@ -108,6 +120,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
                     @Override
                     public void onFailure(Exception e) {
+
+                        Log.e(TAG, e.toString());
 
                     }
                 });
@@ -119,14 +133,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             @Override
             public void onFailure(Exception e) {
 
+                Log.e(TAG, e.toString());
+
             }
         });
 
-        holder.innerLinearLayout.setOnClickListener((View.OnClickListener) view -> {
-
-            onItemClicked(position);
-
-        });
+        holder.innerLinearLayout.setOnClickListener(view -> onItemClicked(position));
 
         holder.followButton.setOnClickListener(view -> {
             profileManager.followAuthor(isFollowing, userList.get(position).getUserId(), new Activity(), new ProfileManager.FollowingUserCallback() {
@@ -150,6 +162,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
                                     } else holder.followButton.setText("follow");
 
+                                    profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
+                                        @Override
+                                        public void onAuthorRetrieved(String authorName) {
+
+                                            if (isFollowing) Toast.makeText(context, "Succeed to follow "+ authorName +"!", Toast.LENGTH_SHORT).show();
+                                            else             Toast.makeText(context, "Succeed to unfollow "+ authorName +"!", Toast.LENGTH_SHORT).show();
+
+                                        }
+
+                                        @Override
+                                        public void onError(Exception e) {
+
+                                            Log.d(TAG, String.valueOf(e));
+
+                                        }
+                                    });
+
                                     return null;
 
                                 }
@@ -169,28 +198,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
                         }
                     });
-
-                    profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
-                        @Override
-                        public void onAuthorRetrieved(String authorName) {
-
-                            if (!isFollowing) Toast.makeText(context, "Succeed following "+ authorName +" rn!", Toast.LENGTH_SHORT).show();
-                            else             Toast.makeText(context, "Succeed to unfollow "+ authorName +" !", Toast.LENGTH_SHORT).show();
-
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-
-                            Log.d(TAG, String.valueOf(e));
-
-                        }
-                    });
                 }
                 @Override
                 public void onFailure(Exception e) {
 
-                    Toast.makeText(context, "Unable to follow this user :(", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "unable to follow this user", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, String.valueOf(e));
 
                 }
@@ -208,12 +220,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         User clickedUser = userList.get(position);
 
-        Intent PostPreviewListIntent = new Intent(context, PostPreviewListActivity.class);
-        PostPreviewListIntent.putExtra("mode", "authorInfo");
-        PostPreviewListIntent.putExtra("userId", clickedUser.getUserId());
-        context.startActivity(PostPreviewListIntent);
+        Intent intent;
+
+        if (Objects.equals(User.getInstance().getUserId(), clickedUser.getUserId())) intent = new Intent(context, ProfileActivity.class);
+
+        else {
+
+            intent = new Intent(context, VisitorPageAvtivity.class);
+            intent.putExtra("userId", clickedUser.getUserId());
+
+        }
+
+        context.startActivity(intent);
 
     }
-
-
 }

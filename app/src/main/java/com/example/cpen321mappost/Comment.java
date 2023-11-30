@@ -25,14 +25,13 @@ public class Comment {
     public String getUid() {
         return userId;
     }
+
     public String getPid() {
         return pid;
     }
+
     public String getTime() {
         return time;
     }
-
-
-
 
 }

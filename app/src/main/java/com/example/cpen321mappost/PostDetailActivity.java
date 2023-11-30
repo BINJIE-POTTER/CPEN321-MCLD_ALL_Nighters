@@ -20,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import android.graphics.BitmapFactory;
@@ -36,6 +38,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private boolean isLiked = false;
     private boolean isFollowing = false;
     private int postlikes;
+    public final boolean isLoggedIn = User.isLoggedIn();
 
     //ChatGPT usage: Partial
     @Override
@@ -46,6 +49,7 @@ public class PostDetailActivity extends AppCompatActivity {
         TextView authorName = findViewById(R.id.textViewPostDetail);
         TextView textViewTitle = findViewById(R.id.textViewTitle);
         TextView textViewMainContent = findViewById(R.id.textViewMainContent);
+        TextView textViewPostTime = findViewById(R.id.textViewPostTime);
 
         Button buttonDelete = findViewById(R.id.buttonDelete);
         Button buttonLike = findViewById(R.id.buttonLike);
@@ -71,8 +75,13 @@ public class PostDetailActivity extends AppCompatActivity {
                 textViewTitle.setText(post.getContent().getTitle());
                 textViewMainContent.setText(post.getContent().getBody());
 
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
+                LocalDateTime time = LocalDateTime.parse(post.getTime(), formatter);
+                String convertedDate = time.format(DateTimeFormatter.ofPattern("MMM. dd - yyyy"));
+                textViewPostTime.setText(convertedDate);
+
                 isLiked = post.getLikeList().contains(myUserId);
-                buttonLike.setText(isLiked ? "❤️ " + post.getLikeCount() : "🩶 " + post.getLikeCount());
+                buttonLike.setText(isLiked ? "❤️ " + post.getLikeCount() : "\uD83E\uDD0D " + post.getLikeCount());
 
                 if (post.getImageData() != null && !Objects.equals(post.getImageData().getImage(), "")) {
 
@@ -93,30 +102,39 @@ public class PostDetailActivity extends AppCompatActivity {
 
                     buttonDelete.setVisibility(View.VISIBLE);
 
+                    followButton.setVisibility(View.GONE);
+
                 } else {
 
                     buttonDelete.setVisibility(View.GONE);
 
                     followButton.setVisibility(View.VISIBLE);
-                    profileManager.getUserData(User.getInstance(), PostDetailActivity.this, new User.UserCallback() {
-                        @Override
-                        public String onSuccess(User user) {
 
-                            isFollowing = user.getFollowing().contains(uid);
+                    if (!User.isLoggedIn()) followButton.setText("follow");
 
-                            followButton.setText(isFollowing ? "following" : "follow");
+                    else {
 
-                            return null;
+                        profileManager.getUserData(User.getInstance(), PostDetailActivity.this, new User.UserCallback() {
+                            @Override
+                            public String onSuccess(User user) {
 
-                        }
+                                isFollowing = user.getFollowing().contains(uid);
 
-                        @Override
-                        public void onFailure(Exception e) {
+                                followButton.setText(isFollowing ? "following" : "follow");
 
-                            Log.e(TAG, e.toString());
+                                return null;
 
-                        }
-                    });
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+
+                                Log.e(TAG, e.toString());
+
+                            }
+                        });
+
+                    }
                 }
 
                 profileManager.getUserData(new User(uid), PostDetailActivity.this, new User.UserCallback() {
@@ -193,49 +211,77 @@ public class PostDetailActivity extends AppCompatActivity {
 
         avatarImageView.setOnClickListener(v -> {
 
-            Intent intent = new Intent(PostDetailActivity.this, PostPreviewListActivity.class);
-            intent.putExtra("mode", "authorInfo");
-            intent.putExtra("userId", uid);
+            Intent intent;
+
+            if (Objects.equals(myUserId, uid)) intent = new Intent(PostDetailActivity.this, ProfileActivity.class);
+
+            else {
+
+                intent = new Intent(PostDetailActivity.this, VisitorPageAvtivity.class);
+                intent.putExtra("userId", uid);
+
+            }
+
             startActivity(intent);
 
         });
 
-        buttonLike.setOnClickListener(v -> postManager.likePostData(!isLiked, pid, myUserId, PostDetailActivity.this, new PostManager.JsonCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                postManager.getSinglePostData(pid, PostDetailActivity.this, new PostManager.JsonCallback<Post>() {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onSuccess(Post post) {
+        buttonLike.setOnClickListener(v -> {
 
-                        postlikes = post.getLikeCount();
+            if (!User.isLoggedIn()) {
 
-                        isLiked = !isLiked;
-                        buttonLike.setText(isLiked ? "❤️ " + postlikes : "🩶 " + postlikes);
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
 
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-
-                        Log.e(TAG, e.toString());
-
-                    }
-                });
-
-                if (!isLiked) Toast.makeText(PostDetailActivity.this, "liked this post!", Toast.LENGTH_SHORT).show();
-                else         Toast.makeText(PostDetailActivity.this, "unliked this post!", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-
-                Toast.makeText(PostDetailActivity.this, "Failed to like this post :(", Toast.LENGTH_LONG).show();
+                return;
 
             }
-        }));
+            postManager.likePostData(!isLiked, pid, myUserId, PostDetailActivity.this, new PostManager.JsonCallback<Void>() {
+                @Override
+                public void onSuccess(Void result) {
+                    postManager.getSinglePostData(pid, PostDetailActivity.this, new PostManager.JsonCallback<Post>() {
+                        @SuppressLint("SetTextI18n")
+                        @Override
+                        public void onSuccess(Post post) {
+
+                            postlikes = post.getLikeCount();
+
+                            isLiked = !isLiked;
+                            buttonLike.setText(isLiked ? "❤️ " + postlikes : "\uD83E\uDD0D " + postlikes);
+
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+
+                            Log.e(TAG, e.toString());
+
+                        }
+                    });
+
+                    if (!isLiked)
+                        Toast.makeText(PostDetailActivity.this, "liked this post!", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(PostDetailActivity.this, "unliked this post!", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                    Toast.makeText(PostDetailActivity.this, "failed to like this post", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+        });
 
         buttonComment.setOnClickListener(v -> {
+
+            if (!User.isLoggedIn()) {
+
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
 
             String newComment = editTextComment.getText().toString();
 
@@ -243,9 +289,13 @@ public class PostDetailActivity extends AppCompatActivity {
 
                 editTextComment.setText("");
 
-                Comment comment = new Comment(pid, User.getInstance().getUserId(), commentManager.getCurrentDateUsingCalendar(), newComment);
+                LocalDateTime now = LocalDateTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
+                String formattedDateTime = now.format(formatter);
 
-                commentManager.postCommentData(comment, this, new CommentManager.CommentCallback() {
+                Comment comment = new Comment(pid, User.getInstance().getUserId(), formattedDateTime, newComment);
+
+                commentManager. postCommentData(comment, this, new CommentManager.CommentCallback() {
                     @Override
                     public void onCommentsReceived(List<Comment> comments) {
 
@@ -265,12 +315,25 @@ public class PostDetailActivity extends AppCompatActivity {
 
                     }
                 });
+            } else {
+
+                Toast.makeText(PostDetailActivity.this, "Please enter comment first", Toast.LENGTH_SHORT).show();
+
             }
         });
 
         commentManager.displayAllComments(this, pid, recyclerViewComments);
 
         followButton.setOnClickListener(view -> {
+
+            if (!User.isLoggedIn()) {
+
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
+
             profileManager.followAuthor(isFollowing, uid, this, new ProfileManager.FollowingUserCallback() {
                 @Override
                 public void onSuccess(String userId) {

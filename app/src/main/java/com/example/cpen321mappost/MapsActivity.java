@@ -2,6 +2,7 @@ package com.example.cpen321mappost;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -47,10 +48,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-
-
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
-
     private static final double CLICKABLE_RADIUS = 0.005 ;
     private GoogleMap mMap;
     private LocationManager locationManager;
@@ -58,8 +56,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker selectedMarker = null;
     private Location currentLocation;
     public LatLng currentLatLng;
-    private ArrayList<Marker> markerList= null;
-    private boolean isPermissionGranted =false;
+    private final ArrayList<Marker> markerList = new ArrayList<>();
+    private boolean isPermissionGranted = false;
     public static boolean TEST_MODE = false;
 
     //ChatGPT usage: Yes
@@ -67,8 +65,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         void onSuccess(Cluster[] clusters);
         void onFailure(Exception e);
     }
-
-    // TODO: implement onResume()
 
     //ChatGPT usage: Partial
     @Override
@@ -114,9 +110,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (lastKnownLocation != null) {
                 currentLocation = lastKnownLocation;
                 onLocationChanged(lastKnownLocation);  // Update the map with the last known location
-                isPermissionGranted =true;
+                isPermissionGranted = true;
             }
-
         }
     }
 
@@ -133,7 +128,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //ChatGPT usage: Partial
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        mMap = googleMap;
 
         try {
             // Customise the styling of the base map using a JSON object defined
@@ -186,7 +180,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (!isNearMarker) {
                 selectedMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Selected Location"));
                 displayLocationMenu(latLng.latitude, latLng.longitude, "createPostOnly");
-//                selectedMarker.remove();
             }
         });
     }
@@ -194,7 +187,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void initializeBlueMarkers()
     {
 
-        //Show all posts:
         JSONObject coordinate = new JSONObject();
         double latitude= currentLocation.getLatitude();
         double longitude= currentLocation.getLongitude();
@@ -230,7 +222,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //ChatGPT usage: Partial
      public static void getClusteredPostData(JSONObject coordinate, final Activity activity, final MapsActivity.JsonPostCallback callback){
 
-         String url = "http://4.204.251.146:8081/posts/cluster";
+         String url = "https://4.204.251.146:3000/posts/cluster";
          OkHttpClient httpClient = HttpClient.getInstance();
          HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder();
 
@@ -266,6 +258,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.d(TAG, "Unexpected server response, the code is: " + response.code());
                 } else {
                     try {
+                        assert response.body() != null;
                         responseData = response.body().string(); // This is executed in background
                     } catch (IOException e) {
                         Log.e(TAG, e.toString());
@@ -292,7 +285,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //ChatGPT usage: Partial
     public void addBlueMarkersToMap(Cluster[] clusteredPosts) {
-        markerList = new ArrayList<>();
 
         if(clusteredPosts != null) {
             for (Cluster cluster : clusteredPosts) {
@@ -301,7 +293,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Marker marker = mMap.addMarker(new MarkerOptions()
                         .position(postLocation)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-
 
                 markerList.add(marker);
 
@@ -350,7 +341,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //ChatGPT usage: Partial
     private void displayLocationMenu( double latitude, double longitude, String openMode) {
 
-        View view = getLayoutInflater().inflate(R.layout.layout_location_menu, null);
+        @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.layout_location_menu, null);
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         bottomSheetDialog.setContentView(view);
 
@@ -364,6 +355,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         createPostButton.setOnClickListener(v -> {
+
+            if (!User.isLoggedIn()) {
+
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
+
             bottomSheetDialog.dismiss();
             Intent intent = new Intent(MapsActivity.this, PostActivity.class);
             if(TEST_MODE)
@@ -414,7 +414,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current Location"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
         }
-}
+    }
+
     //ChatGPT usage: Partial
     private boolean isNearby(double markeLatitude, double markerLongitude , LatLng selectedMarker, double radius) {
 
@@ -457,7 +458,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-
-
-
 }

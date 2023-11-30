@@ -29,7 +29,7 @@ public class PostManager {
     //ChatGPT usage: Partial
     public void getSinglePostData(String pid, final Activity activity, final JsonCallback<Post> callback){
 
-        String url = "http://4.204.251.146:8081/posts/single/?pid=" + pid;
+        String url = "https://4.204.251.146:3000/posts/single/?pid=" + pid;
         OkHttpClient httpClient = HttpClient.getInstance();
 
         Request request = new Request.Builder()
@@ -47,61 +47,30 @@ public class PostManager {
 
                 });
             }
-//            @Override
-//            public void onResponse(@NonNull Call call, @NonNull Response response) {
-//                activity.runOnUiThread(() -> {
-//
-//                    if (!response.isSuccessful()) {
-//
-//                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-//
-//                        callback.onFailure(new IOException("Unexpected response " + response));
-//
-//                    } else {
-//
-//                        Log.d(TAG, "GET POST SUCCEED!");
-//
-//                        assert response.body() != null;
-//                        String responseData = null;
-//                        try {
-//                            responseData = response.body().string();
-//                        } catch (IOException e) {
-//                            Log.e(TAG, e.toString());
-//                        }
-//
-//                        Post post = gson.fromJson(responseData, Post.class);
-//
-//                        callback.onSuccess(post);
-//
-//                    }
-//                });
-//            }
-//
-                    @Override
-                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        if (!response.isSuccessful()) {
-                            throw new IOException("Unexpected response " + response);
-                        }
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected response " + response);
+                }
 
-                        // Process the response in the background thread
-                        final String responseData = response.body().string();
-                        Post post = gson.fromJson(responseData, Post.class);
+                // Process the response in the background thread
+                assert response.body() != null;
+                final String responseData = response.body().string();
+                Post post = gson.fromJson(responseData, Post.class);
 
-                        // Switch to the main thread to update UI
-                        activity.runOnUiThread(() -> {
-                            Log.d(TAG, "GET POST SUCCEED");
-                            callback.onSuccess(post);
-                        });
-                    }
-
-
+                // Switch to the main thread to update UI
+                activity.runOnUiThread(() -> {
+                    Log.d(TAG, "GET POST SUCCEED");
+                    callback.onSuccess(post);
+                });
+            }
         });
     }
 
     //ChatGPT usage: Yes
     public void deletePostData(String pid, final Activity activity, final JsonCallback<Void> callback){
 
-        String url = "http://4.204.251.146:8081/posts/?pid=" + pid;
+        String url = "https://4.204.251.146:3000/posts/?pid=" + pid;
         OkHttpClient httpClient = HttpClient.getInstance();
 
         Request request = new Request.Builder()
@@ -147,8 +116,8 @@ public class PostManager {
     public void likePostData(boolean like, String pid, String userId, final Activity activity, final JsonCallback<Void> callback) {
 
         String url;
-        if (like) url = "http://4.204.251.146:8081/posts/like";
-        else      url = "http://4.204.251.146:8081/posts/unlike";
+        if (like) url = "https://4.204.251.146:3000/posts/like";
+        else      url = "https://4.204.251.146:3000/posts/unlike";
         OkHttpClient httpClient = HttpClient.getInstance();
 
         JsonObject likeInfo = new JsonObject();
@@ -204,7 +173,7 @@ public class PostManager {
     //ChatGPT usage: Partial
     public void getTagsData(String latitude, String longitute, final Activity activity, final JsonCallback< ArrayList<String>> callback){
 
-        String url = "http://4.204.251.146:8081/tags/nearby/?latitude=" + latitude + "&longitude=" + longitute;
+        String url = "https://4.204.251.146:3000/tags/nearby/?latitude=" + latitude + "&longitude=" + longitute;
         OkHttpClient httpClient = HttpClient.getInstance();
         Request request = new Request.Builder()
                 .url(url)
@@ -237,44 +206,13 @@ public class PostManager {
                     callback.onSuccess(tagsList);
                 });
             }
-
-
-//            @Override
-//            public void onResponse(@NonNull Call call, @NonNull Response response) {
-//                activity.runOnUiThread(() -> {
-//
-//                    if (!response.isSuccessful()) {
-//
-//                        Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-//
-//                        callback.onFailure(new IOException("Unexpected response " + response));
-//
-//                    } else {
-//
-//                        Log.d(TAG, "GET TAGS SUCCEED");
-//
-//                        assert response.body() != null;
-//                        String responseData = null;
-//                        try {
-//                            responseData = response.body().string();
-//                        } catch (IOException e) {
-//                            Log.e(TAG, e.toString());
-//                        }
-//                        Type listType = new TypeToken<ArrayList<String>>(){}.getType();
-//                        ArrayList<String> tagsList = gson.fromJson(responseData, listType);
-//
-//                        callback.onSuccess(tagsList);
-//
-//                    }
-//                });
-//            }
         });
     }
 
     //ChatGPT usage: Partial
     public void getSearchedPosts(String searchText, final Activity activity, final PostCallback callback) {
 
-        String url = "http://4.204.251.146:8081/posts/search/?keyword=" + searchText;
+        String url = "https://4.204.251.146:3000/posts/search/?keyword=" + searchText;
         OkHttpClient httpClient = HttpClient.getInstance();
         Request request = new Request.Builder()
                 .url(url)
@@ -295,7 +233,7 @@ public class PostManager {
                     throw new IOException("Unexpected response " + response);
                 }
 
-                // Process the response in the background thread
+                assert response.body() != null;
                 final String responseData = response.body().string();
                     Log.d(TAG, "GET SEARCHED POSTS SUCCEED");
                     Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
@@ -307,45 +245,13 @@ public class PostManager {
                     callback.onSuccess(posts);
                 });
             }
-
-//
-//            @Override
-//            public void onResponse(@NonNull Call call, @NonNull Response response) {
-//
-//                String responseData = null;
-//
-//                if (!response.isSuccessful()) {
-//
-//                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-//
-//                    activity.runOnUiThread(() -> callback.onFailure(new IOException("Unexpected response " + response)));
-//
-//                } else {
-//
-//                    try {
-//                        assert response.body() != null;
-//                        responseData = response.body().string();
-//                    } catch (IOException e) {
-//                        Log.e(TAG, e.toString());
-//                    }
-//
-//                    String finalResponseData = responseData;
-//
-//                    Log.d(TAG, "GET SEARCHED POSTS SUCCEED");
-//                    Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
-//                    List<Post> posts = gson.fromJson(finalResponseData, postListType);
-//
-//                    activity.runOnUiThread(() -> callback.onSuccess(posts));
-//
-//                }
-//            }
         });
     }
 
     //ChatGPT usage: Partial
     public void getTagsSelectedPosts(String latitude, String longitute, ArrayList<String> tagsList, final Activity activity, final PostCallback callback) {
 
-        String url = "http://4.204.251.146:8081/posts/has-tags/?latitude=" + latitude + "&longitude=" + longitute + "&tags=";
+        String url = "https://4.204.251.146:3000/posts/has-tags/?latitude=" + latitude + "&longitude=" + longitute + "&tags=";
         StringBuilder urlBuilder = new StringBuilder(url);
 
         for(int i = 0; i < tagsList.size(); i++ ) {
@@ -394,43 +300,13 @@ public class PostManager {
                     callback.onSuccess(posts);
                 });
             }
-
-//            @Override
-//            public void onResponse(@NonNull Call call, @NonNull Response response) {
-//
-//                if (!response.isSuccessful()) {
-//
-//                    Log.d(TAG, "Unexpected server response, the code is: " + response.code());
-//
-//                    activity.runOnUiThread(() -> callback.onFailure(new IOException("Unexpected response " + response)));
-//
-//                } else {
-//
-//                    Log.d(TAG, "GET POSTS FILTERED BY TAGS SUCCEED");
-//
-//                    List<Post> posts;
-//
-//                    assert response.body() != null;
-//                    String responseData = null;
-//                    try {
-//                        responseData = response.body().string();
-//                    } catch (IOException e) {
-//                        Log.e(TAG, e.toString());
-//                    }
-//                    Type postListType = new TypeToken<ArrayList<Post>>(){}.getType();
-//                    posts = gson.fromJson(responseData, postListType);
-//
-//                    activity.runOnUiThread(() -> callback.onSuccess(posts));
-//
-//                }
-//            }
         });
     }
 
     //ChatGPT usage: Partial
     public void getUserAllPosts(String userId, final Activity activity, final PostCallback callback) {
 
-        String url = "http://4.204.251.146:8081/posts/from-user/?userId=" + userId;
+        String url = "https://4.204.251.146:3000/posts/from-user/?userId=" + userId;
         OkHttpClient httpClient = HttpClient.getInstance();
         Request request = new Request.Builder()
                 .url(url)

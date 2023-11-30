@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/user_list_following_follower"
+        android:layout_marginTop="16dp"
         android:textSize="18sp"
         android:textStyle="bold"
         android:padding="16dp"

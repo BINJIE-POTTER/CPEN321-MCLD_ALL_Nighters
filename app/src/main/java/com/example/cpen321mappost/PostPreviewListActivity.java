@@ -37,7 +37,6 @@ public class PostPreviewListActivity extends AppCompatActivity {
     private TextView modeTitle;
     private Button followButton;
     private boolean isFollowing = false;
-    private ImageView icon1, icon2, icon3;
 
     //ChatGPT usage: Partial
     @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
@@ -62,10 +61,6 @@ public class PostPreviewListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        icon1 = findViewById(R.id.icon1);
-        icon2 = findViewById(R.id.icon2);
-        icon3 = findViewById(R.id.icon3);
-
         Intent intent = getIntent();
         String mode = intent.getStringExtra("mode");
 
@@ -74,7 +69,22 @@ public class PostPreviewListActivity extends AppCompatActivity {
             case "profile":
 
                 userId = intent.getStringExtra("userId");
-                modeTitle.setText(User.getInstance().getUserName() + "'s Posts");
+
+                profileManager.getAuthor(userId, new ProfileManager.AuthorCallback() {
+                    @Override
+                    public void onAuthorRetrieved(String authorName) {
+
+                        modeTitle.setText(authorName + "'s posts");
+
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                        Log.e(TAG, e.toString());
+
+                    }
+                });
 
                 showProfile(userId);
 
@@ -170,8 +180,8 @@ public class PostPreviewListActivity extends AppCompatActivity {
                                 @Override
                                 public void onAuthorRetrieved(String authorName) {
 
-                                    if (isFollowing) Toast.makeText(PostPreviewListActivity.this, "Succeed following "+ authorName +" rn!", Toast.LENGTH_SHORT).show();
-                                    else             Toast.makeText(PostPreviewListActivity.this, "Succeed to unfollow "+ authorName +" !", Toast.LENGTH_SHORT).show();
+                                    if (isFollowing) Toast.makeText(PostPreviewListActivity.this, "Succeed to follow "+ authorName +"!", Toast.LENGTH_SHORT).show();
+                                    else             Toast.makeText(PostPreviewListActivity.this, "Succeed to unfollow "+ authorName +"!", Toast.LENGTH_SHORT).show();
 
                                 }
 
@@ -247,6 +257,8 @@ public class PostPreviewListActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Exception e) {
 
+                    Log.d(TAG, String.valueOf(e));
+
                 }
             });
 
@@ -281,8 +293,8 @@ public class PostPreviewListActivity extends AppCompatActivity {
                                 @Override
                                 public void onAuthorRetrieved(String authorName) {
 
-                                    if (isFollowing) Toast.makeText(PostPreviewListActivity.this, "Succeed following "+ authorName +" rn!", Toast.LENGTH_SHORT).show();
-                                    else             Toast.makeText(PostPreviewListActivity.this, "Succeed to unfollow "+ authorName +" !", Toast.LENGTH_SHORT).show();
+                                    if (isFollowing) Toast.makeText(PostPreviewListActivity.this, "Succeed to follow "+ authorName +"!", Toast.LENGTH_SHORT).show();
+                                    else             Toast.makeText(PostPreviewListActivity.this, "Succeed to unfollow "+ authorName +"!", Toast.LENGTH_SHORT).show();
 
                                 }
 
@@ -328,7 +340,6 @@ public class PostPreviewListActivity extends AppCompatActivity {
                 posts.clear();
                 posts.addAll(fetchedPosts);
                 adapter.notifyDataSetChanged();
-                displayAcheivements(fetchedPosts.size());
 
             }
             @Override
@@ -430,7 +441,6 @@ public class PostPreviewListActivity extends AppCompatActivity {
                 posts.clear();
                 posts.addAll(fetchedPosts);
                 adapter.notifyDataSetChanged();
-                displayAcheivements(fetchedPosts.size());
 
             }
             @Override
@@ -492,17 +502,4 @@ public class PostPreviewListActivity extends AppCompatActivity {
             });
         }
     }
-
-    private void displayAcheivements(int numPosts)
-    {
-        if(numPosts >= 5 )
-            icon1.setVisibility(View.VISIBLE);
-
-        if(numPosts >= 10)
-            icon2.setVisibility(View.VISIBLE);
-
-        if(numPosts>= 15)
-            icon3.setVisibility(View.VISIBLE);
-    }
-
 }

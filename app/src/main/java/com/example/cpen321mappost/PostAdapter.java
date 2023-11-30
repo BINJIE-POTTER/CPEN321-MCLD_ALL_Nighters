@@ -2,16 +2,23 @@ package com.example.cpen321mappost;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.Objects;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private final List<Post> postList;
@@ -25,6 +32,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         public TextView textViewTitle;
         public TextView textViewContent;
         public TextView textViewLikes;
+        public CardView cardViewPost;
+        public ImageView imageViewPost;
 
         public ViewHolder(View view, List<Post> postList) {
             super(view);
@@ -32,17 +41,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             textViewTitle = view.findViewById(R.id.textViewTitle);
             textViewContent = view.findViewById(R.id.textViewContent);
             textViewLikes = view.findViewById(R.id.textViewLikes);
+            cardViewPost = view.findViewById(R.id.cardViewPost);
+            imageViewPost = view.findViewById(R.id.imageViewPost);
+
+            cardViewPost.setVisibility(View.GONE);
 
             itemView.setOnClickListener(view1 -> {
 
-                int position = getAdapterPosition(); // Get the position of the view holder
+                int position = getAdapterPosition();
 
-                // Ensure the position is valid (exists in the dataset)
                 if (position != RecyclerView.NO_POSITION) {
 
                     Intent PostDetailIntent = new Intent(view1.getContext(), PostDetailActivity.class);
 
-                    // Assuming 'post' has a method 'getId' to get a unique identifier for the post
                     Post clickedPost = postList.get(position);
                     PostDetailIntent.putExtra("pid", clickedPost.getPid()); // for example
 
@@ -69,7 +80,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     //ChatGPT usage: Partial
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Post post = postList.get(position);
 //        if()
         profileManager.getAuthor(post.getUserId(), new ProfileManager.AuthorCallback() {
@@ -85,6 +96,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
             }
         });
+
+        if (post.getImageData() != null && !Objects.equals(post.getImageData().getImage(), "")) {
+
+            byte[] decodedString = Base64.decode(post.getImageData().getImage(), Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            holder.cardViewPost.setVisibility(View.VISIBLE);
+            holder.imageViewPost.setImageBitmap(decodedByte);
+            holder.textViewContent.setMaxLines(3);
+
+        } else {
+
+            holder.textViewContent.setMaxLines(2);
+            holder.cardViewPost.setVisibility(View.GONE);
+
+        }
 
         holder.textViewTitle.setText(post.getContent().getTitle());
         holder.textViewContent.setText(post.getContent().getBody());
