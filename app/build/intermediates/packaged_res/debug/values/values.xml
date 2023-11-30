@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="gender_array">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Non-binary</item>
+        <item>Prefer not to say</item>
+    </string-array>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <item name="explorer" type="id"/>
+    <item name="master" type="id"/>
+    <item name="novice" type="id"/>
+    <string name="achievement">achievement</string>
+    <string name="add_a_comment">Add a comment…</string>
+    <string name="app_name">Cpen321Mappost</string>
+    <string name="avatar">Avatar</string>
+    <string name="comment">comment</string>
+    <string name="ddd">…</string>
+    <string name="default_notification_channel_id">follower_update_channel</string>
+    <string name="default_web_client_id" translatable="false">667120763376-1be03htv6s11a7be9d1k2d57hdnftt5m.apps.googleusercontent.com</string>
+    <string name="edit_profile_cancel_button_caption">Cancel</string>
+    <string name="edit_profile_save_button_caption">Save</string>
+    <string name="follow_button"> </string>
+    <string name="followers">followers: </string>
+    <string name="followings">following: </string>
+    <string name="gcm_defaultSenderId" translatable="false">667120763376</string>
+    <string name="google_api_key" translatable="false">AIzaSyAt3034Ob4e66P9Ou_qTCVzw1-sfzWI5U0</string>
+    <string name="google_app_id" translatable="false">1:667120763376:android:19867dfa3a5ce5f68c1d35</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAt3034Ob4e66P9Ou_qTCVzw1-sfzWI5U0</string>
+    <string name="google_storage_bucket" translatable="false">mappost-d37d3.appspot.com</string>
+    <string name="image_content_desc">none_for_now</string>
+    <string name="loading">…</string>
+    <string name="log_in">log in</string>
+    <string name="log_out">log out</string>
+    <string name="novice">Novice</string>
+    <string name="post">Published: </string>
+    <string name="post_detail_author_button_caption">Author</string>
+    <string name="post_detail_comment_button_caption">Comment</string>
+    <string name="post_detail_delete_button_caption">Delete</string>
+    <string name="post_detail_like_button_caption">Like</string>
+    <string name="post_detail_main_content">Main Content</string>
+    <string name="post_detail_post_detail">Post Detail</string>
+    <string name="post_detail_title">Title</string>
+    <string name="post_item_author">Author</string>
+    <string name="post_item_title">Title</string>
+    <string name="post_preview_list_mode_name"> </string>
+    <string name="project_id" translatable="false">mappost-d37d3</string>
+    <string name="publish">Send</string>
+    <string name="tag_activity_save_button">Save</string>
+    <string name="tag_activity_title_caption">Tags</string>
+    <string name="tag_caption">Tag</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="user_birthdate_caption">Birth Date</string>
+    <string name="user_birthdate_value_caption">loading…</string>
+    <string name="user_email_caption">Email</string>
+    <string name="user_email_value_caption">loading…</string>
+    <string name="user_gender_caption">Gender</string>
+    <string name="user_gender_value_caption">loading…</string>
+    <string name="user_id_caption">ID</string>
+    <string name="user_id_value_caption">loading…</string>
+    <string name="user_list_following_follower">FollowType</string>
+    <string name="user_name_caption">Name</string>
+    <string name="user_name_value_caption">loading…</string>
+    <string name="user_profile_edit_button_caption">edit</string>
+    <string name="user_view_posts_caption">my posts</string>
+    <style name="Base.Theme.Cpen321Mappost" parent="Theme.Material3.DayNight.NoActionBar">
+        
+        
+    </style>
+    <style name="Theme.Cpen321Mappost" parent="Base.Theme.Cpen321Mappost"/>
+</resources>

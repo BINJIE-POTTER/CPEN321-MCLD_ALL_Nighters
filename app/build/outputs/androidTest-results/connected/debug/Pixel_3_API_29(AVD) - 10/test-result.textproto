@@ -1,0 +1,77 @@
+# 2023-11-30T02:14:08.488Z:
+test_suite_meta_data {
+  scheduled_test_case_count: 1
+}
+test_status: ABORTED
+test_result {
+  test_case {
+    test_class: "ReviewPostTest"
+    test_package: "espressotest"
+    test_method: "testReviewPost"
+    start_time {
+      seconds: 1701310444
+      nanos: 302000000
+    }
+    end_time {
+      seconds: 1701310446
+      nanos: 128000000
+    }
+  }
+  test_status: FAILED
+  output_artifact {
+    label {
+      label: "logcat"
+      namespace: "android"
+    }
+    source_path {
+      path: "/Users/binjieye/AndroidStudioProjects/CPEN321-MCLD_ALL_Nighters/app/build/outputs/androidTest-results/connected/debug/Pixel_3_API_29(AVD) - 10/logcat-espressotest.ReviewPostTest-testReviewPost.txt"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info"
+      namespace: "android"
+    }
+    source_path {
+      path: "/Users/binjieye/AndroidStudioProjects/CPEN321-MCLD_ALL_Nighters/app/build/outputs/androidTest-results/connected/debug/Pixel_3_API_29(AVD) - 10/device-info.pb"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.meminfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/Users/binjieye/AndroidStudioProjects/CPEN321-MCLD_ALL_Nighters/app/build/outputs/androidTest-results/connected/debug/Pixel_3_API_29(AVD) - 10/meminfo"
+    }
+  }
+  output_artifact {
+    label {
+      label: "device-info.cpuinfo"
+      namespace: "android"
+    }
+    source_path {
+      path: "/Users/binjieye/AndroidStudioProjects/CPEN321-MCLD_ALL_Nighters/app/build/outputs/androidTest-results/connected/debug/Pixel_3_API_29(AVD) - 10/cpuinfo"
+    }
+  }
+}
+output_artifact {
+  label {
+    label: "test-results.log"
+    namespace: "com.google.testing.platform.runtime.android.driver.AndroidInstrumentationDriver"
+  }
+  source_path {
+    path: "/Users/binjieye/AndroidStudioProjects/CPEN321-MCLD_ALL_Nighters/app/build/outputs/androidTest-results/connected/debug/Pixel_3_API_29(AVD) - 10/testlog/test-results.log"
+  }
+  type: TEST_DATA
+  mime_type: "text/plain"
+}
+issue {
+  namespace {
+    namespace: "com.google.testing.platform.runtime.android.driver.AndroidInstrumentationDriver"
+  }
+  severity: SEVERE
+  code: 1
+  name: "INSTRUMENTATION_FAILED"
+  message: "Test run failed to complete. Expected 1 tests, received 0"
+}

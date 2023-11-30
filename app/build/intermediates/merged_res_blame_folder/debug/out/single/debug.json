@@ -1,0 +1,222 @@
+[
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_authentication.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_authentication.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable_master_achievement.png.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable/master_achievement.png"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_search.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_search.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_visitor_page_avtivity.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_visitor_page_avtivity.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/xml_backup_rules.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/mipmap-anydpi_ic_launcher_round.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/mipmap-anydpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable_master.jpg.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable/master.jpg"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_layout_location_menu.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/layout_location_menu.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable_novice_achievement.png.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable/novice_achievement.png"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/font_caveat_variablefont_wght.ttf.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/font/caveat_variablefont_wght.ttf"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_post_detail.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_post_detail.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable_explorer_achievement.png.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable/explorer_achievement.png"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/raw_certificate.crt.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/raw/certificate.crt"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/mipmap-anydpi_ic_launcher.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/mipmap-anydpi/ic_launcher.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable_ic_launcher_background.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_item_post.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/item_post.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/font_ephesis_regular.ttf.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/font/ephesis_regular.ttf"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/raw_map_style.json.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/raw/map_style.json"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_tag_item.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/tag_item.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_comment_item.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/comment_item.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable-mdpi_ic_notification.png.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable-mdpi/ic_notification.png"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_user_item.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/user_item.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_profile.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_profile.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_user_list.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_user_list.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_profile_editing_birthdate.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_profile_editing_birthdate.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable-xxxhdpi_ic_notification.png.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable-xxxhdpi/ic_notification.png"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_tag.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_tag.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_edit_profile.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_edit_profile.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_post.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_post.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable_explorer.jpg.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable/explorer.jpg"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/xml_network_security_config.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/xml/network_security_config.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_maps.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_maps.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable_novice.jpg.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable/novice.jpg"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_main.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable_rounded_background.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable/rounded_background.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_dialog_image_view.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/dialog_image_view.xml"
+    },
+    {
+        "merged": "com.example.cpen321mappost.app-merged_res-38:/layout_item_post.xml.flat",
+        "source": "com.example.cpen321mappost.app-main-40:/layout/item_post.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_edit_profile_spinner.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_edit_profile_spinner.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable-xhdpi_ic_notification.png.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable-xhdpi/ic_notification.png"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_comment.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_comment.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable-xxhdpi_ic_notification.png.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable-xxhdpi/ic_notification.png"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/xml_data_extraction_rules.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/layout_activity_post_preview_list.xml.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/layout/activity_post_preview_list.xml"
+    },
+    {
+        "merged": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-merged_res-38:/drawable-hdpi_ic_notification.png.flat",
+        "source": "/Users/binjieye/.gradle/daemon/8.0/com.example.cpen321mappost.app-main-40:/drawable-hdpi/ic_notification.png"
+    }
+]

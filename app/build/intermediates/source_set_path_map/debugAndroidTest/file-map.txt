@@ -1,0 +1,7 @@
+com.example.cpen321mappost.test.app-uiautomator-2.3.0-alpha03-0 /Users/binjieye/.gradle/caches/transforms-3/179da9fd12018ad5b98bf0f0755a65a5/transformed/uiautomator-2.3.0-alpha03/res
+com.example.cpen321mappost.test.app-core-1.5.0-1 /Users/binjieye/.gradle/caches/transforms-3/579a14d3dc9291cfd1979f80d42bf6f5/transformed/core-1.5.0/res
+com.example.cpen321mappost.test.app-annotation-experimental-1.3.0-2 /Users/binjieye/.gradle/caches/transforms-3/f6e072e2b09544c47ffef35d7a91e653/transformed/annotation-experimental-1.3.0/res
+com.example.cpen321mappost.test.app-androidTest-3 /Users/binjieye/AndroidStudioProjects/CPEN321-MCLD_ALL_Nighters/app/build/generated/res/resValues/androidTest/debug
+com.example.cpen321mappost.test.app-mergeDebugAndroidTestResources-4 /Users/binjieye/AndroidStudioProjects/CPEN321-MCLD_ALL_Nighters/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/merged.dir
+com.example.cpen321mappost.test.app-mergeDebugAndroidTestResources-5 /Users/binjieye/AndroidStudioProjects/CPEN321-MCLD_ALL_Nighters/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/stripped.dir
+com.example.cpen321mappost.test.app-merged_res-6 /Users/binjieye/AndroidStudioProjects/CPEN321-MCLD_ALL_Nighters/app/build/intermediates/merged_res/debugAndroidTest
