@@ -145,12 +145,10 @@ public class SearchAndFilterPostTest {
 
         onView(withId(R.id.search_button)).perform(click());
 
-        // Optional: Verify that the app navigates to PostPreviewListActivity with the correct search string
-         intended(hasComponent(PostPreviewListActivity.class.getName()));
+        intended(hasComponent(PostPreviewListActivity.class.getName()));
 
         intended(hasExtra("searchString", "s"));
-        idlingResource.increment(); // Before starting the background task
-        idlingResource.decrement(); // After completing the background task
+
 
         try {
             Thread.sleep(3000); // Wait for 3 seconds

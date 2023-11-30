@@ -50,9 +50,6 @@ import org.junit.Before;
 public class ReviewPostTest {
     private UiDevice uiDevice;
 
-
-    private CountingIdlingResource idlingResource = new CountingIdlingResource("DATA_LOADER");
-
     @Rule
     public ActivityScenarioRule<MapsActivity> activityScenarioRule = new ActivityScenarioRule<>(MapsActivity.class);
 
@@ -67,7 +64,6 @@ public class ReviewPostTest {
         MapsActivity.TEST_MODE=true;
         User.TEST_MODE=true;
         uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-
         Intents.init();
     }
 
@@ -85,8 +81,7 @@ public class ReviewPostTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        // Step 1: Click on an empty area
-//        onView(withId(R.id.map)).perform(click());
+
         int xCoordinate = 540; // Determine the X coordinate
         int yCoordinate = 1080; // Determine the Y coordinate
 
@@ -98,8 +93,6 @@ public class ReviewPostTest {
             e.printStackTrace();
         }
 
-
-        // Step 2: Check for bottom sheet dialog and its contents
         onView(withId(R.id.createPostButton)).check(matches(isDisplayed()));
         onView(withId(R.id.reviewPostsButton)).check(matches(isDisplayed()));
 
@@ -116,7 +109,6 @@ public class ReviewPostTest {
             e.printStackTrace();
         }
 
-        //How to Click on the first item in the postRecyclerView ?
         onView(withId(R.id.postsRecyclerView)).perform(new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {
@@ -139,9 +131,6 @@ public class ReviewPostTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
-        // Perform a click on the first item of the RecyclerView
 
         onView(withId(R.id.textViewTitle)).check(matches(isDisplayed()));
         onView(withId(R.id.textViewMainContent)).check(matches(isDisplayed()));
