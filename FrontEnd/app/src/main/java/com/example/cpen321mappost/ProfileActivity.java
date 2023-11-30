@@ -37,7 +37,7 @@ import java.nio.file.Files;
 import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity {
-    private final static User user = User.getInstance();
+    private final User user = User.getInstance();
     private final static String TAG = "ProfileManager Activity";
     private final static ProfileManager profileManager = new ProfileManager();
     private ImageView avatarImageView;
@@ -310,70 +310,83 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadUserData() {
-        profileManager.getUserData(user, this, new User.UserCallback() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public String onSuccess(User user) {
 
-                Log.d(TAG, "Succeed on get user data in profile activity");
+        if (!User.isLoggedIn()) {
 
-                emailTextView.setText(user.getUserEmail());
-                nameTextView.setText(user.getUserName());
-                genderTextView.setText(user.getUserGender());
-                birthdateTextView.setText(user.getUserBirthdate());
-                userIdTextView.setText(user.getUserId());
-                followingTextView.setText(""+user.getFollowing().size());
-                followersTextView.setText(""+user.getFollowers().size());
-                postCountTextView.setText(""+user.getPostCount());
+            emailTextView.setText("-");
+            nameTextView.setText("-");
+            genderTextView.setText("-");
+            birthdateTextView.setText("-");
+            userIdTextView.setText("-");
 
-                if (user.getPostCount() >= 1) {
+        } else {
+
+            profileManager.getUserData(user, this, new User.UserCallback() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public String onSuccess(User user) {
+
+                    Log.d(TAG, "Succeed on get user data in profile activity");
+
+                    emailTextView.setText(user.getUserEmail());
+                    nameTextView.setText(user.getUserName());
+                    genderTextView.setText(user.getUserGender());
+                    birthdateTextView.setText(user.getUserBirthdate());
+                    userIdTextView.setText(user.getUserId());
+                    followingTextView.setText(""+user.getFollowing().size());
+                    followersTextView.setText(""+user.getFollowers().size());
+                    postCountTextView.setText(""+user.getPostCount());
+
+                    if (user.getPostCount() >= 1) {
 
 
-                    lastDivider.setVisibility(View.VISIBLE);
-                    achievementBoard.setVisibility(View.VISIBLE);
-                    achievementBoard.setWeightSum(1);
-                    novice.setVisibility(View.VISIBLE);
+                        lastDivider.setVisibility(View.VISIBLE);
+                        achievementBoard.setVisibility(View.VISIBLE);
+                        achievementBoard.setWeightSum(1);
+                        novice.setVisibility(View.VISIBLE);
+
+                    }
+
+                    if (user.getPostCount() >= 2) {
+
+                        achievementBoard.setWeightSum(2);
+                        explorer.setVisibility(View.VISIBLE);
+
+                    }
+
+                    if (user.getPostCount() >= 3) {
+
+                        achievementBoard.setWeightSum(3);
+                        master.setVisibility(View.VISIBLE);
+
+                    }
+
+                    if (user.getUserAvatar() != null && !Objects.equals(user.getUserAvatar().getImage(), "")) {
+
+                        byte[] decodedString = Base64.decode(user.getUserAvatar().getImage(), Base64.DEFAULT);
+                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                        avatarImageView.setImageBitmap(decodedByte);
+
+                    }
+
+                    return null;
 
                 }
 
-                if (user.getPostCount() >= 2) {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onFailure(Exception e) {
 
-                    achievementBoard.setWeightSum(2);
-                    explorer.setVisibility(View.VISIBLE);
-
-                }
-
-                if (user.getPostCount() >= 3) {
-
-                    achievementBoard.setWeightSum(3);
-                    master.setVisibility(View.VISIBLE);
+                    emailTextView.setText("-");
+                    nameTextView.setText("-");
+                    genderTextView.setText("-");
+                    birthdateTextView.setText("-");
+                    userIdTextView.setText("-");
 
                 }
+            });
 
-                if (user.getUserAvatar() != null && !Objects.equals(user.getUserAvatar().getImage(), "")) {
-
-                    byte[] decodedString = Base64.decode(user.getUserAvatar().getImage(), Base64.DEFAULT);
-                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    avatarImageView.setImageBitmap(decodedByte);
-
-                }
-
-                return null;
-
-            }
-
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onFailure(Exception e) {
-
-                emailTextView.setText("-");
-                nameTextView.setText("-");
-                genderTextView.setText("-");
-                birthdateTextView.setText("-");
-                userIdTextView.setText("-");
-
-            }
-        });
+        }
     }
 
     private void setOnClickers() {
