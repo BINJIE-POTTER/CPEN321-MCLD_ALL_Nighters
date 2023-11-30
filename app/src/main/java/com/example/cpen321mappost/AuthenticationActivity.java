@@ -76,7 +76,9 @@ public class AuthenticationActivity extends AppCompatActivity {
         //TODO:Ask for firebase cloud mesasging token, ask for permission
         if (firebaseUser != null) {
 
-            User user = User.getInstance();
+            User.setInstance(null);
+            User.setLoggedIn(true);
+            User.getInstance();
 
         }
 

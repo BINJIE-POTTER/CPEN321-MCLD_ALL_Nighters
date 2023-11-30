@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.cpen321mappost"
-        minSdk = 29
+        minSdk = 27
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"

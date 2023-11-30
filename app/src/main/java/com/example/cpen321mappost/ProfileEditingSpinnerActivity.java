@@ -15,17 +15,14 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.Objects;
 
 public class ProfileEditingSpinnerActivity extends AppCompatActivity {
-    private ProfileManager profileManager;
-    private User user;
+    private final ProfileManager profileManager = new ProfileManager();
+    private final User user = User.getInstance();
     final static String TAG = "ProfileEditingSpinner Activity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile_spinner);
-
-        user = User.getInstance();
-        profileManager = new ProfileManager();
 
         Button saveButton = findViewById(R.id.edit_profile_save_button);
         Button cancelButton  = findViewById(R.id.edit_profile_cancel_button);
@@ -40,18 +37,32 @@ public class ProfileEditingSpinnerActivity extends AppCompatActivity {
 
             String newGender = genderSpinner.getSelectedItem().toString();
 
-            user.setUserGender(newGender);
-
-            profileManager.putUserData(user, this, new User.UserCallback() {
+            profileManager.getUserData(user, this, new User.UserCallback() {
                 @Override
                 public String onSuccess(User user) {
+                    profileManager.putUserData(new User(user, null, null, null, newGender, null), ProfileEditingSpinnerActivity.this, new User.UserCallback() {
+                        @Override
+                        public String onSuccess(User user) {
 
-                    Toast.makeText(ProfileEditingSpinnerActivity.this, "Saved!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(ProfileEditingSpinnerActivity.this, "Saved!", Toast.LENGTH_LONG).show();
 
-                    Intent ProfileIntent = new Intent(ProfileEditingSpinnerActivity.this, ProfileActivity.class);
-                    startActivity(ProfileIntent);
+                            Intent ProfileIntent = new Intent(ProfileEditingSpinnerActivity.this, ProfileActivity.class);
+                            startActivity(ProfileIntent);
 
-                    finish();
+                            finish();
+
+                            return null;
+
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+
+                            Toast.makeText(ProfileEditingSpinnerActivity.this, "Failed to upload new user info!", Toast.LENGTH_LONG).show();
+                            finish();
+
+                        }
+                    });
 
                     return null;
 
@@ -65,7 +76,6 @@ public class ProfileEditingSpinnerActivity extends AppCompatActivity {
 
                 }
             });
-
         });
 
         cancelButton.setOnClickListener(view -> {

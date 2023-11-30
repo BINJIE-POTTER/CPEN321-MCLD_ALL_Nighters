@@ -1,17 +1,10 @@
 package com.example.cpen321mappost;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Base64;
@@ -23,7 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -91,14 +87,13 @@ public class VisitorPageAvtivity extends AppCompatActivity {
                 Log.d(TAG, "Succeed on get user data in profile activity");
 
                 nameTextView.setText(user.getUserName());
-                genderTextView.setText(user.getUserGender());
-                birthdateTextView.setText(user.getUserBirthdate());
+                genderTextView.setText(user.getUserGender().equals("none") ? "" : user.getUserGender());
+                birthdateTextView.setText(user.getUserBirthdate().equals("none") ? "" : user.getUserBirthdate());
                 followingTextView.setText(""+user.getFollowing().size());
                 followersTextView.setText(""+user.getFollowers().size());
                 postCountTextView.setText(""+user.getPostCount());
 
-                if (user.getPostCount() >= 5) {
-
+                if (user.getPostCount() >= 1) {
 
                     lastDivider.setVisibility(View.VISIBLE);
                     achievementBoard.setVisibility(View.VISIBLE);
@@ -107,14 +102,14 @@ public class VisitorPageAvtivity extends AppCompatActivity {
 
                 }
 
-                if (user.getPostCount() >= 12) {
+                if (user.getPostCount() >= 2) {
 
                     achievementBoard.setWeightSum(2);
                     explorer.setVisibility(View.VISIBLE);
 
                 }
 
-                if (user.getPostCount() >= 20) {
+                if (user.getPostCount() >= 3) {
 
                     achievementBoard.setWeightSum(3);
                     master.setVisibility(View.VISIBLE);
@@ -129,32 +124,37 @@ public class VisitorPageAvtivity extends AppCompatActivity {
 
                 }
 
-                profileManager.getUserData(User.getInstance(), new Activity(), new User.UserCallback() {
-                    @Override
-                    public String onSuccess(User me) {
+                if (!User.isLoggedIn()) followButton.setText("follow");
 
-                        isFollowing = me.getFollowing().contains(user.getUserId());
-                        isFollowed  = user.getFollowing().contains(me.getUserId());
+                else {
 
-                        if (isFollowing) {
+                    profileManager.getUserData(User.getInstance(), new Activity(), new User.UserCallback() {
+                        @Override
+                        public String onSuccess(User me) {
 
-                            if (isFollowed) followButton.setText("mutual");
+                            isFollowing = me.getFollowing().contains(user.getUserId());
+                            isFollowed  = user.getFollowing().contains(me.getUserId());
 
-                            else followButton.setText("following");
+                            if (isFollowing) {
 
-                        } else followButton.setText("follow");
+                                if (isFollowed) followButton.setText("mutual");
 
-                        return null;
+                                else followButton.setText("following");
 
-                    }
+                            } else followButton.setText("follow");
 
-                    @Override
-                    public void onFailure(Exception e) {
+                            return null;
 
-                        Log.e(TAG, e.toString());
+                        }
 
-                    }
-                });
+                        @Override
+                        public void onFailure(Exception e) {
+
+                            Log.e(TAG, e.toString());
+
+                        }
+                    });
+                }
 
                 return null;
 
@@ -205,6 +205,14 @@ public class VisitorPageAvtivity extends AppCompatActivity {
         });
 
         followButton.setOnClickListener(view -> {
+
+            if (!User.isLoggedIn()) {
+
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
             profileManager.followAuthor(isFollowing, userId, new Activity(), new ProfileManager.FollowingUserCallback() {
                 @Override
                 public void onSuccess(String userId) {

@@ -27,7 +27,7 @@ public class ProfileManager {
     //ChatGPT usage: Yes
     public void getUserData(User user, final Activity activity, final User.UserCallback callback) {
 
-        String url = "http://4.204.251.146:8081/users/?userId=" + user.getUserId();
+        String url = "https://4.204.251.146:3000/users/?userId=" + user.getUserId();
         OkHttpClient httpClient = HttpClient.getInstance();
         Request request = new Request.Builder()
                 .url(url)
@@ -76,7 +76,7 @@ public class ProfileManager {
     //ChatGPT usage: Yes
     public void putUserData(User user, final Activity activity, final User.UserCallback callback) {
 
-        String url = "http://4.204.251.146:8081/users/update-profile";
+        String url = "https://4.204.251.146:3000/users/update-profile";
         OkHttpClient httpClient = HttpClient.getInstance();
 
         String jsonUserData = gson.toJson(user);
@@ -122,7 +122,7 @@ public class ProfileManager {
     //ChatGPT usage: Yes
     public void postUserData(User user, final Activity activity, final User.UserCallback callback){
 
-        String url = "http://4.204.251.146:8081/users";
+        String url = "https://4.204.251.146:3000/users";
         OkHttpClient httpClient = HttpClient.getInstance();
 
         String jsonUserData = gson.toJson(user);
@@ -193,7 +193,7 @@ public class ProfileManager {
 
                 }
 
-                return null;
+                return "";
 
             }
 
@@ -210,8 +210,8 @@ public class ProfileManager {
     public void followAuthor(boolean isFollowing, String userId, final Activity activity, final FollowingUserCallback callback) {
 
         String url;
-        if (isFollowing) url= "http://4.204.251.146:8081/users/unfollow";
-        else             url= "http://4.204.251.146:8081/users/follow";
+        if (isFollowing) url= "https://4.204.251.146:3000/users/unfollow";
+        else             url= "https://4.204.251.146:3000/users/follow";
         OkHttpClient httpClient = HttpClient.getInstance();
 
         FollowingUser followingUser = new FollowingUser(User.getInstance().getUserId(), userId);
@@ -260,7 +260,7 @@ public class ProfileManager {
 
     public void uploadUserAvatar(File avatarFile, final Activity activity, final User.UserCallback callback) {
 
-        String url = "http://4.204.251.146:8081/users/update-avatar";
+        String url = "https://4.204.251.146:3000/users/update-avatar";
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS) // Increase connect timeout
                 .writeTimeout(10, TimeUnit.SECONDS) // Increase write timeout

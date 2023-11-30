@@ -25,6 +25,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
@@ -83,12 +85,10 @@ public class PostActivity extends AppCompatActivity {
         double latitude = Double.parseDouble(receivedIntent.getStringExtra("latitude"));
         double longitude = Double.parseDouble(receivedIntent.getStringExtra("longitude"));
 
-        // Check permissions at runtime
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissionLauncher.launch(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE});
         }
 
-        //Upload the image
         imgPreview.setOnClickListener(v -> {
             Intent pickImage = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             getImage.launch(pickImage);
@@ -100,14 +100,17 @@ public class PostActivity extends AppCompatActivity {
 
         });
 
-        //Save the content of post
         saveButton.setOnClickListener(v -> {
             try {
-                // Construct the JSON object
+
                 JSONObject postData = new JSONObject();
 
                 postData.put("userId", User.getInstance().getUserId());
-                postData.put("time", getCurrentDateUsingCalendar());
+
+                LocalDateTime now = LocalDateTime.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
+                String formattedDateTime = now.format(formatter);
+                postData.put("time", formattedDateTime);
 
                 JSONObject coordinate = new JSONObject();
                 coordinate.put("latitude", latitude);
@@ -142,7 +145,7 @@ public class PostActivity extends AppCompatActivity {
     //ChatGPT usage: Partial
     public void postJsonData(Uri imageUri, JSONObject postData, final Activity activity, final JsonPostCallback callback) {
 
-        String url = "http://4.204.251.146:8081/posts";
+        String url = "https://4.204.251.146:3000/posts";
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS) // Increase connect timeout
                 .writeTimeout(10, TimeUnit.SECONDS) // Increase write timeout
@@ -188,17 +191,5 @@ public class PostActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    //ChatGPT usage: Partial
-    public String getCurrentDateUsingCalendar() {
-
-        Calendar calendar = Calendar.getInstance();
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int month = calendar.get(Calendar.MONTH) + 1; // Months are indexed from 0
-        int year = calendar.get(Calendar.YEAR);
-
-        return day + "-" + month + "-" + year;
-
     }
 }

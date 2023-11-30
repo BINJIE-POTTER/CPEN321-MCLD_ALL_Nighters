@@ -17,8 +17,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.Objects;
 
 public class ProfileEditingActivity extends AppCompatActivity {
-    private ProfileManager profileManager;
-    private User user;
+    private final ProfileManager profileManager = new ProfileManager();
+    private final User user = User.getInstance();
     final static String TAG = "ProfileEditing Activity";
 
     //ChatGPT usage: Partial
@@ -31,35 +31,24 @@ public class ProfileEditingActivity extends AppCompatActivity {
         Button saveButton;
         Button cancelButton;
 
-        user = User.getInstance();
-        profileManager = new ProfileManager();
-
         newValueText = findViewById(R.id.textInputEditText);
         saveButton = findViewById(R.id.edit_profile_save_button);
         cancelButton = findViewById(R.id.edit_profile_cancel_button);
 
-        //Implement the live checking:
         newValueText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // No need to implement anything here for this case
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // No need to implement anything here for this case
-            }
-
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
             public void afterTextChanged(Editable s) {
                 String result = s.toString().replaceAll("<", "");
                 if (!s.toString().equals(result)) {
                     newValueText.setText(result);
-                    newValueText.setSelection(result.length()); // Set cursor to the end
+                    newValueText.setSelection(result.length());
                 }
             }
         });
-
 
         Intent intent = getIntent();
 
@@ -71,49 +60,30 @@ public class ProfileEditingActivity extends AppCompatActivity {
 
                 String hint;
 
-                switch (Objects.requireNonNull(item)) {
+                assert item != null;
+                if (item.equals("userName")) {
 
-                    case "userName":
+                    hint = user.getUserName();
+                    newValueText.setHint(hint);
 
-                        hint = user.getUserName();
-                        newValueText.setHint(hint);
+                } else if (item.equals("userEmail")) {
 
-                        break;
-                    case "userGender":
+                    hint = user.getUserEmail();
+                    newValueText.setHint(hint);
 
-                        hint = user.getUserGender();
-                        newValueText.setHint(hint);
+                } else {
 
-                        break;
-                    case "userBirthdate":
-
-                        hint = user.getUserBirthdate();
-                        newValueText.setHint(hint);
-
-                        break;
-                    case "userEmail":
-
-                        hint = user.getUserEmail();
-                        newValueText.setHint(hint);
-
-                        break;
-                    default:
-
-                        Log.d(TAG, "Cannot resolve passed-in item.");
-
-                        break;
+                    Log.d(TAG, "Cannot resolve passed-in item.");
 
                 }
 
                 return null;
+
             }
             @Override
             public void onFailure(Exception e) {
 
                 Toast.makeText(ProfileEditingActivity.this, "Failed to get User Data in ProfileEditingActivity", Toast.LENGTH_SHORT).show();
-                final Toast toast = Toast.makeText(ProfileEditingActivity.this, "Failed to get User Data in ProfileEditingActivity", Toast.LENGTH_LONG);
-                final Handler handler = new Handler();
-                handler.postDelayed(toast::show, 3000); // 3000ms delay to show the toast again after the initial showing
 
             }
         });
@@ -122,50 +92,57 @@ public class ProfileEditingActivity extends AppCompatActivity {
 
             String newInput = Objects.requireNonNull(newValueText.getText()).toString();
 
-            switch (Objects.requireNonNull(item)) {
+            assert item != null;
+            if (item.equals("userName")) {
 
-                case "userName":
+                if (newInput.length() > 20) {
 
-                    Log.d(TAG, "going to set the new user name: " + newInput);
+                    Toast.makeText(ProfileEditingActivity.this, "Name length too long, please keep it in 20 characters!", Toast.LENGTH_SHORT).show();
+                    return;
 
-                    user.setUserName(newInput);
+                }
 
-                    Log.d(TAG, "Setted the name!");
+            } else if (item.equals("userEmail")) {
 
-                    break;
-                case "userGender":
+                if (!isValidEmail(newInput)) {
 
-                    user.setUserGender(newInput);
+                    Toast.makeText(ProfileEditingActivity.this, "Invalid Email, Please enter again!", Toast.LENGTH_SHORT).show();
+                    return;
 
-                    break;
-                case "userBirthdate":
+                }
 
-                    user.setUserBirthdate(newInput);
+            } else {
 
-                    break;
-                case "userEmail":
-
-                    user.setUserEmail(newInput);
-
-                    break;
-                default:
-
-                    Log.d(TAG, "Cannot resolve passed-in item.");
-
-                    break;
+                Log.d(TAG, "Cannot resolve passed-in item.");
 
             }
 
-            profileManager.putUserData(user, this, new User.UserCallback() {
+            profileManager.getUserData(user, this, new User.UserCallback() {
                 @Override
                 public String onSuccess(User user) {
+                    profileManager.putUserData(new User(user, null, item.equals("userName") ? newInput : null, item.equals("userEmail") ? newInput : null, null, null), ProfileEditingActivity.this, new User.UserCallback() {
+                        @Override
+                        public String onSuccess(User user) {
 
-                    Toast.makeText(ProfileEditingActivity.this, "Saved!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(ProfileEditingActivity.this, "Saved!", Toast.LENGTH_LONG).show();
 
-                    Intent ProfileIntent = new Intent(ProfileEditingActivity.this, ProfileActivity.class);
-                    startActivity(ProfileIntent);
+                            Intent ProfileIntent = new Intent(ProfileEditingActivity.this, ProfileActivity.class);
+                            startActivity(ProfileIntent);
 
-                    finish();
+                            finish();
+
+                            return null;
+
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+
+                            Toast.makeText(ProfileEditingActivity.this, "Failed to upload new user info!", Toast.LENGTH_LONG).show();
+                            finish();
+
+                        }
+                    });
 
                     return null;
 
@@ -173,11 +150,12 @@ public class ProfileEditingActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Exception e) {
+
                     Toast.makeText(ProfileEditingActivity.this, "Failed to upload new user info!", Toast.LENGTH_LONG).show();
                     finish();
+
                 }
             });
-
         });
 
         cancelButton.setOnClickListener(view -> {
@@ -197,6 +175,16 @@ public class ProfileEditingActivity extends AppCompatActivity {
         startActivity(ProfileIntent);
 
         finish();
+
+    }
+
+    private static boolean isValidEmail(String email) {
+
+        if (email == null) return false;
+
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+
+        return email.matches(emailRegex);
 
     }
 

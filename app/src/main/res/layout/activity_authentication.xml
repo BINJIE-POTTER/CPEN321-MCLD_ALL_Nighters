@@ -6,11 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".AuthenticationActivity">
 
-    <!-- Google Sign-In Button -->
-    <!--        android:drawableStart="@drawable/google_icon" -->
-    />
 
-    <!-- Facebook Sign-In Button -->
     <Button
         android:id="@+id/btnGoogleSignIn"
         android:layout_width="wrap_content"
@@ -24,6 +20,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--        android:drawableStart="@drawable/facebook_icon" -->
-    />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
 
     <LinearLayout
         android:id="@+id/innerLinearLayout"
@@ -22,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginEnd="16dp"
-            app:cardCornerRadius="100dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp">
 
             <ImageView
@@ -46,14 +47,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:text="Name"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/user_list_user_post_count_and_followers"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Posts: 0      Followers: 0"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -62,15 +61,13 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="..." />
+            android:text="@string/ddd" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#cccccc"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp" />
+        android:background="#cccccc" />
 
 </LinearLayout>

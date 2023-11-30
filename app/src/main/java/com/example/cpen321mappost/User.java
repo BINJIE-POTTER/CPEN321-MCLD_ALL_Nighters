@@ -12,7 +12,8 @@ import java.util.ArrayList;
 
 public class User {
     private static User instance = null;
-    private static ProfileManager profileManager = null;
+    private static final ProfileManager profileManager = new ProfileManager();
+    private static boolean loggedIn = true;
     private static final String TAG = "User";
     private String userId;
     private String userName;
@@ -29,11 +30,20 @@ public class User {
     private User() {
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        assert firebaseUser != null;
+        if (firebaseUser != null) {
 
-        this.userId = firebaseUser.getUid();
-        this.userName = firebaseUser.getDisplayName();
-        this.userEmail = firebaseUser.getEmail();
+            this.userId = firebaseUser.getUid();
+            this.userName = firebaseUser.getDisplayName();
+            this.userEmail = firebaseUser.getEmail();
+
+        } else {
+
+            this.userId = "none";
+            this.userName = "none";
+            this.userEmail = "none";
+
+        }
+
         this.userGender = "none";
         this.userBirthdate = "none";
         this.token = "";
@@ -60,14 +70,14 @@ public class User {
 
     }
 
-    public User (User user, String token) {
+    public User (User user, String token, String userName, String userEmail, String userGender, String userBirthdate) {
 
         this.userId = user.getUserId();
-        this.userName = user.getUserName();
-        this.userEmail = user.getUserEmail();
-        this.userGender = user.getUserGender();
-        this.userBirthdate = user.getUserBirthdate();
-        this.token = token;
+        this.userName = userName == null ? user.getUserName() : userName;
+        this.userEmail = userEmail == null ? user.getUserEmail() : userEmail;
+        this.userGender = userGender == null ? user.getUserGender() : userGender;
+        this.userBirthdate = userBirthdate == null ? user.getUserBirthdate() : userBirthdate;
+        this.token = token == null ? user.getToken() : token;
         this.postCount = user.getPostCount();
         this.following = user.getFollowing();
         this.followers = user.getFollowers();
@@ -78,10 +88,17 @@ public class User {
     //ChatGPT usage: Partial
     public static synchronized User getInstance() {
 
+        if (!isLoggedIn()) {
+
+            instance = new User("-");
+
+            return instance;
+
+        }
+
         if (instance == null) {
 
             instance = new User();
-            profileManager = new ProfileManager();
             profileManager.getUserData(instance, new Activity(), new UserCallback() {
                 @Override
                 public String onSuccess(User user) {
@@ -103,7 +120,7 @@ public class User {
 
                             Log.d(TAG, "USER LOGGED IN WITH UPDATED TOKEN DATA: " + jsonUserData);
 
-                            profileManager.putUserData(new User(instance, token), new Activity(), new UserCallback() {
+                            profileManager.putUserData(new User(instance, token, null, null, null, null), new Activity(), new UserCallback() {
                                 @Override
                                 public String onSuccess(User user) {
 
@@ -210,6 +227,30 @@ public class User {
 
     }
 
+    public static void updateToken(TokenCallback callback) {
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+
+                    if (!task.isSuccessful()) {
+
+                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+
+                        callback.onError(task.getException());
+
+                    } else {
+
+                        String retrievedToken = task.getResult();
+
+                        Log.d(TAG, "FCM Token: " + retrievedToken);
+
+                        callback.onTokenReceived(retrievedToken);
+
+                    }
+
+                });
+    }
+
     //ChatGPT usage: Yes
     public interface UserCallback {
         String onSuccess(User user);
@@ -271,30 +312,6 @@ public class User {
         this.userBirthdate = userBirthdate;
     }
 
-    public static void updateToken(TokenCallback callback) {
-
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-
-                    if (!task.isSuccessful()) {
-
-                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-
-                        callback.onError(task.getException());
-
-                    } else {
-
-                        String retrievedToken = task.getResult();
-
-                        Log.d(TAG, "FCM Token: " + retrievedToken);
-
-                        callback.onTokenReceived(retrievedToken);
-
-                    }
-
-                });
-    }
-
     public String getToken() {
         return token;
     }
@@ -333,6 +350,19 @@ public class User {
 
     public void setUserAvatar(ImageData userAvatar) {
         this.userAvatar = userAvatar;
+    }
+
+    public static boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public static void setLoggedIn(boolean loggedIn) {
+        User.loggedIn = loggedIn;
+    }
+    public static void setInstance(User user) {
+
+        instance = user;
+
     }
 
 }

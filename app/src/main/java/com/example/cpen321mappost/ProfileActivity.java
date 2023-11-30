@@ -27,11 +27,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.ktx.Firebase;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -130,6 +136,8 @@ public class ProfileActivity extends AppCompatActivity {
         Button followingButton;
         Button followersButton;
         Button postCountButton;
+        Button logInButton;
+        Button logOutButton;
         ImageView novice;
         ImageView explorer;
         ImageView master;
@@ -138,9 +146,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         user = User.getInstance();
 
-        Log.d(TAG, "User ID: " + user.getUserId() + "," + "User Email: " + user.getUserEmail() + "," + "User name: " + user.getUserName() + "," + "User gender: " + user.getUserGender());
-
-        // Initialize UI display
         nameTextView = findViewById(R.id.user_name_value_id);
         emailTextView = findViewById(R.id.user_email_value_id);
         genderTextView = findViewById(R.id.user_gender_value_id);
@@ -158,6 +163,8 @@ public class ProfileActivity extends AppCompatActivity {
         followingButton = findViewById(R.id.user_following_count_id);
         followersButton = findViewById(R.id.user_follower_count_id);
         postCountButton = findViewById(R.id.user_post_count_id);
+        logInButton = findViewById(R.id.user_log_in_button_id);
+        logOutButton = findViewById(R.id.user_log_out_button_id);
 
         novice = findViewById(R.id.novice);
         explorer = findViewById(R.id.explorer);
@@ -189,7 +196,7 @@ public class ProfileActivity extends AppCompatActivity {
                 followersTextView.setText(""+user.getFollowers().size());
                 postCountTextView.setText(""+user.getPostCount());
 
-                if (user.getPostCount() >= 5) {
+                if (user.getPostCount() >= 1) {
 
 
                     lastDivider.setVisibility(View.VISIBLE);
@@ -199,14 +206,14 @@ public class ProfileActivity extends AppCompatActivity {
 
                 }
 
-                if (user.getPostCount() >= 12) {
+                if (user.getPostCount() >= 2) {
 
                     achievementBoard.setWeightSum(2);
                     explorer.setVisibility(View.VISIBLE);
 
                 }
 
-                if (user.getPostCount() >= 20) {
+                if (user.getPostCount() >= 3) {
 
                     achievementBoard.setWeightSum(3);
                     master.setVisibility(View.VISIBLE);
@@ -229,16 +236,24 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onFailure(Exception e) {
 
-                emailTextView.setText("error");
-                nameTextView.setText("error");
-                genderTextView.setText("error");
-                birthdateTextView.setText("error");
-                userIdTextView.setText("error");
+                emailTextView.setText("-");
+                nameTextView.setText("-");
+                genderTextView.setText("-");
+                birthdateTextView.setText("-");
+                userIdTextView.setText("-");
 
             }
         });
 
         nameEditButton.setOnClickListener(view -> {
+
+            if (!User.isLoggedIn()) {
+
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
 
             Log.d(TAG,"Opening the profile editing activity");
             Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
@@ -250,6 +265,14 @@ public class ProfileActivity extends AppCompatActivity {
 
         genderEditButton.setOnClickListener(view -> {
 
+            if (!User.isLoggedIn()) {
+
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
+
             Log.d(TAG,"Opening the profile editing activity");
             Intent ProfileEditingIntent = new Intent(this, ProfileEditingSpinnerActivity.class);
             startActivity(ProfileEditingIntent);
@@ -259,6 +282,14 @@ public class ProfileActivity extends AppCompatActivity {
 
         birthdateEditButton.setOnClickListener(view -> {
 
+            if (!User.isLoggedIn()) {
+
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
+
             Log.d(TAG,"Opening the profile editing activity");
             Intent ProfileEditingIntent = new Intent(this, ProfileEditingBirthdateActivity.class);
             startActivity(ProfileEditingIntent);
@@ -267,6 +298,14 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         emailEditButton.setOnClickListener(view -> {
+
+            if (!User.isLoggedIn()) {
+
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
 
             Log.d(TAG,"Opening the profile editing activity");
             Intent ProfileEditingIntent = new Intent(this, ProfileEditingActivity.class);
@@ -278,6 +317,14 @@ public class ProfileActivity extends AppCompatActivity {
 
         viewPostsButton.setOnClickListener(view -> {
 
+            if (!User.isLoggedIn()) {
+
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
+
             Log.d(TAG,"Opening the posts preview list activity");
             Intent PostPreviewListIntent = new Intent(this, PostPreviewListActivity.class);
             PostPreviewListIntent.putExtra("mode", "profile");
@@ -287,6 +334,14 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         postCountButton.setOnClickListener(view -> {
+
+            if (!User.isLoggedIn()) {
+
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
 
             Log.d(TAG,"Opening the posts preview list activity");
             Intent PostPreviewListIntent = new Intent(this, PostPreviewListActivity.class);
@@ -298,6 +353,14 @@ public class ProfileActivity extends AppCompatActivity {
 
         followingButton.setOnClickListener(view -> {
 
+            if (!User.isLoggedIn()) {
+
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
+
             Log.d(TAG,"Opening the users list activity");
             Intent UserListIntent = new Intent(this, UserListActivity.class);
             UserListIntent.putExtra("mode", "followings");
@@ -307,6 +370,14 @@ public class ProfileActivity extends AppCompatActivity {
 
         followersButton.setOnClickListener(view -> {
 
+            if (!User.isLoggedIn()) {
+
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
+
             Log.d(TAG,"Opening the users list activity");
             Intent UserListIntent = new Intent(this, UserListActivity.class);
             UserListIntent.putExtra("mode", "followers");
@@ -314,25 +385,56 @@ public class ProfileActivity extends AppCompatActivity {
 
         });
 
-        novice.setOnClickListener(view -> {
+        logInButton.setOnClickListener(view -> {
 
-            displayDialog(R.drawable.novice_achievement, "Novice Achiever", "Welcome to your journey of discovery! You've taken the first step by contributing 5 posts, and we're thrilled to see your ideas taking flight. Each post is a building block of your growing community presence. Keep sharing, keep exploring, and watch your impact grow. Your next milestone, Explorer, is just around the corner. Keep posting, keep shining!");
+            if (!User.isLoggedIn()) {
+
+                Intent authenticationIntent = new Intent(this, AuthenticationActivity.class);
+                startActivity(authenticationIntent);
+                finish();
+
+            } else {
+
+                Toast.makeText(this, "Already logged in!", Toast.LENGTH_SHORT).show();
+
+            }
+
+        });
+
+        logOutButton.setOnClickListener(view -> {
+
+            if (User.isLoggedIn()) {
+
+                FirebaseAuth.getInstance().signOut();
+
+                User.setLoggedIn(false);
+                Intent profileIntent = new Intent(this, ProfileActivity.class);
+                startActivity(profileIntent);
+                finish();
+
+            } else {
+
+                Toast.makeText(this, "Already logged out!", Toast.LENGTH_SHORT).show();
+
+            }
 
         });
 
-        explorer.setOnClickListener(view -> {
+        novice.setOnClickListener(view -> displayDialog(R.drawable.novice_achievement, "Novice Achiever", "Welcome to your journey of discovery! You've taken the first step by contributing 5 posts, and we're thrilled to see your ideas taking flight. Each post is a building block of your growing community presence. Keep sharing, keep exploring, and watch your impact grow. Your next milestone, Explorer, is just around the corner. Keep posting, keep shining!"));
 
-            displayDialog(R.drawable.explorer_achievement, "Explorer Extraordinaire",  "Bravo! You’ve reached the Explorer level with your 12th post, proving your commitment and enthusiasm. As an Explorer, you’re not just participating; you're influencing and leading the conversation. Your insights are paving the way for new discussions and discoveries. Continue on this exciting path, and soon, the prestigious Master Achievement awaits you. Your voice matters, and your journey inspires!");
+        explorer.setOnClickListener(view -> displayDialog(R.drawable.explorer_achievement, "Explorer Extraordinaire",  "Bravo! You’ve reached the Explorer level with your 12th post, proving your commitment and enthusiasm. As an Explorer, you’re not just participating; you're influencing and leading the conversation. Your insights are paving the way for new discussions and discoveries. Continue on this exciting path, and soon, the prestigious Master Achievement awaits you. Your voice matters, and your journey inspires!"));
 
-        });
-
-        master.setOnClickListener(view -> {
-
-            displayDialog(R.drawable.master_achievement, "Master Contributor", "Outstanding! With 20 posts, you've ascended to the Master level, a testament to your dedication and expertise. Your contributions are significant, driving meaningful dialogue and shaping the essence of our community. As a Master Contributor, you embody the spirit of leadership and collaboration. Your journey doesn’t end here. Keep leading the way, keep inspiring, and continue to set a benchmark for excellence!");
-
-        });
+        master.setOnClickListener(view -> displayDialog(R.drawable.master_achievement, "Master Contributor", "Outstanding! With 20 posts, you've ascended to the Master level, a testament to your dedication and expertise. Your contributions are significant, driving meaningful dialogue and shaping the essence of our community. As a Master Contributor, you embody the spirit of leadership and collaboration. Your journey doesn’t end here. Keep leading the way, keep inspiring, and continue to set a benchmark for excellence!"));
 
         avatarImageView.setOnClickListener(view -> {
+
+            if (!User.isLoggedIn()) {
+
+                Toast.makeText(this, "Please log in first", Toast.LENGTH_SHORT).show();
+
+                return;
+
+            }
 
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 

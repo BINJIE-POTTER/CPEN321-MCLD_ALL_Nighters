@@ -51,7 +51,7 @@ public class CommentManager {
     //ChatGPT usage: Partial
     public void getAllCommentsData(String pid, final Activity activity, final CommentCallback callback) {
 
-        String url = "http://4.204.251.146:8081/comments/?pid=" + pid;
+        String url = "https://4.204.251.146:3000/comments/?pid=" + pid;
         OkHttpClient httpClient = HttpClient.getInstance();
 
         Request request = new Request.Builder()
@@ -105,7 +105,7 @@ public class CommentManager {
     //ChatGPT usage: Partial
     public void postCommentData(Comment comment, final Activity activity, final CommentCallback callback){
 
-        String url = "http://4.204.251.146:8081/comments";
+        String url = "https://4.204.251.146:3000/comments";
         OkHttpClient httpClient = HttpClient.getInstance();
 
         Gson gson = new Gson();

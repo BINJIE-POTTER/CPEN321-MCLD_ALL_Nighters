@@ -36,7 +36,7 @@
                         android:layout_marginTop="12dp"
                         android:layout_marginBottom="12dp"
                         android:layout_marginEnd="8dp"
-                        app:cardCornerRadius="100dp"
+                        app:cardCornerRadius="50dp"
                         app:cardElevation="0dp">
 
                         <ImageView
@@ -64,36 +64,32 @@
 
                         <TextView
                             android:id="@+id/user_name_id"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_weight="1"
                             android:textSize="20sp"
-                            android:textStyle="bold"
-                            android:text="@string/user_name_caption" />
+                            android:textStyle="bold" />
 
                         <Button
                             android:id="@+id/visit_page_follow_button_id"
                             style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="end"
-                            android:text="follow" />
+                            android:layout_gravity="end" />
 
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/user_gender_id"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/user_gender_caption" />
+                        android:layout_height="wrap_content" />
 
                     <TextView
                         android:id="@+id/user_birthdate_id"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/user_birthdate_caption" />
+                        android:layout_marginTop="8dp" />
 
                 </LinearLayout>
 

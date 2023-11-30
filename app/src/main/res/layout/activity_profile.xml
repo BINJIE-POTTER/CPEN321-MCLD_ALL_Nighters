@@ -19,7 +19,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"
-            app:cardCornerRadius="100dp"
+            app:cardCornerRadius="50dp"
             app:cardElevation="0dp">
 
             <ImageView
@@ -124,6 +124,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:maxLines="1"
                 android:text="@string/user_name_caption"
                 android:textSize="18sp" />
 
@@ -154,8 +155,6 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp" />
 
-        <!-- Repeat similar sections for User Gender, User Birthdate, and User Email -->
-
         <!-- User Gender Section -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -169,6 +168,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:maxLines="1"
                 android:text="@string/user_gender_caption"
                 android:textSize="18sp" />
 
@@ -224,6 +224,7 @@
                 android:text="@string/user_birthdate_value_caption"
                 android:textSize="18sp"
                 android:layout_marginEnd="10dp"
+                android:maxLines="1"
                 android:gravity="end" />
 
             <!-- Edit button for User Birthdate -->
@@ -254,19 +255,22 @@
             <!-- Caption -->
             <TextView
                 android:id="@+id/user_email_id"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/user_email_caption"
                 android:textSize="18sp" />
 
             <!-- Actual user data -->
             <TextView
                 android:id="@+id/user_email_value_id"
-                android:layout_width="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
                 android:text="@string/user_email_value_caption"
                 android:textSize="18sp"
+                android:maxLines="1"
                 android:layout_marginEnd="10dp"
                 android:gravity="end" />
 
@@ -298,23 +302,26 @@
             <!-- Caption (e.g., "User ID:") aligned to left -->
             <TextView
                 android:id="@+id/user_id_id"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/user_id_caption"
                 android:textSize="18sp" />
 
             <!-- Actual user data aligned to right -->
             <TextView
                 android:id="@+id/user_id_value_id"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:layout_marginStart="18dp"
                 android:text="@string/user_id_value_caption"
                 android:textSize="18sp"
                 android:layout_marginEnd="10dp"
                 android:gravity="end"
                 android:clickable="true"
                 android:focusable="true"
+                android:maxLines="1"
                 android:background="?attr/selectableItemBackground"
                 android:padding="10dp" />
 
@@ -338,7 +345,8 @@
             android:visibility="gone"
             android:padding="16dp"
             android:weightSum="1"
-            android:gravity="center">
+            android:gravity="center"
+            android:baselineAligned="false">
 
             <RelativeLayout
                 android:layout_width="0dp"
@@ -393,18 +401,42 @@
 
         </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
         <Button
             android:id="@+id/user_view_posts_button_id"
-            android:layout_width="122dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:elevation="4dp"
-            android:padding="16dp"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
             android:text="@string/user_view_posts_caption" />
+
+        <Button
+            android:id="@+id/user_log_in_button_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="@string/log_in" />
+
+        <Button
+            android:id="@+id/user_log_out_button_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="@string/log_out" />
 
     </LinearLayout>
 
-
+    </LinearLayout>
 
 </ScrollView>
 
