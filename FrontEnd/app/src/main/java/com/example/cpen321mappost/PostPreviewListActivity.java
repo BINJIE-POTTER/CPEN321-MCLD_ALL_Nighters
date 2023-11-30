@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -23,6 +23,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Handler;
+import android.os.Looper;
 import android.widget.PopupMenu;
 import android.util.Log;
 import android.view.View;
@@ -51,6 +52,8 @@ import okhttp3.Response;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
     private static final double CLICKABLE_RADIUS = 0.005 ;
     private GoogleMap mMap;
+    private boolean isInitialZoomDone = false;
+
     private LocationManager locationManager;
     private static final String TAG = "MapsActivity";
     private Marker selectedMarker = null;
@@ -104,13 +107,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //ChatGPT usage: No
     private void startLocationUpdates() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
             if (lastKnownLocation != null) {
                 currentLocation = lastKnownLocation;
                 onLocationChanged(lastKnownLocation);  // Update the map with the last known location
                 isPermissionGranted = true;
+            }
+
+            if (currentLocation == null) {
+                new Handler(Looper.getMainLooper()).postDelayed(this::startLocationUpdates, 5000);
             }
         }
     }
@@ -143,11 +152,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, "Can't find style. Error: ", e);
         }
+        zoomToCurrentLocation();
 
-        if(isPermissionGranted )
-        {
-            initializeBlueMarkers();
-        }
+
+        if (isPermissionGranted) initializeBlueMarkers();
 
         mMap.setOnMarkerClickListener(marker -> {
             displayLocationMenu(marker.getPosition().latitude, marker.getPosition().longitude, "create_review_Post");
@@ -183,6 +191,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 displayLocationMenu(latLng.latitude, latLng.longitude, "createPostOnly");
             }
         });
+    }
+    private void zoomToCurrentLocation() {
+        if (mMap != null && currentLocation != null && currentLatLng != null) {
+            LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current Location"));
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+            isInitialZoomDone = true; // Set the flag to true after initial zoom
+        }
     }
 
     public void initializeBlueMarkers()
@@ -410,11 +427,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location) {
         currentLocation = location;
         currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-        if (mMap != null) {
-            mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current Location"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+        if (!isInitialZoomDone) {
+            // If initial zoom is not done, zoom to the current location
+            zoomToCurrentLocation();
         }
+
+//        if (mMap != null) {
+////            mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Current Location"));
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+////        }
     }
 
     //ChatGPT usage: Partial

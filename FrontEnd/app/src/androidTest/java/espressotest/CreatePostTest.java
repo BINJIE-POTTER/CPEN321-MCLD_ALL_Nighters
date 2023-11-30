@@ -11,13 +11,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withHint;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
-import android.content.Context;
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.IdlingRegistry;
-import androidx.test.espresso.idling.CountingIdlingResource;
 import androidx.test.espresso.intent.Intents;
-import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -33,11 +27,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import com.example.cpen321mappost.MapsActivity; // Import from your main app package
-
-import com.example.cpen321mappost.AuthenticationActivity;
-import com.example.cpen321mappost.MainActivity;
 import com.example.cpen321mappost.MapsActivity;
+
 import com.example.cpen321mappost.PostActivity;
 import com.example.cpen321mappost.R;
 import com.example.cpen321mappost.User;
@@ -46,7 +37,6 @@ import com.example.cpen321mappost.User;
 @LargeTest
 public class CreatePostTest {
     private UiDevice uiDevice;
-
 
     @Rule
     public ActivityScenarioRule<MapsActivity> activityScenarioRule = new ActivityScenarioRule<>(MapsActivity.class);
@@ -61,9 +51,7 @@ public class CreatePostTest {
     public void setUp() throws Exception {
         User.TEST_MODE = true;
         uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-
         Intents.init();
-
     }
 
     @After
@@ -82,15 +70,14 @@ public class CreatePostTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        // Step 1: Click on an empty area
-//        onView(withId(R.id.map)).perform(click());
+
         int xCoordinate = 540; // Determine the X coordinate
-        int yCoordinate = 1080; // Determine the Y coordinate
+        int yCoordinate = 1080;
 
         // Perform the click
         uiDevice.click(xCoordinate, yCoordinate);
         try {
-            Thread.sleep(10000); // Wait for 3 seconds
+            Thread.sleep(10000); //Wait to load
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -129,8 +116,12 @@ public class CreatePostTest {
         // Step 7: Click save
         onView(withId(R.id.edit_profile_save_button)).perform(click());
 
-        // Step 8: Check for success toast (if applicable)
-        // onView(isRoot()).check(matches(ToastMatcher.withToast("Post created successfully")));
+        try {
+            Thread.sleep(5000); //Wait to load
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

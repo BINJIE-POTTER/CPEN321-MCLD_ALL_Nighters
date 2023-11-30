@@ -2,50 +2,40 @@ package espressotest;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.intent.Intents.intended;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withHint;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.IdlingRegistry;
-import androidx.test.espresso.idling.CountingIdlingResource;
+import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.intent.Intents;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
-import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.Until;
 
-import com.example.cpen321mappost.AuthenticationActivity;
 import com.example.cpen321mappost.MapsActivity;
-import com.example.cpen321mappost.PostActivity;
-import com.example.cpen321mappost.PostDetailActivity;
-import com.example.cpen321mappost.PostPreviewListActivity;
 import com.example.cpen321mappost.R;
 import com.example.cpen321mappost.User;
 
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class ReviewPostTest {
     private UiDevice uiDevice;
-
-
-    private CountingIdlingResource idlingResource = new CountingIdlingResource("DATA_LOADER");
 
     @Rule
     public ActivityScenarioRule<MapsActivity> activityScenarioRule = new ActivityScenarioRule<>(MapsActivity.class);
@@ -60,6 +50,7 @@ public class ReviewPostTest {
     public void setUp() throws Exception {
         MapsActivity.TEST_MODE=true;
         User.TEST_MODE=true;
+        uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         Intents.init();
     }
 
@@ -77,8 +68,7 @@ public class ReviewPostTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        // Step 1: Click on an empty area
-//        onView(withId(R.id.map)).perform(click());
+
         int xCoordinate = 540; // Determine the X coordinate
         int yCoordinate = 1080; // Determine the Y coordinate
 
@@ -90,31 +80,50 @@ public class ReviewPostTest {
             e.printStackTrace();
         }
 
-
-        // Step 2: Check for bottom sheet dialog and its contents
         onView(withId(R.id.createPostButton)).check(matches(isDisplayed()));
         onView(withId(R.id.reviewPostsButton)).check(matches(isDisplayed()));
 
         onView(withId(R.id.reviewPostsButton)).perform(click());
-        intended(hasComponent(PostPreviewListActivity.class.getName()));
-        idlingResource.increment();
-        idlingResource.decrement();
+        try {
+            Thread.sleep(5000); // Wait for 3 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-////
-//        onView(withId(R.id.postsRecyclerView)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-//        try {
-//            Thread.sleep(3000); // Wait for 3 seconds
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        intended(hasComponent(PostDetailActivity.class.getName()));
-//        onView(withId(R.id.textViewTitle)).check(matches(isDisplayed()));
-//        onView(withId(R.id.imageViewPost)).check(matches(isDisplayed()));
-//        onView(withId(R.id.textViewMainContent)).check(matches(isDisplayed()));
-//        onView(withId(R.id.editTextComment)).check(matches(isDisplayed()));
-//        onView(withId(R.id.buttonComment)).check(matches(isDisplayed()));
-//        onView(withId(R.id.buttonLike)).check(matches(isDisplayed()));
+        try {
+            Thread.sleep(5000); // Wait for 3 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
+        onView(withId(R.id.postsRecyclerView)).perform(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return ViewMatchers.isAssignableFrom(RecyclerView.class);
+            }
+
+            @Override
+            public String getDescription() {
+                return "Click on the first item of the RecyclerView.";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                RecyclerView recyclerView = (RecyclerView) view;
+                recyclerView.getChildAt(0).performClick();
+            }
+        });
+        try {
+            Thread.sleep(5000); // Wait for 3 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onView(withId(R.id.textViewTitle)).check(matches(isDisplayed()));
+        onView(withId(R.id.textViewMainContent)).check(matches(isDisplayed()));
+        onView(withId(R.id.editTextComment)).check(matches(isDisplayed()));
+        onView(withId(R.id.buttonComment)).check(matches(isDisplayed()));
+        onView(withId(R.id.buttonLike)).check(matches(isDisplayed()));
 
     }
 

@@ -22,13 +22,7 @@ public class AuthenticationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (TEST_MODE) {
-//            // Bypass authentication and directly start MapsActivity
-//            Intent intent = new Intent(AuthenticationActivity.this, MapsActivity.class);
-//            startActivity(intent);
-//            finish();
-//            return;
-//        }
+
         authenticationHandler = new AuthenticationHandler(this, new AuthenticationHandler.AuthCallback() {
             @Override
             public void onAuthSuccess(FirebaseUser user) {
