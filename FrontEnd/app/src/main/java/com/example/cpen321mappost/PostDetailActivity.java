@@ -38,6 +38,19 @@ public class PostDetailActivity extends AppCompatActivity {
     private boolean isLiked = false;
     private boolean isFollowing = false;
     private int postlikes;
+    private TextView authorName;
+    private TextView textViewTitle;
+    private TextView textViewMainContent;
+    private TextView textViewPostTime;
+    private Button buttonDelete;
+    private Button buttonLike;
+    private Button buttonComment;
+    private Button followButton;
+    private CardView cardView;
+    private ImageView imageViewPost;
+    private ImageView avatarImageView;
+    private RecyclerView recyclerViewComments;
+    private EditText editTextComment;
 
     //ChatGPT usage: Partial
     @Override
@@ -45,34 +58,41 @@ public class PostDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
 
-        TextView authorName = findViewById(R.id.textViewPostDetail);
-        TextView textViewTitle = findViewById(R.id.textViewTitle);
-        TextView textViewMainContent = findViewById(R.id.textViewMainContent);
-        TextView textViewPostTime = findViewById(R.id.textViewPostTime);
-
-        Button buttonDelete = findViewById(R.id.buttonDelete);
-        Button buttonLike = findViewById(R.id.buttonLike);
-        Button buttonComment = findViewById(R.id.buttonComment);
-        Button followButton = findViewById(R.id.post_detail_follow_button_id);
-
-        CardView cardView = findViewById(R.id.cardViewPost);
-        ImageView imageViewPost = findViewById(R.id.imageViewPost);
-        ImageView avatarImageView = findViewById(R.id.avatar_post_detail);
-
-        RecyclerView recyclerViewComments = findViewById(R.id.recyclerViewComments);
-        recyclerViewComments.setLayoutManager(new LinearLayoutManager(this));
-        EditText editTextComment = findViewById(R.id.editTextComment);
-
         Intent receivedIntent = getIntent();
         pid = receivedIntent.getStringExtra("pid");
 
-        initializeUIComponents(textViewTitle, textViewMainContent, textViewPostTime, authorName, buttonLike, buttonDelete, followButton, cardView, imageViewPost, avatarImageView);
-        setupListeners(editTextComment, buttonDelete, followButton, buttonComment, buttonLike, avatarImageView, recyclerViewComments);
+        initializeUI();
+        loadUserData();
+        setupListeners();
+        setButtonLike();
+        setComment();
+        setButtonFollow();
 
     }
 
-    private void initializeUIComponents(TextView textViewTitle, TextView textViewMainContent, TextView textViewPostTime, TextView authorName, Button buttonLike, Button buttonDelete, Button followButton, CardView cardView, ImageView imageViewPost, ImageView avatarImageView) {
+    private void initializeUI() {
 
+        authorName = findViewById(R.id.textViewPostDetail);
+        textViewTitle = findViewById(R.id.textViewTitle);
+        textViewMainContent = findViewById(R.id.textViewMainContent);
+        textViewPostTime = findViewById(R.id.textViewPostTime);
+
+        buttonDelete = findViewById(R.id.buttonDelete);
+        buttonLike = findViewById(R.id.buttonLike);
+        buttonComment = findViewById(R.id.buttonComment);
+        followButton = findViewById(R.id.post_detail_follow_button_id);
+
+        cardView = findViewById(R.id.cardViewPost);
+        imageViewPost = findViewById(R.id.imageViewPost);
+        avatarImageView = findViewById(R.id.avatar_post_detail);
+
+        recyclerViewComments = findViewById(R.id.recyclerViewComments);
+        recyclerViewComments.setLayoutManager(new LinearLayoutManager(this));
+        editTextComment = findViewById(R.id.editTextComment);
+
+    }
+
+    private void loadUserData() {
         postManager.getSinglePostData(pid, this, new PostManager.JsonCallback<Post>() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -179,8 +199,7 @@ public class PostDetailActivity extends AppCompatActivity {
         });
     }
 
-    private void setupListeners(EditText editTextComment, Button buttonDelete, Button followButton, Button buttonComment, Button buttonLike, ImageView avatarImageView, RecyclerView recyclerViewComments) {
-
+    private void setupListeners() {
         editTextComment.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -242,6 +261,9 @@ public class PostDetailActivity extends AppCompatActivity {
             startActivity(intent);
 
         });
+    }
+
+    private void setButtonLike() {
 
         buttonLike.setOnClickListener(v -> {
 
@@ -289,6 +311,9 @@ public class PostDetailActivity extends AppCompatActivity {
                 }
             });
         });
+    }
+
+    private void setComment() {
 
         buttonComment.setOnClickListener(v -> {
 
@@ -340,6 +365,10 @@ public class PostDetailActivity extends AppCompatActivity {
         });
 
         commentManager.displayAllComments(this, pid, recyclerViewComments);
+
+    }
+
+    private void setButtonFollow() {
 
         followButton.setOnClickListener(view -> {
 
@@ -399,7 +428,6 @@ public class PostDetailActivity extends AppCompatActivity {
                 }
             });
         });
-
     }
 }
 

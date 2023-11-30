@@ -77,6 +77,7 @@ public class ProfileActivity extends AppCompatActivity {
         initializeUI();
         loadUserData();
         setOnClickers();
+        setImageClickers();
 
     }
 
@@ -545,8 +546,10 @@ public class ProfileActivity extends AppCompatActivity {
                 Toast.makeText(this, "Already logged out!", Toast.LENGTH_SHORT).show();
 
             }
-
         });
+    }
+
+    private void setImageClickers() {
 
         novice.setOnClickListener(view -> displayDialog(R.drawable.novice_achievement, "Novice Achiever", "Welcome to your journey of discovery! You've taken the first step by contributing 5 posts, and we're thrilled to see your ideas taking flight. Each post is a building block of your growing community presence. Keep sharing, keep exploring, and watch your impact grow. Your next milestone, Explorer, is just around the corner. Keep posting, keep shining!"));
 

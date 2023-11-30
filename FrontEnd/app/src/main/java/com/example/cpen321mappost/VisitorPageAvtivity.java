@@ -196,28 +196,7 @@ public class VisitorPageAvtivity extends AppCompatActivity {
                 followersTextView.setText(""+user.getFollowers().size());
                 postCountTextView.setText(""+user.getPostCount());
 
-                if (user.getPostCount() >= 1) {
-
-                    lastDivider.setVisibility(View.VISIBLE);
-                    achievementBoard.setVisibility(View.VISIBLE);
-                    achievementBoard.setWeightSum(1);
-                    novice.setVisibility(View.VISIBLE);
-
-                }
-
-                if (user.getPostCount() >= 2) {
-
-                    achievementBoard.setWeightSum(2);
-                    explorer.setVisibility(View.VISIBLE);
-
-                }
-
-                if (user.getPostCount() >= 3) {
-
-                    achievementBoard.setWeightSum(3);
-                    master.setVisibility(View.VISIBLE);
-
-                }
+                displayAchievement(user);
 
                 if (user.getUserAvatar() != null && !Objects.equals(user.getUserAvatar().getImage(), "")) {
 
@@ -391,5 +370,31 @@ public class VisitorPageAvtivity extends AppCompatActivity {
                 }
             });
         });
+    }
+
+    private void displayAchievement(User user) {
+
+        if (user.getPostCount() >= 1) {
+
+            lastDivider.setVisibility(View.VISIBLE);
+            achievementBoard.setVisibility(View.VISIBLE);
+            achievementBoard.setWeightSum(1);
+            novice.setVisibility(View.VISIBLE);
+
+        }
+
+        if (user.getPostCount() >= 2) {
+
+            achievementBoard.setWeightSum(2);
+            explorer.setVisibility(View.VISIBLE);
+
+        }
+
+        if (user.getPostCount() >= 3) {
+
+            achievementBoard.setWeightSum(3);
+            master.setVisibility(View.VISIBLE);
+
+        }
     }
 }
