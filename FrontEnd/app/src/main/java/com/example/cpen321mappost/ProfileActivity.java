@@ -76,7 +76,9 @@ public class ProfileActivity extends AppCompatActivity {
         initializeRequestPermissionLauncher();
         initializeUI();
         loadUserData();
-        setOnClickers();
+        setProfileClickers();
+        setRelationClickers();
+        setLogInOutClickers();
         setImageClickers();
 
     }
@@ -390,7 +392,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void setOnClickers() {
+    private void setProfileClickers() {
 
         nameEditButton.setOnClickListener(view -> {
 
@@ -461,6 +463,9 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(PostPreviewListIntent);
 
         });
+    }
+
+    private void setRelationClickers() {
 
         postCountButton.setOnClickListener(view -> {
 
@@ -513,6 +518,9 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(UserListIntent);
 
         });
+    }
+
+    private void setLogInOutClickers() {
 
         logInButton.setOnClickListener(view -> {
 
