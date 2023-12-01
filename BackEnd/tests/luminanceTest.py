@@ -1,4 +1,3 @@
-#If want to test this function, please put it in a python project
 from PIL import Image
 
 def calculate_average_luminance(image_path):
@@ -18,9 +17,11 @@ def calculate_average_luminance(image_path):
 
         return normalized_luminance
 
-# Example Usage, adjust the image path as required
-image_path = './phoneScreen.png'
-average_luminance = calculate_average_luminance(image_path)
-print("The average luminance of the image on a scale from 0 to 1 is: {average_luminance}")
+# Example Usage
+image1_path = './phoneScreen.png'
+image2_path = './phoneButton.png'
+average_luminance1 = calculate_average_luminance(image1_path)
+average_luminance2 = calculate_average_luminance(image2_path)
 
-
+print(f"The average luminance of the image 1 on a scale from 0 to 1 is: {average_luminance1}")
+print(f"The average luminance of the image 2 on a scale from 0 to 1 is: {average_luminance2}")
