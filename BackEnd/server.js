@@ -1,5 +1,4 @@
 //Final release
-
 //Backend-server used to connect to mongodb
 var express = require("express")
 var app = express();
