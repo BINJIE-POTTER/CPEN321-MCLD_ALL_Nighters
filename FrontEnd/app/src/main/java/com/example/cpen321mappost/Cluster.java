@@ -107,14 +107,14 @@ class Post {
 // Getters and setters for image and other fields
 
 class ImageData {
-    public String getContentType() {
-        return contentType;
-    }
     private String contentType;
     private String image; // This holds the Base64 encoded image data
     public String getImage()
     {
         return image;
+    }
+    public String getContentType() {
+        return contentType;
     }
 
 }
